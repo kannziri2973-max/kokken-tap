@@ -8819,7 +8819,7 @@ setTimeout(()=>{subscribeRaidCfg();raidCheck()},1200);setInterval(()=>{if(cloud.
 /* ---------- 倒した・終わったボスの帯は、しばらくしたら消す / 軽くする ---------- */
 {const gr=gRaid;let c=null,ct=0,ca;gRaid=function(){const n=Date.now();if(n-ct<1000&&ca===RCFG.auto)return c;ct=n;ca=RCFG.auto;c=gr();return c}}
 {const rr=raid;let c=null,ct=0,cc,cp;raid=function(){const n=Date.now(),pv=raidPreviewOn();if(n-ct<500&&cc===RAID.cur&&cp===pv)return c;ct=n;cc=RAID.cur;cp=pv;c=rr();return c}}
-const RAID_DOWN_SHOW=10*6e4,RAID_END_SHOW=30*6e4;
+const RAID_DOWN_SHOW=10*6e4,RAID_END_SHOW=5*6e4;
 function raidBarGone(r,st,T){if(!r||r.prev)return false;const n=Date.now();
   if(st==='after'&&n>r.end+RAID_END_SHOW)return true;
   if(T&&T.down&&T.r&&T.r.id===r.id){let v=RAID.dAt;if(!v||v.id!==r.id){v=store.get('raidDownAt',null);if(!v||v.id!==r.id){v={id:r.id,t:n};store.set('raidDownAt',v)}RAID.dAt=v}return n-num(v.t)>RAID_DOWN_SHOW}
