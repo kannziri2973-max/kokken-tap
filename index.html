@@ -7530,11 +7530,11 @@ function raidState(r){
 }
 const rdKey=r=>r&&r.prev?'raidDmgP':'raidDmg';
 function myRaid(){const r=raid(),v=r?store.get(rdKey(r),null):null;if(!r||!v||v.id!==r.id)return {id:r?r.id:'',dmg:0,hits:0,crit:0,best:0};return {id:v.id,dmg:num(v.dmg),hits:num(v.hits),crit:num(v.crit),best:num(v.best)}}
-function raidMine(){const r=RAID.cur;if(!r)return null;const v=store.get('raidDmg',null);return v&&v.id===r.id&&num(v.dmg)>0?{id:v.id,dmg:Math.floor(num(v.dmg)),hits:Math.floor(num(v.hits))}:null}
+function raidMine(){const r=raid();if(!r||r.prev)return null;const v=store.get('raidDmg',null);return v&&v.id===r.id&&num(v.dmg)>0?{id:v.id,dmg:Math.floor(num(v.dmg)),hits:Math.floor(num(v.hits))}:null}
 /* 記録の送り先と取りこみに、魔王へのダメージを足す */
 {const bc=buildCloud;buildCloud=function(){const d=bc();try{const m=raidMine();if(m)d.raid=m}catch(e){}return d}}
 {const mc=mergeCloud;mergeCloud=function(d){mc(d);try{const x=d&&d.raid;if(x&&typeof x.id==='string'&&num(x.dmg)>0){const v=store.get('raidDmg',null);
-  if(!v||v.id!==x.id){if(!RAID.cur||RAID.cur.id===x.id)store.set('raidDmg',{id:x.id,dmg:num(x.dmg),hits:num(x.hits),crit:0,best:0})}
+  if(!v||v.id!==x.id){{const cr=raid();if(!cr||cr.prev||cr.id===x.id)store.set('raidDmg',{id:x.id,dmg:num(x.dmg),hits:num(x.hits),crit:0,best:0})}}
   else if(num(x.dmg)>num(v.dmg))store.set('raidDmg',{...v,dmg:num(x.dmg),hits:Math.max(num(v.hits),num(x.hits))})}}catch(e){}}}
 function raidTotals(){
   const r=raid();if(!r)return null;
@@ -8831,6 +8831,13 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 {const of=openRankFeed;openRankFeed=function(){if(gameBusy()&&cloud.rows){cloud.feedPaused=true;return}cloud.feedPaused=false;return of.apply(this,arguments)}}
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
+/* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
+const APP_VER='84';
+{const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
+function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
+  const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
+  location.replace(location.pathname+'?v='+m[1]+location.hash)}).catch(()=>{})}catch(e){}}
+setTimeout(verCheck,3000);setInterval(verCheck,5*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)verCheck()});
 })();
 </script>
 
