@@ -30,6 +30,7 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
 /* ---- ここから下は書きかえなくて大丈夫です ----
    ゲーム本体は「window.claude.use('db' | 'user' | 'room')」で記録・ログイン・対戦の部屋を使う。
    それを Firebase（Firestore・匿名ログイン・Realtime Database）で同じ形に作り直す */
+window.KOKKEN_WEB=1;
 (function(){
   const V='10.12.2',U='https://www.gstatic.com/firebasejs/'+V+'/';
   const configured=FIREBASE_CONFIG&&FIREBASE_CONFIG.apiKey&&!/ここ/.test(FIREBASE_CONFIG.apiKey);
@@ -47,15 +48,29 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
     const mk=()=>{
       if(gateEl){gateEl.hidden=false;return}
       gateEl=document.createElement('div');gateEl.id='fbGate';
-      gateEl.style.cssText='position:fixed;inset:0;z-index:90;background:radial-gradient(90% 60% at 50% 25%,#1c2240,#0d0f14 70%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 18px;text-align:center;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif';
+      gateEl.style.cssText='position:fixed;inset:0;z-index:90;overflow-y:auto;background:radial-gradient(90% 60% at 50% 25%,#1c2240,#0d0f14 70%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:safe center;gap:14px;padding:24px 18px;text-align:center;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif';
       gateEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,52px);gap:2px;background:#2a2d3a;border:2px solid #2a2d3a"><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">黒</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">鍵</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">タ</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">ッ</span></div>'
         +'<div style="font:700 22px/1.4 sans-serif">黒鍵タップ</div>'
         +'<div style="font-size:14px;line-height:1.7;color:#c9cbd6;max-width:340px">ログインすると、記録・コイン・アイテムがアカウントに保存されて、どの端末からでも続きから遊べます。ランキングやレイドにも参加できます。</div>'
         +'<button id="fbGateBtn" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:320px;min-height:54px;border:0;background:#fff;color:#1f1f1f;font:700 16px sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35)"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Googleでログインして遊ぶ</button>'
+        +'<div style="display:flex;align-items:center;gap:10px;width:100%;max-width:320px;color:#8a8da0;font-size:12px"><span style="flex:1;height:1px;background:#3a3f55"></span>または メールアドレスで（Gmail・iCloud・どれでもOK）<span style="flex:1;height:1px;background:#3a3f55"></span></div>'
+        +'<form id="fbMailForm" style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:320px" autocomplete="on">'
+        +'<input id="fbMail" type="email" inputmode="email" autocomplete="email" placeholder="メールアドレス" style="min-height:48px;padding:0 12px;font:16px sans-serif;border:1px solid #4a4f70;background:#0d0f14;color:#fff;-webkit-user-select:text;user-select:text">'
+        +'<input id="fbPass" type="password" autocomplete="current-password" placeholder="パスワード（6文字以上）" style="min-height:48px;padding:0 12px;font:16px sans-serif;border:1px solid #4a4f70;background:#0d0f14;color:#fff;-webkit-user-select:text;user-select:text">'
+        +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><button type="submit" id="fbMailIn" style="min-height:48px;border:0;background:#ffd76a;color:#1a1200;font:800 15px sans-serif;cursor:pointer">ログイン</button><button type="button" id="fbMailNew" style="min-height:48px;border:1px solid #ffd76a;background:transparent;color:#ffd76a;font:800 15px sans-serif;cursor:pointer">はじめて登録</button></div>'
+        +'<button type="button" id="fbMailForgot" style="border:0;background:none;color:#9a9db0;font:13px sans-serif;text-decoration:underline;cursor:pointer;padding:4px">パスワードを忘れた</button>'
+        +'</form>'
         +'<div id="fbGateMsg" style="font-size:13px;line-height:1.6;color:#ffd76a;max-width:340px;min-height:1.6em"></div>'
-        +(inApp?'<div style="font-size:13px;line-height:1.7;color:#ff9aa8;max-width:340px;border:1px solid #ff5a6a;padding:10px">⚠ LINEなどのアプリの中で開いているとログインできません。右上（か右下）のメニューから「ブラウザで開く」を選んで、Safari か Chrome で開いてください。</div>':'')
+        +(inApp?'<div style="font-size:13px;line-height:1.7;color:#ff9aa8;max-width:340px;border:1px solid #ff5a6a;padding:10px">⚠ LINEなどのアプリの中では、Googleのログインが使えません。メールアドレスで登録するか、「ブラウザで開く」で Safari か Chrome で開いてください。</div>':'')
         +'<div style="font-size:11px;color:#8a8da0;max-width:340px;line-height:1.6">ゲームに表示されるのはニックネームだけです。メールアドレスはほかの人には見えません。</div>';
       document.body.appendChild(gateEl);
+      const $g=id=>gateEl.querySelector(id),gmsg=t=>{$g('#fbGateMsg').textContent=t};
+      const jp=c=>({'auth/invalid-email':'メールアドレスの形がちがいます。','auth/missing-password':'パスワードを入れてください。','auth/weak-password':'パスワードは6文字以上にしてください。','auth/email-already-in-use':'このメールアドレスはもう登録されています。「ログイン」を押してください。','auth/invalid-credential':'メールアドレスかパスワードがちがいます。はじめての人は「はじめて登録」を押してください。','auth/wrong-password':'パスワードがちがいます。','auth/user-not-found':'このメールアドレスはまだ登録されていません。「はじめて登録」を押してください。','auth/too-many-requests':'何回もまちがえたので、少し時間をおいてからためしてください。','auth/operation-not-allowed':'メールでのログインがまだ使えない設定です（管理者がFirebaseで「メール / パスワード」を有効にしてください）。','auth/network-request-failed':'通信できませんでした。電波を確かめてください。'}[c]||('ログインできませんでした（'+c+'）'));
+      const mail=()=>$g('#fbMail').value.trim(),pass=()=>$g('#fbPass').value;
+      try{au.languageCode='ja'}catch(e){}
+      $g('#fbMailForm').onsubmit=async e=>{e.preventDefault();if(!mail()||!pass()){gmsg('メールアドレスとパスワードを入れてください。');return}gmsg('ログインしています…');try{await auth.signInWithEmailAndPassword(au,mail(),pass())}catch(x){gmsg(jp(x.code))}};
+      $g('#fbMailNew').onclick=async()=>{if(!mail()||!pass()){gmsg('使いたいメールアドレスと、パスワード（6文字以上）を入れてから押してください。');return}gmsg('登録しています…');try{await auth.createUserWithEmailAndPassword(au,mail(),pass())}catch(x){gmsg(jp(x.code))}};
+      $g('#fbMailForgot').onclick=async()=>{if(!mail()){gmsg('先にメールアドレスを入れてから押してください。');return}try{await auth.sendPasswordResetEmail(au,mail());gmsg('パスワードを決め直すメールを送りました。届かないときは迷惑メールも見てください。')}catch(x){gmsg(jp(x.code))}};
       gateEl.querySelector('#fbGateBtn').onclick=async()=>{
         const msg=gateEl.querySelector('#fbGateMsg');msg.textContent='ログインしています…';
         const p=new auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
@@ -125,7 +140,7 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
       let pres={},peers=[],conn=true;const peerCbs=new Set(),connCbs=new Set();
       const write=()=>rtdb.set(me,{uid:user.uid,t:Date.now(),p:JSON.parse(JSON.stringify(pres))});
       try{await rtdb.onDisconnect(me).remove();await write()}catch(e){throw wrapErr(e)}
-      const offPeers=rtdb.onValue(base,s=>{const v=s.val()||{};peers=Object.entries(v).map(([k,x])=>({id:k,kind:'viewer',presence:x&&x.p||{},sameTab:k===myKey,uid:x&&x.uid,t:x&&x.t||0}));peerCbs.forEach(f=>{try{f.cb(peers)}catch(e){}})},e=>{peerCbs.forEach(f=>{try{f.err&&f.err(wrapErr(e))}catch(x){}})});
+      const offPeers=rtdb.onValue(base,s=>{const v=s.val()||{};peers=Object.entries(v).map(([k,x])=>({id:k,kind:'viewer',presence:x&&x.p||{},sameTab:k===myKey,isMe:!!(x&&x.uid===user.uid),uid:x&&x.uid,t:x&&x.t||0}));peerCbs.forEach(f=>{try{f.cb(peers)}catch(e){}})},e=>{peerCbs.forEach(f=>{try{f.err&&f.err(wrapErr(e))}catch(x){}})});
       const offConn=rtdb.onValue(rtdb.ref(rd,'.info/connected'),s=>{conn=!!s.val();if(conn){rtdb.onDisconnect(me).remove().catch(()=>{});write().catch(()=>{})}connCbs.forEach(f=>{try{f.cb(conn)}catch(e){}})});
       const keep=setInterval(()=>{rtdb.update(me,{t:Date.now()}).catch(()=>{})},20000);
       return {
@@ -289,8 +304,10 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#e9ebf0;paddin
 /* ---------- 特大イベント: 魔王レイド ---------- */
 #raidBar{flex:none;position:relative;display:grid;grid-template-columns:76px minmax(0,1fr);gap:4px 14px;align-items:center;text-align:left;padding:12px 14px 12px 10px;color:#ffe9e4;border:1px solid #ff2a3a;overflow:hidden;isolation:isolate;
   background:radial-gradient(120% 140% at 0% 50%,#4a0610 0%,#16020a 55%,#050208 100%)}
-#raidBar::before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(-45deg,rgba(255,42,58,.07) 0 10px,transparent 10px 20px);animation:rbStripe 1.6s linear infinite}
-#raidBar::after{content:"";position:absolute;inset:0;z-index:-1;box-shadow:inset 0 0 22px rgba(255,30,50,.55);animation:rbPulse 1.8s ease-in-out infinite}
+#raidBar::before{content:"";position:absolute;top:0;bottom:0;left:-29px;right:0;z-index:-1;background:repeating-linear-gradient(-45deg,rgba(255,42,58,.07) 0 10px,transparent 10px 20px);animation:rbStripeT 1.6s linear infinite;will-change:transform}
+@keyframes rbStripeT{to{transform:translateX(28.28px)}}
+#raidBar::after{content:"";position:absolute;inset:0;z-index:-1;box-shadow:inset 0 0 22px rgba(255,30,50,.55);animation:rbPulseO 1.8s ease-in-out infinite;will-change:opacity}
+@keyframes rbPulseO{50%{opacity:.35}}
 @keyframes rbStripe{to{background-position:28px 0}}
 @keyframes rbPulse{50%{box-shadow:inset 0 0 6px rgba(255,30,50,.2)}}
 #raidBar canvas{grid-row:1/5;width:76px;height:76px}
@@ -408,6 +425,185 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#e9ebf0;paddin
 .rdLoot .lootPlus b{color:#ffd76a}
 .rdLoot .lootMvp{font-size:12px;line-height:1.7;color:#ffd9b0;text-align:center;border-top:1px dashed rgba(255,215,106,.4);padding-top:10px}
 .rdLoot .lootMvp b{color:#fff}
+/* ---------- デイリー・パス・ランク戦 ---------- */
+#dp_pass .psHead{position:relative;overflow:hidden;background:linear-gradient(115deg,#13204a,#4a1440 50%,#13204a);background-size:200% 100%;animation:psFlow 6s linear infinite}
+@keyframes psFlow{to{background-position:-200% 0}}
+#dp_pass .psHead::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.18) 50%,transparent 70%);background-size:250% 100%;animation:psShine 3s linear infinite}
+@keyframes psShine{from{background-position:150% 0}to{background-position:-100% 0}}
+.lootSwatch{width:30px;height:46px;border:2px solid;box-shadow:0 0 10px currentColor}
+.lootFx{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:24px;background:#0d0204;box-shadow:0 0 14px currentColor,inset 0 0 10px rgba(255,255,255,.15)}
+.psShow{display:flex;flex-direction:column;gap:10px;padding:14px 12px;background:radial-gradient(120% 100% at 50% 0%,#2a1450,#0d0f14 75%);color:#fff;border:2px solid #c77dff;box-shadow:0 0 24px rgba(199,125,255,.35)}
+.psShow h3{margin:0;text-align:center;font-size:15px;letter-spacing:.12em;color:#ffd76a;text-shadow:0 0 10px rgba(255,200,80,.6)}
+.psShow p{margin:0;font-size:11.5px;color:#c9c0e6;text-align:center;line-height:1.6}
+.psGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.psItem{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 4px 8px;background:rgba(255,255,255,.05);border:1px solid rgba(199,125,255,.35);text-align:center;min-width:0}
+.psItem i{position:absolute;top:4px;left:4px;font-style:normal;font-size:10px;font-weight:800;color:#d9c8ff}
+.psItem b{font-size:11px;line-height:1.3;color:#fff}
+.psItem small{font-size:10px;color:#a99cd0}
+.psItem .pic{height:52px;display:grid;place-items:center}
+.psItem .tag{white-space:normal;font-size:10px}
+.psItem.open{border-color:#ffd76a;box-shadow:0 0 12px rgba(255,215,106,.4)}
+.psItem.own{border-color:#4fd1c5}
+.psItem.own i{color:#4fd1c5}
+.psItem.grand{grid-column:span 3;flex-direction:row;justify-content:center;gap:14px;padding:14px;background:linear-gradient(110deg,rgba(255,215,106,.18),rgba(199,125,255,.18));border:2px solid #ffd76a}
+.psItem.grand b{font-size:15px}
+#passUp{position:fixed;inset:0;z-index:72;background:radial-gradient(circle at 50% 40%,rgba(60,20,110,.92),rgba(5,4,12,.95));display:flex;align-items:center;justify-content:center;padding:16px}
+.puCard{position:relative;width:100%;max-width:380px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;color:#fff;padding:24px 16px;overflow:hidden}
+.puRays{position:absolute;left:50%;top:42%;width:600px;height:600px;margin:-300px 0 0 -300px;background:repeating-conic-gradient(rgba(255,215,106,.16) 0 10deg,transparent 10deg 20deg);animation:spin 14s linear infinite;z-index:-1}
+.puK{font-family:var(--display);font-size:12px;letter-spacing:.4em;color:#c77dff}
+.puCard h2{margin:0;font-family:var(--display);font-weight:400;font-size:40px;color:#ffd76a;text-shadow:0 0 20px rgba(255,190,60,.8);animation:fxIn .6s cubic-bezier(.2,1.6,.4,1)}
+.puSub{font-weight:800;letter-spacing:.2em;color:#fff}
+.puPic{min-height:130px;display:grid;place-items:center;animation:fxSlam .8s cubic-bezier(.2,1.4,.3,1) .3s both}
+.puPic .pic.big{transform:scale(2);height:auto}
+.puCard b{font-size:22px;text-shadow:0 0 12px rgba(199,125,255,.9)}
+.puCard small{font-size:12px;color:#d9c8ff}
+.puCard .btn{width:100%;max-width:300px;background:linear-gradient(#ffe48a,#ffbf1f);color:#1a1200;border:0}
+.puCard .sound{background:transparent;color:#c9c0e6;border-color:rgba(255,255,255,.25)}
+.dailyCard{flex:none;position:relative;display:flex;flex-direction:column;gap:6px;text-align:left;padding:12px 14px;color:#fff;border:1px solid #2c3a6a;background:linear-gradient(115deg,#13204a,#2a1450 55%,#4a1440)}
+.dailyCard .dcTop{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:800;font-size:15px}
+.dailyCard em{font-style:normal;font-size:11px;font-weight:800;background:#ff3d6a;color:#fff;padding:2px 8px;border-radius:999px;animation:rbBlink 1.2s steps(2) infinite}
+.dailyCard .dcRow{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:#d8d2ff}
+.dailyCard .dcBarW{height:6px;background:rgba(255,255,255,.15)}
+.dailyCard .dcBarW span{display:block;height:100%;background:linear-gradient(90deg,#ffd76a,#ff7aa8);transition:width .6s}
+.dTabs{flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.dTabs button{background:#fff;min-height:46px;font-weight:700;font-size:14px}
+.dTabs button[aria-selected="true"]{background:var(--ink);color:#fff}
+.dPane{display:flex;flex-direction:column;gap:12px}
+.lgDays{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.lgDay{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:74px;padding:6px 4px;background:#fff;border:1px solid var(--line);text-align:center;font-size:11px;line-height:1.35;color:var(--ink)}
+.lgDay b{font-size:12px}
+.lgDay.got{background:#eef0f4;color:#9aa0ad}
+.lgDay.got b::after{content:' ✓'}
+.lgDay.now{border:2px solid #ffbf1f;background:linear-gradient(#fff8de,#ffe9a8);box-shadow:0 0 14px rgba(255,191,31,.6);animation:surprisePop 1.2s ease-in-out infinite alternate}
+.lgDay.big{grid-column:span 2;background:linear-gradient(120deg,#fff3c4,#ffd76a)}
+.lgDay.big.got{background:#eef0f4}
+#loginFx{position:fixed;inset:0;z-index:70;background:rgba(8,10,20,.78);display:flex;align-items:center;justify-content:center;padding:16px}
+.lgCard{width:100%;max-width:400px;background:linear-gradient(160deg,#fffdf4,#fff);padding:20px 16px;display:flex;flex-direction:column;gap:12px;text-align:center;border:2px solid #ffbf1f;box-shadow:0 0 40px rgba(255,191,31,.45);animation:surprisePop .6s cubic-bezier(.2,1.4,.4,1)}
+.lgCard .lgK{font-family:var(--display);font-size:12px;letter-spacing:.3em;color:#d99a00}
+.lgCard h2{margin:0;font-family:var(--display);font-weight:400;font-size:26px;color:var(--ink)}
+.lgCard p{margin:0;font-weight:700;color:#e0213a}
+.msList{display:flex;flex-direction:column;gap:8px}
+.msRow{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--line);padding:12px}
+.msRow b{font-size:14px}
+.msRow small{font-size:12px;color:var(--mute)}
+.msRow.done{border-color:#2fae7d;background:#f0fff6}
+.msBar{height:8px;background:#eceef3}
+.msBar span{display:block;height:100%;background:linear-gradient(90deg,#4fd1c5,#2fae7d)}
+.msAll{margin:0;padding:12px;background:var(--ink);color:#ffd76a;font-weight:700;font-size:13px;text-align:center}
+.psHead{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;padding:14px;background:linear-gradient(115deg,#13204a,#4a1440);color:#fff}
+.psHead small{display:block;font-size:12px;color:#d8d2ff}
+.psHead b{font-family:var(--display);font-weight:400;font-size:34px;line-height:1}
+.psHead span{font-size:12px;color:#ffd76a}
+.psBar{height:10px;background:#e3e5ec}
+.psBar span{display:block;height:100%;background:linear-gradient(90deg,#ffd76a,#ff7aa8)}
+.psList{display:flex;flex-direction:column;gap:4px}
+.psRow{display:grid;grid-template-columns:34px 54px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 10px;background:#f3f4f7;border:1px solid var(--line);color:#9aa0ad;font-size:12.5px}
+.psRow i{font-style:normal;font-family:var(--display);font-size:16px;text-align:center}
+.psRow .psPic{height:46px;display:grid;place-items:center;font-size:22px}
+.psRow .psPic .pic{height:46px;transform:scale(.8)}
+.psRow.open{background:#fff;color:var(--ink);border-color:#ffbf1f}
+.psRow.got{background:#fff;color:var(--mute)}
+.psRow.sp{border-width:2px;border-color:#c77dff}
+.psRow.sp.open{background:linear-gradient(90deg,#f7efff,#fff)}
+.psRow .sound{min-width:70px}
+.rkBlock{display:flex;flex-direction:column;gap:10px}
+.rkCard{display:grid;grid-template-columns:64px minmax(0,1fr);gap:12px;align-items:center;padding:14px;color:#fff;background:linear-gradient(115deg,#0d0f14,color-mix(in srgb,var(--rc) 55%,#0d0f14));border:2px solid var(--rc)}
+.rkEmb{font-size:44px;text-align:center;filter:drop-shadow(0 0 10px var(--rc))}
+.rkTx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.rkTx b{font-family:var(--display);font-weight:400;font-size:24px;color:#fff}
+.rkTx small{font-size:12px;color:#d6d9e6}
+.rkBar{height:6px;background:rgba(255,255,255,.2)}
+.rkBar span{display:block;height:100%;background:var(--rc)}
+.rkGo{font-size:17px}
+.rkWait{white-space:pre-line;padding:14px;background:#0d0f14;color:#ffd76a;font-weight:700;text-align:center;animation:rbBlink 1.6s steps(2) infinite}
+.rkRes{margin-top:6px;padding:8px;font-weight:800;font-size:14px;background:#2a2d40}
+.rkRes.up{background:#0f6b4c;color:#c8ffe0}
+.rkRes.down{background:#6b0f1f;color:#ffd0d6}
+
+/* ---------- みんなの広場 ---------- */
+.plazaCard{flex:none;display:flex;flex-direction:column;gap:3px;text-align:left;padding:12px 14px;color:#fff;border:1px solid #1f6b5c;background:linear-gradient(115deg,#0f4a40,#1747a6 60%,#2a1450)}
+.plazaCard b{font-size:16px}
+.plazaCard small{font-size:12px;color:#d0f0ea;line-height:1.5}
+.pzTabs{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.pzTabs button{background:#fff;min-height:46px;font-weight:700;font-size:13.5px}
+.pzTabs button[aria-selected="true"]{background:var(--ink);color:#fff}
+#pzBody{display:flex;flex-direction:column;gap:12px}
+.pzNote{margin:0;padding:10px 12px;background:#fff4d6;border:1px solid #f0d58a;color:#5a4300;font-size:13px;line-height:1.6}
+.pzEmpty{margin:0;padding:14px;background:#fff;border:1px dashed var(--line);color:var(--mute);font-size:13px;text-align:center}
+.pzTop{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:stretch}
+.pzSort{min-height:50px;font:inherit;font-size:14px;padding:0 8px;border:1px solid var(--ink);background:#fff;color:var(--ink)}
+.pzSec{display:flex;flex-direction:column;gap:8px}
+.pzSec h3{margin:6px 0 0;font-size:14px}
+.pzInput{width:100%;box-sizing:border-box;min-height:46px;padding:8px 12px;font:inherit;font-size:16px;border:1px solid var(--ink);background:#fff;color:var(--ink);-webkit-user-select:text;user-select:text}
+.ucCard{display:flex;flex-direction:column;gap:6px;padding:12px;background:#fff;border:1px solid var(--line)}
+.ucCard.hot{border:2px solid #ff7aa8;background:linear-gradient(110deg,#fff0f6,#fff)}
+.ucHead{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.ucHead b{font-size:16px;overflow-wrap:anywhere}
+.ucLike{font-weight:800;color:#e0215a;white-space:nowrap}
+.ucCard small{font-size:12px;color:var(--mute);line-height:1.5}
+.ucBtns{display:flex;gap:6px;flex-wrap:wrap}
+.ucBtns .btn{min-height:42px;flex:1 1 120px}
+.ucBtns .sound.on{border-color:#e0215a;color:#e0215a}
+.stRow{display:grid;grid-template-columns:36px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;background:#fff;border:1px solid var(--line);font-size:13px}
+.stRow .stBig{font-size:24px;text-align:center}
+.stRow small{color:var(--mute);font-size:11px;white-space:nowrap}
+.frCard{display:grid;grid-template-columns:48px minmax(0,1fr);gap:4px 10px;align-items:center;padding:10px;background:#fff;border:1px solid var(--line)}
+.frAva{grid-row:1/3;display:grid;place-items:center}
+.frTx{display:flex;flex-direction:column;gap:2px;min-width:0}
+.frTx b{font-size:15px;overflow-wrap:anywhere}
+.frTx small{font-size:11.5px;color:var(--mute);line-height:1.5}
+.frBtns{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
+.stPick{grid-column:1/-1;display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding-top:6px}
+.stBtn{font-size:24px;min-height:44px;background:#f3f4f7;border:1px solid var(--line)}
+.frRes{display:flex;flex-direction:column;gap:4px}
+.frAdd{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;background:#fff;border:1px solid var(--line);font-size:14px}
+.frAdd small{color:var(--mute);font-size:11.5px}
+.tmCard{display:flex;flex-direction:column;gap:8px;padding:14px;color:#fff;background:linear-gradient(120deg,color-mix(in srgb,var(--tc) 70%,#000),#0d0f14);border:2px solid var(--tc)}
+.tmHead{display:flex;gap:12px;align-items:center}
+.tmHead b{display:block;font-size:20px}
+.tmHead small{font-size:12px;color:#d6d9e6}
+.tmEmb{font-size:40px;line-height:1}
+.tmEmb.s{font-size:22px}
+.tmStats{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.tmStats div{background:rgba(0,0,0,.3);padding:8px;font-size:11px;color:#d6d9e6}
+.tmStats b{display:block;font-family:var(--display);font-weight:400;font-size:20px;color:#fff}
+.tmMem{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;background:rgba(255,255,255,.08);font-size:13px}
+.tmCard .sound{align-self:flex-start;background:transparent;color:#ffd0d6;border-color:rgba(255,255,255,.3)}
+.tmPick{display:flex;flex-wrap:wrap;gap:6px}
+.tmEmbBtn{width:44px;height:44px;font-size:24px;background:#fff;border:1px solid var(--line)}
+.tmColBtn{width:38px;height:38px;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.tmEmbBtn.on,.tmColBtn.on{box-shadow:0 0 0 3px var(--ink)}
+.tmRow{display:grid;grid-template-columns:28px 32px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:8px 10px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--tc)}
+.tmRow i{font-style:normal;font-family:var(--display);text-align:center}
+.tmRow div b{display:block;font-size:14px}
+.tmRow div small{font-size:11px;color:var(--mute)}
+.tmRow>b{font-family:var(--display);font-weight:400;font-variant-numeric:tabular-nums}
+#rdTeams{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+#rdTeams li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 6px;border-bottom:1px solid #2a080c;font-size:14px}
+#rdTeams li i{font-style:normal;font-family:var(--display);text-align:center;color:#ff9a9f}
+#rdTeams li.me{background:rgba(255,42,58,.14)}
+#rdTeams li b{font-family:var(--display);font-variant-numeric:tabular-nums}
+/* 譜面エディタ */
+.edRow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
+.edRow label{font-weight:700}
+.edRow input[type=range]{flex:1 1 140px;accent-color:var(--ink)}
+#edHar{min-height:44px;font:inherit;font-size:15px;padding:0 8px;border:1px solid var(--ink);background:#fff;color:var(--ink);flex:1 1 200px}
+.edToks{min-height:96px;max-height:160px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start;padding:8px;background:#0d0f14;border:1px solid #2c3042}
+.edTok{font:600 12px ui-monospace,Menlo,monospace;color:#fff;background:#2a2d40;padding:4px 6px}
+.edTok:last-child{background:#1747a6;box-shadow:0 0 0 1px #9ee7ff}
+.edHint{color:#8a8da0;font-size:13px;padding:8px}
+.edSeg{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);flex-wrap:wrap}
+.edSeg button{flex:1 1 auto;background:#fff;min-height:40px;padding:4px 8px;font-weight:700;font-size:12.5px}
+.edSeg button.on{background:var(--ink);color:#fff}
+.edKeys{position:relative;height:150px;background:#0d0f14;border:2px solid #0d0f14;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.edKeys .wk{position:absolute;top:0;bottom:0;background:linear-gradient(#fff,#eceef3);border:1px solid #9aa0ad;border-radius:0 0 4px 4px;font-size:10px;color:#9aa0ad;display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px;z-index:1}
+.edKeys .bk{position:absolute;top:0;height:60%;background:linear-gradient(#3a3d4a,#0d0f14);border:1px solid #000;border-radius:0 0 3px 3px;z-index:2}
+.edKeys .wk:active{background:#ffd76a}.edKeys .bk:active{background:#e0213a}
+.edBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.edBtns .btn{min-height:46px;font-size:14px}
+#edText{width:100%;box-sizing:border-box;min-height:80px;font:12px/1.5 ui-monospace,Menlo,monospace;border:1px solid var(--ink);padding:8px;-webkit-user-select:text;user-select:text}
+#edMsg{margin:0;color:var(--red);font-weight:700;font-size:13px;min-height:1.2em}
+
 #exGate{flex:none;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:center;text-align:left;padding:14px 16px;background:linear-gradient(120deg,#12040d,#2a0838 35%,#03243c 70%,#2c2010);color:#f6eefc;border:1px solid #4a2a66}
 #exGate.open{box-shadow:0 0 0 1px #d9a8ff inset}
 #exGate b{font-family:var(--mystic);font-weight:700;font-size:19px;letter-spacing:.14em}
@@ -1040,6 +1236,8 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
     <button id="newsBar" class="newsBar" hidden></button>
     <button id="mailBar" class="eventBar on mailBar" hidden></button>
     <button id="raidBar" hidden><canvas id="rbCv" width="152" height="152" aria-hidden="true"></canvas><span class="rbK" id="rbKick"></span><b id="rbName"></b><div class="rbHp"><span id="rbHpIn"></span></div><small id="rbInfo"></small></button>
+    <button id="dailyCard" class="dailyCard"><span class="dcTop"><span id="dcLogin"></span><em id="dcBadge" hidden></em></span><span class="dcRow"><span id="dcMiss"></span><span id="dcPass"></span></span><span class="dcBarW"><span id="dcBar"></span></span></button>
+    <button id="plazaCard" class="plazaCard"><b>👥 みんなの広場</b><small id="plazaInfo">みんなの譜面・フレンド・チーム</small></button>
     <button id="surpriseBar" class="eventBar on surprise" hidden></button>
     <button id="eventBar" class="eventBar"></button>
     <div class="weekRow"><button id="wedBar" class="weekBar"></button><button id="festBar" class="weekBar"></button></div>
@@ -1435,6 +1633,10 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
     </div>
     <p class="hint vsNote" id="vsNote" role="status" hidden></p>
     <div class="block">
+      <div class="label">⚔ ランク戦（レートで競う）</div>
+      <div id="rkBlock" class="rkBlock"></div>
+    </div>
+    <div class="block">
       <div class="label">リアルタイム対戦（2〜4人・同じ譜面）</div>
       <div id="vsLobby" class="vsLobby"></div>
     </div>
@@ -1525,10 +1727,45 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
     <div class="rdLoot" id="rdLoot"></div>
     <div class="rdSec"><h3>報酬の一覧</h3><div id="rdRws"></div></div>
     <div class="rdSec"><h3>与ダメージ ランキング</h3><ol id="rdRank"></ol></div>
+    <div class="rdSec"><h3>チーム別ダメージ</h3><ol id="rdTeams"></ol></div>
     <p id="rdNote"></p>
   </section>
 
   <div id="raidFx" hidden><canvas id="rfxCv"></canvas><div class="stripe t">WARNING ⚠ 魔王襲来 ⚠ WARNING ⚠ 魔王襲来 ⚠ WARNING</div><div class="stripe b">WARNING ⚠ 魔王襲来 ⚠ WARNING ⚠ 魔王襲来 ⚠ WARNING</div><div class="fxT" id="rfxT"></div></div>
+
+  <section id="plaza" class="screen panel" hidden>
+    <div class="toprow"><h1>みんなの広場</h1><button class="sound" id="plazaBack">メニューに戻る</button></div>
+    <div class="pzTabs" role="tablist"><button role="tab" id="pz_chart">🎼 みんなの譜面</button><button role="tab" id="pz_friend">👥 フレンド</button><button role="tab" id="pz_team">🛡 チーム</button></div>
+    <div id="pzBody"></div>
+  </section>
+
+  <section id="ugcEd" class="screen panel" hidden>
+    <div class="toprow"><h1>譜面をつくる</h1><button class="sound" id="edBack">広場に戻る</button></div>
+    <input id="edName" class="pzInput" type="text" maxlength="30" placeholder="曲名（30文字まで）" autocomplete="off">
+    <div class="edRow"><label for="edSpeed">速さ</label><input id="edSpeed" type="range" min="2" max="10" step="0.2" value="4"><span>毎秒 <b id="edSpeedV">4.0</b> 枚</span></div>
+    <div class="edRow"><label for="edHar">伴奏</label><select id="edHar"></select></div>
+    <div class="edRow" style="justify-content:space-between"><b>並べた音</b><span id="edCount">0音</span></div>
+    <div class="edToks" id="edToks"></div>
+    <div class="edSeg" id="edLen"><button data-len="1">♪ 1マス</button><button data-len="2">♩ 2マス（長押し）</button><button data-len="4">𝅗𝅥 4マス（長押し）</button></div>
+    <div class="edSeg" id="edMode"><button data-mode="one">1音ずつ</button><button data-mode="chord">和音（1枚に重ねる）</button><button data-mode="double">同時押し（2枚）</button></div>
+    <p class="hint" style="margin:0">和音・同時押しは、ボタンを押してから鍵盤を2〜3個押すと1つにまとまります。次の和音を作るときは、もう一度そのボタンを押してね。</p>
+    <div class="edKeys" id="edKeys"></div>
+    <div class="edBtns"><button class="btn" id="edUndo">↩ 1つ戻す</button><button class="btn" id="edClear">🗑 ぜんぶ消す</button><button class="btn" id="edListen">🔊 聴いてみる</button><button class="btn" id="edTry">🎮 試しに遊ぶ</button></div>
+    <button class="btn pri" id="edPub">🎼 みんなに公開する</button>
+    <p id="edMsg"></p>
+    <details><summary class="hint">文字で直す（くわしい人向け）</summary><textarea id="edText" spellcheck="false"></textarea><p class="hint">空白で区切ります。E5 は1マス、E5-2 は2マスの長押し、A4.C5 は和音、A4+E5 は同時押し2枚。</p></details>
+  </section>
+
+  <section id="daily" class="screen panel" hidden>
+    <div class="toprow"><h1>デイリー</h1><button class="sound" id="dailyBack">メニューに戻る</button></div>
+    <div class="dTabs" role="tablist"><button role="tab" id="dt_login">📅 ログボ</button><button role="tab" id="dt_miss">✅ ミッション</button></div>
+    <div id="dp_login" class="dPane"><div class="lgDays" id="dpLoginDays"></div><button class="btn pri" id="dpLoginBtn"></button><p class="hint" id="dpLoginNote"></p></div>
+    <div id="dp_miss" class="dPane" hidden><div id="dpMissList" class="msList"></div><p class="msAll" id="dpMissAll"></p><p class="hint" id="dpMissReset"></p></div>
+    <div id="dp_pass" class="dPane" hidden><div class="psHead"><div><small id="dpPassName"></small><b id="dpPassLv"></b></div><span id="dpPassXp"></span></div><div class="psBar"><span id="dpPassFill"></span></div><p class="hint" id="dpPassEnd"></p><div class="psShow" id="dpPassShow"></div><button class="btn pri" id="dpPassAll"></button><div id="dpPassList" class="psList"></div><p class="hint" id="dpPassHow"></p></div>
+  </section>
+
+  <div id="passUp" hidden><div class="puCard"><div class="puRays" aria-hidden="true"></div><div class="puK">SEASON PASS</div><h2 id="puLv"></h2><div class="puSub">限定アイテム解放！</div><div class="puPic" id="puPic"></div><b id="puName"></b><small id="puKind"></small><button class="btn pri" id="puGet">受け取る</button><button class="sound" id="puLater">あとで（パスの画面でも受け取れます）</button></div></div>
+  <div id="loginFx" hidden><div class="lgCard"><div class="lgK">LOGIN BONUS</div><h2>ログインボーナス</h2><p id="lgStreak"></p><div class="lgDays" id="lgDays"></div><button class="btn pri" id="lgBtn">受け取る</button><button class="sound" id="lgClose">あとで</button></div></div>
 
   <section id="exmap" class="screen" hidden>
     <button class="leave" id="exmapBack">メニューに戻る</button>
@@ -3765,7 +4002,7 @@ function showResult(){
   const k=bestKey(G),classic=G.mode==='classic';
   const prev=store.get(k,null);
   const value=classic?(G.finished?G.time:null):G.score;
-  const slow=G.assisted||(G.mode==='song'&&!G.audio&&speedScale<1);
+  const slow=G.assisted||(G.mode==='song'&&!G.audio&&speedScale<1)||(G.song&&G.song.cat==='ugc');
   let isNew=false;
   if(!slow&&value!==null&&value>0&&(prev===null||(classic?value<prev:value>prev))){isNew=true;store.set(k,value)}
   const bestVal=store.get(k,null);
@@ -3778,11 +4015,12 @@ function showResult(){
   $('rCoin').hidden=!earned;
   $('rCoin').textContent=earned?`+${earned.toLocaleString()} コイン`+(bm>1?` ・ ${[G.bonus&&G.bonus.name,G.coin2&&'コイン2倍チケット'].filter(Boolean).join('＋')} ×${bm}`:'')+(reward?`（ミッション報酬 ${reward.toLocaleString()} を含む）`:''):'';
   try{raidResult(slow)}catch(e){}
+  try{progressHook(slow)}catch(e){}
   $('rAch').hidden=!fresh.length;
   $('rAch').textContent=fresh.length?'実績を解除: '+fresh.join('、'):'';
   fresh.forEach(n=>addNote('ach',`🏅 ミッション達成: ${n}`,'ach:'+n));
   $('rNote').hidden=!slow;
-  $('rNote').textContent=G.assisted?'最強モードで遊んだので、記録と実績には数えません。':slow?'速度を100%より下げているので、記録と実績には数えません。':'';
+  $('rNote').textContent=G.song&&G.song.cat==='ugc'?'みんなの譜面は練習なので、コイン・記録・ミッションには数えません。気に入ったら「いいね」で応援しよう！':G.assisted?'最強モードで遊んだので、記録と実績には数えません。':slow?'速度を100%より下げているので、記録と実績には数えません。':'';
   if(!slow&&G.challenge){$('rNote').hidden=false;$('rNote').textContent=`水曜チャレンジ ・ 今週のベスト ${store.get('wed:'+G.challenge,0)}`+(G.challengePreview?'（試し表示なので記録しません）':'')}
   if(!slow&&(isNew||fresh.length||earned))pushCloud();
   renderWeekBars();
@@ -3812,7 +4050,7 @@ function continueGame(){
   if(t)G.scroll=t.row-1.5;
   G.bad=null;G.phase='countdown';G.cd=3;
 }
-function toMenu(){const fr=G&&G.fromRaid;if(fr){}else if(G&&isStage(G.song))openRoom(G.song.cat);stopTrack();G=null;restoreBgSrc();$('result').hidden=true;$('pause').hidden=true;$('pauseBtn').hidden=true;$('menu').hidden=false;renderSongs();renderTicket();renderSurprise();renderKeepNote();if(fr)setTimeout(openRaid,0);setTimeout(raidPump,600);releaseWake()}
+function toMenu(){const fr=G&&G.fromRaid,fp=G&&G.fromPlaza;if(fr){}else if(G&&isStage(G.song))openRoom(G.song.cat);stopTrack();G=null;restoreBgSrc();$('result').hidden=true;$('pause').hidden=true;$('pauseBtn').hidden=true;$('menu').hidden=false;renderSongs();renderTicket();renderSurprise();renderKeepNote();if(fr)setTimeout(openRaid,0);if(fp==='editor')setTimeout(()=>{$('ugcEd').hidden=false},0);else if(fp)setTimeout(()=>openPlaza(),0);setTimeout(raidPump,600);releaseWake()}
 function pauseGame(){
   if(!G||(G.phase!=='play'&&G.phase!=='countdown'&&G.phase!=='ready'))return;
   stopTrack();
@@ -4320,7 +4558,7 @@ const loadStats=()=>{
   const s=store.get('stats',{});
   return {clears:Array.isArray(s.clears)?s.clears:[],tiles:+s.tiles||0,fast:!!s.fast,maxLap:+s.maxLap||0,relay:+s.relay||1,ashLap:+s.ashLap||0,godLap:+s.godLap||0,sunPerfect:!!s.sunPerfect,perf:Array.isArray(s.perf)?s.perf:[],granted:Array.isArray(s.granted)?s.granted.filter(x=>typeof x==='string'):[],doors:Array.isArray(s.doors)?s.doors.filter(x=>typeof x==='string'):[],unlocked:Array.isArray(s.unlocked)?s.unlocked:[],events:Array.isArray(s.events)?s.events:[],wed:Array.isArray(s.wed)?s.wed:[],fest:Array.isArray(s.fest)?s.fest:[]};
 };
-const builtinIds=()=>SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='event'&&!isStage(x)).map(x=>x.id);
+const builtinIds=()=>SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='event'&&!isStage(x)).map(x=>x.id);
 const countCat=(s,cat)=>s.clears.filter(id=>SONGS.some(x=>x.id===id&&(x.cat||'classic')===cat)).length;
 const totalCat=cat=>SONGS.filter(x=>(x.cat||'classic')===cat).length;
 const countIn=(s,cat)=>s.clears.filter(id=>SONGS.some(x=>x.id===id&&x.cat===cat)).length;
@@ -4522,7 +4760,7 @@ function renderTagCatalog(){
   section('ショップの称号',shop);
   section('⛩ お賽銭の称号（ショップのお賽銭箱）',ents.filter(([,t])=>t.offer));
   section('✦ ガチャ限定の称号',ents.filter(([,t])=>t.gacha));
-  section('🎁 プレゼント限定の称号',ents.filter(([,t])=>t.gift));
+  section('🎁 プレゼント限定の称号',ents.filter(([,t])=>t.gift&&!t.pass));
 }
 $('tabMis').addEventListener('click',()=>{achTab='mis';renderAch()});
 $('tabTag').addEventListener('click',()=>{achTab='tag';renderAch()});
@@ -4604,7 +4842,7 @@ const cloud={db:null,user:null,uid:null,canWrite:true,isOwner:false,busy:false,a
 const num=x=>typeof x==='number'&&isFinite(x)&&x>=0?x:0;
 function buildCloud(){
   const best={},laps={};let total=0;
-  SONGS.filter(x=>x.cat!=='mine').forEach(x=>{
+  SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc').forEach(x=>{
     const v=store.get('best:song:'+x.id,null);
     if(v){best[x.id]=v;total+=v}
     const l=store.get('lap:'+x.id,0);if(l)laps[x.id]=l;
@@ -4694,7 +4932,7 @@ function boards(){
   const st=loadStats(),seen={sanct:sanctumOpen(st),ash:ashOpen(st),ice:iceOpen(st),sun:sunOpen(st),god:godOpen(st),...exOpenAll(st)},room={sanct:'星霧の間',ash:'紅蓮の間',ice:'氷晶の間',sun:'日輪の間',god:'神の領域',...exNames()};
   const wk=wedKey().split('-');
   return [['total','総合（全曲のベストの合計）'],['offered','⛩ お賽銭（投げた合計）'],['w:wed',`水曜チャレンジ（${+wk[1]}月${+wk[2]}日）`],['achv','実績の数'],['m:classic','クラシック（タイム）'],['m:arcade','アーケード'],['m:zen','ゼン'],['m:rush','ラッシュ'],['m:relay','リレー']]
-    .concat(SONGS.filter(x=>x.cat!=='mine'&&(!isStage(x)||seen[x.cat])).map(x=>['s:'+x.id,(isStage(x)?room[x.cat]+' ・ ':x.cat==='event'?x.by+' ・ ':'')+x.name]));
+    .concat(SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&(!isStage(x)||seen[x.cat])).map(x=>['s:'+x.id,(isStage(x)?room[x.cat]+' ・ ':x.cat==='event'?x.by+' ・ ':'')+x.name]));
 }
 function boardValue(d,key){
   if(key==='total')return num(d.total);
@@ -4840,7 +5078,7 @@ $('keepLoadBtn').addEventListener('click',()=>{
 });
 function renderRSave(){$('rSave').hidden=canSync()}
 function renderKeepNote(){
-  if((canSync()&&!looksFresh())||(storageOK&&store.get('keepNoteOff',false)&&!looksFresh())){$('keepNote').hidden=true;return}
+  if((canSync()&&(!window.KOKKEN_WEB||!looksFresh()))||(storageOK&&store.get('keepNoteOff',false)&&!looksFresh())){$('keepNote').hidden=true;return}
   $('keepLoad').hidden=!looksFresh();
   $('keepText').textContent=canSync()?'Claude版で遊んでいた人へ: Claude版のページで「引っ越し」ボタンを押すか、セーブコードを下に貼ると、続きから遊べます。':storageOK
     ?'あなたの記録は、この端末のこのアプリ（ブラウザ）の中にだけ保存されます。別のアプリで開いたり、データが消えたりすると最初からになります。プロフィールの「引き継ぎ」でセーブコードを保存しておくと、続きから遊べます。'
@@ -4984,7 +5222,7 @@ function jpHoliday(d){
 function weeklyPreview(){try{return cloud.isOwner?store.get('owner:weekly',''):''}catch(e){return ''}}
 function isWedToday(){const p=weeklyPreview();return p?p==='wed':new Date().getDay()===3}
 function isFestToday(){const p=weeklyPreview();if(p)return p==='fest';const d=new Date();return d.getDay()===0||d.getDay()===6||jpHoliday(d)}
-function poolSongs(){return SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='event'&&!isStage(x))}
+function poolSongs(){return SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='event'&&!isStage(x))}
 function wedKey(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+4)%7));return dkey(d)}
 function wedSong(key){const p=poolSongs();return p[hashStr('wed'+key)%p.length]}
 function festSongs(key){const p=poolSongs(),out=[];for(let i=0;out.length<3&&i<60;i++){const x=p[hashStr('fest'+key+i)%p.length];if(!out.includes(x))out.push(x)}return out}
@@ -5164,6 +5402,25 @@ Object.assign(TAGS,{maouslayer:{name:'魔王を討ちし者',style:'cu',c1:'#1a0
 FRAMES.maoucrown={name:'魔王の王冠',gift:1,raid:1};
 SKINS.maou={name:'黒鍵の魔王',gift:1,raid:1,top:'#2a0006',bot:'#050001',edge:'#ff2a3a',glow:'#ff0022'};
 TAPFX.maoufx={name:'魔王の爪',gift:1,raid:1,glyph:'ϟ',amb:'bolt',pal:['#ff2a3a','#ffd76a','#ffffff'],edge:'#ff2a3a'};
+/* （シーズンパスはやめた。すでに持っている人のために、アイテムの定義だけ残して全部隠す） */
+{const MN=['睦月','如月','弥生','卯月','皐月','水無月','文月','葉月','長月','神無月','霜月','師走'];
+ const GL=['❄','❄','✿','✿','☘','☂','☀','✸','☾','✦','❖','❄'],AM=['snow','snow','petal','petal','star','bubble','star','firework','star','note','star','snow'];
+ const PAL=[['#9ee7ff','#3a6dff','#e8fbff'],['#ffb3d1','#c2457a','#fff0f6'],['#ffd1e3','#ff7fb0','#fff8e6'],['#b7f5c8','#2fae7d','#f2fff6'],['#c6ffd9','#3ab06a','#fffbd0'],['#9ad7ff','#3a6dc0','#e6f4ff'],['#ffe48a','#ff8a00','#fff6c8'],['#ff9a6a','#e0213a','#fff0c8'],['#d9c8ff','#6b5bd6','#fff3c4'],['#ffb36a','#b8340f','#fff1d6'],['#ffb07a','#c8501a','#ffe8c8'],['#e8fbff','#c8102e','#ffd76a']];
+ const n=new Date(Date.now()+9*3600e3),cur='p'+String(n.getUTCFullYear()).slice(2)+String(n.getUTCMonth()+1).padStart(2,'0');let css='';
+ for(let y=2026;y<=2028;y++)for(let m=1;m<=12;m++){if(y===2026&&m<11)continue;
+   const id='p'+String(y).slice(2)+String(m).padStart(2,'0'),mn=MN[m-1],c=PAL[m-1],P={gift:1,pass:1,hidden:true};
+   TAGS[id+'a']={name:mn+'の旅人',style:'cu',c1:c[1],c2:c[0],tc:'#ffffff',...P};
+   TAGS[id+'c']={name:mn+'の奏者',style:'cu',c1:c[0],c2:c[2],tc:'#1a1200',...P};
+   TAGS[id+'b']={name:mn+'の覇者',style:'cu',c1:'#0d0f14',c2:c[1],tc:c[2],...P};
+   SKINS[id]={name:mn+'の鍵盤',top:c[1],bot:'#0a0a12',edge:c[0],glow:c[2],...P};
+   SKINS[id+'n']={name:mn+'の夜',top:'#07070f',bot:'#000000',edge:c[2],glow:c[1],...P};
+   TAPFX[id]={name:mn+'の光',glyph:GL[m-1],amb:AM[m-1],pal:[c[0],c[1],c[2]],edge:c[0],...P};
+   TAPFX[id+'s']={name:mn+'の嵐',glyph:'✸',amb:'firework',pal:[c[2],c[0],c[1]],edge:c[2],...P};
+   FRAMES[id]={name:mn+'の環',...P};
+   css+=`.ava.f-${id}::before{content:'';inset:calc(var(--s)*-.1);border-radius:50%;z-index:0;background:conic-gradient(${c[0]},${c[1]},${c[2]},${c[1]},${c[0]});box-shadow:0 0 calc(var(--s)*.25) ${c[1]};animation:spin 3.2s linear infinite}`;
+   [['e','の紋章','sacred',c[1],0],['u','の宇宙','cosmos',c[0],1],['k','の王冠','royal',c[1],0]].forEach(([s,nm,dr,tn,sp])=>{const o={name:mn+nm,draw:dr,tint:tn,spin:sp,pulse:1,...P};ART_FRAMES[id+s]=o;FRAMES[id+s]=o});
+ }
+ try{const st=document.createElement('style');st.textContent=css;document.head.appendChild(st)}catch(e){}}
 /* ---------- 日替わりショップの品（1000個） ----------
    決まった乱数で作るので、誰の端末でも同じ品になる。毎日0時（日本時間）に並ぶ品が入れかわる */
 const DAILY={tag:[],frame:[],skin:[],fx:[]};
@@ -5223,7 +5480,7 @@ function avaEl(pf,size){
   const w=document.createElement('span');w.className='ava'+(art?' art':pf.frame&&pf.frame!=='none'?' f-'+pf.frame:'');w.style.setProperty('--s',size+'px');
   const i=document.createElement('img');i.alt='';i.src=pf.icon==='img'&&pf.img?pf.img:svgUrl(ICONS[pf.icon][1]);
   w.appendChild(i);
-  if(art){const f=document.createElement('img');f.alt='';f.className='frameArt'+(art.img?' imgF':'')+(art.spin?' spin':'')+(art.ach||art.price>=12000?' pulse':'');f.src=frameArt(pf.frame);if(art.img){w.classList.add('imgFr');if(art.scale){f.style.width=f.style.height=`calc(var(--s)*${art.scale})`;f.style.margin=`calc(var(--s)*-${art.scale/2}) 0 0 calc(var(--s)*-${art.scale/2})`}}w.appendChild(f)}
+  if(art){const f=document.createElement('img');f.alt='';f.className='frameArt'+(art.img?' imgF':'')+(art.spin?' spin':'')+(art.ach||art.pulse||art.price>=12000?' pulse':'');f.src=frameArt(pf.frame);if(art.img){w.classList.add('imgFr');if(art.scale){f.style.width=f.style.height=`calc(var(--s)*${art.scale})`;f.style.margin=`calc(var(--s)*-${art.scale/2}) 0 0 calc(var(--s)*-${art.scale/2})`}}w.appendChild(f)}
   return w;
 }
 const frameCache=new Map();
@@ -5351,11 +5608,12 @@ function frameArt(id){
       g.save();g.globalCompositeOperation='lighter';const og=g.createRadialGradient(C,C,R-4,C,C,R+10);og.addColorStop(0,'rgba(255,150,40,0)');og.addColorStop(.5,'rgba(255,170,60,.9)');og.addColorStop(1,'rgba(255,120,20,0)');g.fillStyle=og;g.beginPath();g.arc(C,C,R+10,0,TAU);g.arc(C,C,R-4,0,TAU,true);g.fill();
       for(let k=0;k<10;k++){let a=r()*TAU,d=R+4,pts=[P(a,d)];for(let j=0;j<5;j++){a+=(r()-.5)*.2;d-=2+r()*4;pts.push(P(a,d))}glowLine(()=>{g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y))},'#fff1b0',1.2,6)}g.restore()},
   };
-  (D[id]||(()=>{}))();
+  const did=D[id]?id:(ART_FRAMES[id]||{}).draw;(D[did]||(()=>{}))();
+  {const tn=(ART_FRAMES[id]||{}).tint;if(tn){const t=document.createElement('canvas');t.width=t.height=S*K;const q=t.getContext('2d');q.drawImage(c,0,0);q.globalCompositeOperation='hue';q.fillStyle=tn;q.fillRect(0,0,S*K,S*K);q.globalCompositeOperation='destination-in';q.drawImage(c,0,0);g.save();g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,S*K,S*K);g.drawImage(t,0,0);g.restore()}}
   const out=document.createElement('canvas');out.width=out.height=S*K;const o=out.getContext('2d');
   g.save();g.setTransform(1,0,0,1,0,0);g.globalCompositeOperation='destination-out';g.beginPath();g.arc(C*K,C*K,(R-1.5)*K,0,TAU);g.fill();g.restore();
   o.shadowColor='rgba(0,0,0,.55)';o.shadowBlur=10;o.shadowOffsetY=3;o.drawImage(c,0,0);o.shadowColor='transparent';
-  if(['emblem','dragon','forge','royal','sunhalo','demon','godlight','sacred','icethorn','crown','eclipse','moonring','frostbloom'].includes(id)){
+  if(['emblem','dragon','forge','royal','sunhalo','demon','godlight','sacred','icethorn','crown','eclipse','moonring','frostbloom'].includes(did)){
     let px=null;try{px=g.getImageData(0,0,S*K,S*K).data}catch(e){}
     if(px){o.save();o.globalCompositeOperation='lighter';
       for(let n=0,t=0;n<7&&t<400;t++){const x=Math.floor(r()*S*K),y=Math.floor(r()*S*K);if(px[(y*S*K+x)*4+3]<200)continue;n++;const sz=(5+r()*7)*K;
@@ -5417,7 +5675,7 @@ function renderProf(){
   const ents=Object.entries(TAGS).filter(([id,t])=>(!t.hidden&&!t.daily)||tagEarned(id,st)||(t.daily&&inToday('tag',id))),skill=ents.filter(([,t])=>t.ach),bought=ents.filter(([,t])=>t.price);
   group('実力の称号',`${skill.filter(([id])=>tagEarned(id,st)).length}/${skill.length} ・ 買えません`,skill);
   group('ショップの称号',`${bought.filter(([id])=>tagEarned(id,st)).length}/${bought.length} ・ コインで買えます`,bought);
-  {const gf=ents.filter(([,t])=>t.gift);if(gf.length)group('プレゼント限定の称号',`${gf.filter(([id])=>tagEarned(id,st)).length}/${gf.length} ・ プレゼントでもらえます`,gf)}
+  {const gf=ents.filter(([,t])=>t.gift&&!t.pass);if(gf.length)group('プレゼント限定の称号',`${gf.filter(([id])=>tagEarned(id,st)).length}/${gf.length} ・ プレゼントでもらえます`,gf)}
   {const gx=ents.filter(([,t])=>t.gacha);group('ガチャ限定の称号',`${gx.filter(([id])=>tagEarned(id,st)).length}/${gx.length} ・ ガチャで出ます`,gx)}
   {const off=ents.filter(([,t])=>t.offer);group('お賽銭の称号',`${off.filter(([id])=>tagEarned(id,st)).length}/${off.length} ・ お賽銭箱に投げた合計で`,off)}
   const own=loadOwned(),pickRow=(box,map,kind,key,preview)=>{
@@ -5540,11 +5798,11 @@ renderModes();renderSongs();renderSound();
 /* ---------- チケット ----------
    1枚で1回。記録・実績・コインはふつうに数える。対戦（リアルタイム・ゴースト）では使わない */
 const TICKETS={
-  speed:{name:'スピードチケット',icon:'🎫',price:14000,desc:'楽曲モードかラッシュの始まりの速さを、50%〜200%のあいだで1%ずつ選べます。'},
-  coin2:{name:'コイン2倍チケット',icon:'💰',price:6000,desc:'次の1回でもらえるコインが2倍。ゲリライベントの倍率とも重なります。'},
-  heart:{name:'ハート+2チケット',icon:'💖',price:9000,desc:'次の楽曲モード1曲で、ミス保険の♥が2つ増えます。神の領域でも使えます。'},
-  judge:{name:'判定ゆるめチケット',icon:'🎯',price:18000,desc:'次の楽曲モード1曲だけ、タップの判定が1段ゆるくなります。'},
-  revive:{name:'復活チケット',icon:'🔥',price:12000,desc:'失敗した結果画面から、その場で続けられます。神の領域でも、1回続けた後でも使えます。'},
+  speed:{name:'スピードチケット',icon:'🎫',price:42000,desc:'楽曲モードかラッシュの始まりの速さを、50%〜200%のあいだで1%ずつ選べます。'},
+  coin2:{name:'コイン2倍チケット',icon:'💰',price:20000,desc:'次の1回でもらえるコインが2倍。ゲリライベントの倍率とも重なります。'},
+  heart:{name:'ハート+2チケット',icon:'💖',price:28000,desc:'次の楽曲モード1曲で、ミス保険の♥が2つ増えます。神の領域でも使えます。'},
+  judge:{name:'判定ゆるめチケット',icon:'🎯',price:50000,desc:'次の楽曲モード1曲だけ、タップの判定が1段ゆるくなります。'},
+  revive:{name:'復活チケット',icon:'🔥',price:36000,desc:'失敗した結果画面から、その場で続けられます。神の領域でも、1回続けた後でも使えます。'},
 };
 const TICKET_PCTS=[70,80,90,110,120,135,150];
 /* 前の版の「tickets」をスピードチケットに引き継ぐ */
@@ -5789,7 +6047,7 @@ function vsOnPeers(){
 }
 function vsSongs(){
   const st=loadStats(),open={sanct:sanctumOpen(st),ash:ashOpen(st),ice:iceOpen(st),sun:sunOpen(st),god:godOpen(st),...exOpenAll(st)};
-  return SONGS.filter(s=>!s.audio&&s.cat!=='mine'&&s.cat!=='event'&&(!isStage(s)||open[s.cat]));
+  return SONGS.filter(s=>!s.audio&&s.cat!=='mine'&&s.cat!=='ugc'&&s.cat!=='event'&&(!isStage(s)||open[s.cat]));
 }
 function vsGo(){
   if(VS.role!=='host'||vsOthers().length<1)return;
@@ -5801,7 +6059,7 @@ function vsStart(id,seed){
   const s=SONGS.find(x=>x.id===id&&!x.audio&&x.cat!=='mine');
   if(!s){vsMsg('相手が選んだ曲がこの端末にありません。');return}
   initAudio();
-  nextOpts={seed,battle:{code:VS.code}};
+  nextOpts={seed,battle:{code:VS.code,ranked:VS.ranked&&VS.ranked.code===VS.code?VS.ranked:null}};
   $('battle').hidden=true;$('result').hidden=true;$('rank').hidden=true;$('shop').hidden=true;$('prof').hidden=true;$('achv').hidden=true;
   newGame(id);restoreBgSrc();
   VS.sent='';vsPresence({st:'play',sc:0,ct:0,lap:0,song:id});VS.sentSt='play';
@@ -6102,7 +6360,7 @@ const fromKind=()=>{const r=document.querySelector('input[name=gfFrom]:checked')
 function renderGiftItems(){
   const box=$('gfItems'),q=$('gfItemQ').value.trim(),cat=$('gfItemCat').value;box.textContent='';
   ITEM_GROUPS.filter(([k])=>cat==='all'||cat===k).forEach(([k,label,map])=>{
-    const list=Object.entries(map).filter(([,v])=>(v.price>0||v.gacha||v.gift)&&(!q||v.name.includes(q)));
+    const list=Object.entries(map).filter(([,v])=>(v.price>0||v.gacha||v.gift)&&!v.pass&&(!q||v.name.includes(q)));
     if(!list.length)return;
     const h=document.createElement('div');h.className='gfGroup';h.textContent=`${label}（${list.filter(([id])=>GF.items.has(k+':'+id)).length}/${list.length}）`;
     const all=document.createElement('button');all.className='sound';all.textContent='全部';all.addEventListener('click',()=>{list.forEach(([id])=>GF.items.add(k+':'+id));renderGiftItems();renderGiftPreview()});
@@ -6744,7 +7002,7 @@ const GM={pool:{SSR:[],SR:[],R:[],N:[]},pickup:new Set(),rar:'SSR',editId:null};
 const prizeKey=p=>p.kind==='item'?p.key:p.kind==='tk'?'tk:'+p.tk+':'+p.n:'coin:'+p.n;
 function gmAllItems(){
   const out=[];
-  [['frame','枠',FRAMES],['tag','称号',TAGS],['skin','タイル',SKINS],['fx','演出',TAPFX]].forEach(([k,l,m])=>Object.entries(m).forEach(([id,v])=>{if(v.price>0||v.gacha||v.gift)out.push({key:k+':'+id,label:l,name:v.name,rar:v.rar||'',price:v.price||0})}));
+  [['frame','枠',FRAMES],['tag','称号',TAGS],['skin','タイル',SKINS],['fx','演出',TAPFX]].forEach(([k,l,m])=>Object.entries(m).forEach(([id,v])=>{if((v.price>0||v.gacha||v.gift)&&!v.pass)out.push({key:k+':'+id,label:l,name:v.name,rar:v.rar||'',price:v.price||0})}));
   return out;
 }
 function renderGM(){
@@ -7504,13 +7762,13 @@ function raidAnim(now){
   const t=now/1000,r=raid();if(!r)return;
   const T=RAID.tot,ph=T?T.phase:0;
   RAID.hurt=Math.max(0,RAID.hurt-.03);RAID.shake=Math.max(0,RAID.shake-.04);
-  if(!$('raid').hidden){
+  if(!$('raid').hidden&&now-(RAID.lastBig||0)>32){RAID.lastBig=now;
     const c=$('rdCv'),dpr=Math.min(2,window.devicePixelRatio||1),sz=c.clientWidth;
     if(sz>0){if(c.width!==Math.round(sz*dpr)){c.width=c.height=Math.round(sz*dpr)}
       const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,sz,sz);
       const sh=RAID.shake*sz*.02;drawBoss(g,sz,sz,t,{ph:T&&T.down?3:ph,hurt:RAID.hurt,sx:(Math.random()-.5)*sh,sy:(Math.random()-.5)*sh,roar:RAID.shake>.5})}
   }
-  if(!$('raidBar').hidden&&!$('menu').hidden&&!G&&(RAID.tick++%2===0)){
+  if(!G&&now-(RAID.lastBar||0)>140&&!$('raidBar').hidden&&!$('menu').hidden){RAID.lastBar=now;
     const c=$('rbCv'),dpr=Math.min(2,window.devicePixelRatio||1),sz=76;
     if(c.width!==sz*dpr){c.width=c.height=sz*dpr}
     const g=c.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,sz,sz);
@@ -7547,7 +7805,7 @@ function playRaidFx(it,done){
   if(it.k==='phase'){rsfx('crash');shake();setTimeout(()=>rsfx('boom'),900)}
   if(it.k==='kill'){rsfx('rumble');setTimeout(()=>{rsfx('boom');rsfx('crash');shake()},2200);setTimeout(()=>rsfx('fanfare'),2700)}
   const loop=now=>{
-    if(!alive)return;requestAnimationFrame(loop);
+    if(!alive||ov.hidden){alive=false;return}requestAnimationFrame(loop);
     const w=innerWidth,h=innerHeight,t=(now-t0)/1000;
     if(cv.width!==Math.round(w*dpr)||cv.height!==Math.round(h*dpr)){cv.width=Math.round(w*dpr);cv.height=Math.round(h*dpr)}
     g.setTransform(dpr,0,0,dpr,0,0);
@@ -7666,6 +7924,467 @@ try{const m=/#kks=([^#&]+)/.exec(location.hash||'');if(m){const code=decodeURICo
   setTimeout(()=>{try{const d=loadSave(code);renderSongs();renderGate();renderCoins();try{renderProf()}catch(e){}try{renderKeepNote()}catch(e){}{let n=0;const tp=()=>{if(cloud.loaded&&cloud.uid)pushCloud();else if(n++<400)setTimeout(tp,1500)};tp()}
     moveToast(`🎉 引っ越し完了！ ${String(d.nick||'プレイヤー').slice(0,16)} ・ 総合 ${Math.round(num(d.total)).toLocaleString()} の記録を読み込みました`)}
   catch(e){moveToast('引っ越しできませんでした: '+(e&&e.message||''))}},400)}}catch(e){}
+/* ======== ランク戦・ログインボーナス・デイリーミッション・シーズンパス ======== */
+const SEASON_MN=['睦月','如月','弥生','卯月','皐月','水無月','文月','葉月','長月','神無月','霜月','師走'];
+const seasonKey=(t=Date.now())=>jstDay(t).slice(0,7);
+const seasonId=k=>'p'+k.slice(2,4)+k.slice(5,7);
+const seasonName=k=>SEASON_MN[+k.slice(5,7)-1];
+const seasonEnd=k=>{const [y,m]=k.split('-').map(Number);return Date.UTC(y,m,1)-9*3600e3};
+const jstTomorrow=()=>{const t=Date.now()+9*3600e3;return Math.floor(t/864e5+1)*864e5-9*3600e3};
+const yesterday=()=>jstDay(Date.now()-864e5);
+const PASS_MAX=50,PASS_XP=250;
+const PASS_ITEM_LV={5:'tag:#a',10:'fx:#',15:'skin:#',20:'frame:#',25:'tag:#c',30:'frame:#e',35:'skin:#n',40:'frame:#u',45:'fx:#s',50:'frame:#k'};
+function passState(){const k=seasonKey(),v=store.get('pass',null);return v&&v.k===k?{k,xp:num(v.xp),got:Array.isArray(v.got)?v.got:[]}:{k,xp:0,got:[]}}
+const passLv=xp=>Math.min(PASS_MAX,Math.floor(xp/PASS_XP)+1);
+function passReward(lv,k){const S=seasonId(k),it=PASS_ITEM_LV[lv];
+  if(lv===50)return {coins:30000,tk:{},items:['frame:'+S+'k','tag:'+S+'b']};
+  if(it)return {coins:1000+lv*40,tk:{},items:[it.replace('#',S)]};
+  if(lv%3===0)return {coins:300,tk:{[['speed','coin2','heart','judge','revive'][(lv/3-1)%5]]:1},items:[]};
+  return {coins:500+lv*30,tk:{},items:[]};}
+function grantRw(w){
+  if(w.coins){const x=loadWallet();x.e+=w.coins;store.set('wallet',x)}
+  Object.entries(w.tk||{}).forEach(([k,n])=>tkSet(k,tkN(k)+n));
+  if((w.items||[]).length){const o=loadOwned();w.items.forEach(i=>{if(validItem(i)&&!o.includes(i))o.push(i)});store.set('owned',o)}
+  renderCoins();try{renderTicket()}catch(e){}
+}
+const rwText=w=>[w.coins?`🪙${w.coins.toLocaleString()}`:'',...Object.entries(w.tk||{}).map(([k,n])=>`${TICKETS[k].icon}${TICKETS[k].name}×${n}`),...(w.items||[]).map(i=>itemName(i))].filter(Boolean).join(' ・ ');
+function addXp(n,why){return;
+  if(!(n>0))return;const s=passState(),before=passLv(s.xp);s.xp+=n;store.set('pass',s);const after=passLv(s.xp);
+  if(after>before){for(let l=before+1;l<=after;l++)if(PASS_ITEM_LV[l])PU.q.push(l);puPump();moveToast(`🎖 シーズンパス Lv.${after} になった！ 報酬を受け取ってね`);addNote('pass',`🎖 シーズンパスが Lv.${after} になりました`,'pass:'+s.k+':'+after,'daily')}
+  renderDailyCard();
+}
+/* 限定アイテムのレベルに届いたら、どーんと見せる */
+const PU={q:[]};
+function puPump(){return;
+  if(G||!$('passUp').hidden||!PU.q.length)return;try{if(!$('loginFx').hidden||!$('raidFx').hidden)return}catch(e){}
+  const lv=PU.q.shift(),P=passState();if(P.got.includes(lv)){puPump();return}
+  const w=passReward(lv,P.k),it=w.items[0],[k,id]=it.split(':'),m={frame:FRAMES,tag:TAGS,skin:SKINS,fx:TAPFX}[k];
+  $('puLv').textContent=`Lv.${lv} 到達！`;$('puName').textContent=m[id].name;$('puKind').textContent=({frame:'アイコンの枠',tag:'称号',skin:'タイル',fx:'タップ演出'})[k]+' ・ シーズンパス限定'+(lv===50?' ・ さらに称号「'+TAGS[seasonId(P.k)+'b'].name+'」':'');
+  const pic=$('puPic');pic.textContent='';try{const p=lootPic(it);p.classList.add('big');pic.appendChild(p)}catch(e){}
+  $('puGet').onclick=()=>{claimPass([lv]);[72,76,79,84,88,91,96].forEach((n,i)=>play(n,i*.06,.5));$('puGet').disabled=true;$('puGet').textContent='受け取りました！';setTimeout(()=>{$('passUp').hidden=true;setTimeout(puPump,300)},900)};
+  $('puGet').disabled=false;$('puGet').textContent='受け取る';$('passUp').hidden=false;try{[60,67,72,76,79,84].forEach((n,i)=>play(n,i*.08,.45))}catch(e){}
+}
+$('puLater').addEventListener('click',()=>{$('passUp').hidden=true});
+setInterval(puPump,1500);
+/* ---------- ログインボーナス ---------- */
+const LOGIN_RW=[{coins:500},{coins:800},{coins:0,tk:{coin2:1}},{coins:1500},{coins:0,tk:{heart:1}},{coins:2500},{coins:5000,tk:{speed:1}}];
+function loginState(){const v=store.get('login',null);return v&&typeof v==='object'?{last:String(v.last||''),streak:num(v.streak),days:num(v.days)}:{last:'',streak:0,days:0}}
+function loginNextDay(){const L=loginState();return L.last===yesterday()?(L.streak%7)+1:1}
+function loginCanClaim(){return loginState().last!==jstDay()}
+function claimLogin(){
+  if(!loginCanClaim())return null;const L=loginState(),d=loginNextDay(),w={tk:{},items:[],...LOGIN_RW[d-1]};
+  store.set('login',{last:jstDay(),streak:d,days:L.days+1});grantRw(w);addXp(50);
+  addNote('take',`📅 ログインボーナス ${d}日目: ${rwText(w)}`,'login:'+jstDay());
+  [72,76,79,84].forEach((m,i)=>play(m,i*.07,.45));pushCloud();renderDailyCard();return {d,w};
+}
+function showLoginFx(){
+  if(G||!loginCanClaim()||!$('raidFx').hidden||!$('loginFx').hidden||showLoginFx.snooze===jstDay())return;
+  try{if(document.getElementById('fbGate')&&!document.getElementById('fbGate').hidden)return}catch(e){}
+  const box=$('lgDays');box.textContent='';const nd=loginNextDay();
+  LOGIN_RW.forEach((w,i)=>{const c=document.createElement('div');c.className='lgDay'+(i+1<nd?' got':'')+(i+1===nd?' now':'')+(i===6?' big':'');
+    const h=document.createElement('b');h.textContent=(i+1)+'日目';const r=document.createElement('span');r.textContent=rwText({tk:{},items:[],...w});c.append(h,r);box.appendChild(c)});
+  $('lgStreak').textContent=nd===1?'今日から連続ログインスタート！':`${nd}日連続ログイン中！`;
+  $('lgBtn').disabled=false;$('lgBtn').textContent='受け取る';$('loginFx').hidden=false;
+}
+$('lgBtn').addEventListener('click',()=>{initAudio();const r=claimLogin();$('lgBtn').disabled=true;$('lgBtn').textContent=r?`受け取りました！ ${rwText({tk:{},items:[],...r.w})}`:'受け取り済み';setTimeout(()=>{$('loginFx').hidden=true},1400)});
+$('lgClose').addEventListener('click',()=>{$('loginFx').hidden=true;showLoginFx.snooze=jstDay()});
+/* ---------- デイリーミッション ---------- */
+const MISS=[
+ {id:'play',t:'どのモードでもいいので3回遊ぶ',g:3,ev:r=>r.first?1:0},
+ {id:'tiles',t:'黒いタイルを500枚叩く',g:500,ev:r=>r.dt},
+ {id:'clear',t:'楽曲モードで2曲を最後まで弾く',g:2,ev:r=>r.first&&r.clear?1:0},
+ {id:'star',t:'どれか1曲で★3つをとる',g:1,ev:r=>r.lap>=3?1:0},
+ {id:'fresh',t:'🆕新作の曲を1曲、最後まで弾く',g:1,ev:r=>r.first&&r.clear&&r.cat==='fresh'?1:0},
+ {id:'rush',t:'ラッシュで1回100枚以上叩く',g:1,ev:r=>r.mode==='rush'&&r.tiles>=100?1:0},
+ {id:'score',t:'1回で300点以上とる',g:1,ev:r=>r.score>=300?1:0},
+ {id:'ranked',t:'ランク戦を1回遊ぶ',g:1,ev:r=>r.ranked&&r.first?1:0},
+ {id:'arcade',t:'アーケードで1回80枚以上叩く',g:1,ev:r=>r.mode==='arcade'&&r.tiles>=80?1:0},
+ {id:'tiles2',t:'黒いタイルを1500枚叩く',g:1500,ev:r=>r.dt},
+];
+const MISS_RW={coins:600},MISS_ALL={coins:1000,tk:{coin2:1}};
+function dailyState(){
+  const d=jstDay(),v=store.get('daily',null);
+  if(v&&v.d===d&&Array.isArray(v.ids))return {d,ids:v.ids,p:v.p||[0,0,0],got:v.got||[0,0,0],all:!!v.all};
+  const r=seeded(hashStr('kk-miss-'+d)%2147483646+1),a=MISS.map(m=>m.id);for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return {d,ids:a.slice(0,3),p:[0,0,0],got:[0,0,0],all:false};
+}
+function progressHook(slow){
+  if(!G||slow||G.song&&G.song.cat==='mine')return;
+  const dt=Math.max(0,G.count-(G.progTiles||0));G.progTiles=G.count;const first=!G.progOnce;G.progOnce=true;
+  const r={dt,first,tiles:G.count,clear:!!G.finished&&G.mode==='song',lap:G.lap|0,cat:G.song&&G.song.cat,mode:G.mode,score:G.score|0,ranked:!!((G.battle&&G.battle.ranked)||(G.ghost&&G.ghost.ranked))};
+  const s=dailyState();let gotNow=[];
+  s.ids.forEach((id,i)=>{const m=MISS.find(x=>x.id===id);if(!m||s.got[i])return;s.p[i]=Math.min(m.g,num(s.p[i])+num(m.ev(r)));if(s.p[i]>=m.g){s.got[i]=1;gotNow.push(m)}});
+  store.set('daily',s);
+  gotNow.forEach(m=>{grantRw({tk:{},items:[],...MISS_RW});addXp(100);moveToast(`✅ デイリーミッション達成「${m.t}」 +600コイン`);addNote('ach',`✅ デイリーミッション達成: ${m.t}`,'miss:'+s.d+':'+m.id,'daily')});
+  if(!s.all&&s.got.every(Boolean)){s.all=true;store.set('daily',s);grantRw({items:[],...MISS_ALL});addXp(200);setTimeout(()=>moveToast('🏆 今日のミッションをぜんぶ達成！ +1000コイン・コイン2倍チケット'),gotNow.length?2200:0)}
+  addXp(Math.min(60,Math.floor(dt/10))+(r.first&&r.clear?10:0));
+  pushCloud();renderDailyCard();
+}
+/* ---------- メニューのカードと画面 ---------- */
+function renderDailyCard(){
+  try{
+  const s=dailyState(),P=passState(),lv=passLv(P.xp),L=loginState();
+  $('dcLogin').textContent=loginCanClaim()?'🎁 今日のログボを受け取る！':`📅 ログイン ${L.streak}日目`;
+  $('dcMiss').textContent=`✅ ミッション ${s.got.filter(Boolean).length}/3`;
+  $('dcPass').textContent=`次の更新まで ${fmtLeft(jstTomorrow()-Date.now()).slice(0,5)}`;
+  $('dcBadge').hidden=!loginCanClaim();$('dcBadge').textContent='受け取れる';
+  $('dcBar').style.width=(s.got.filter(Boolean).length/3*100)+'%';
+  if(!$('daily').hidden)renderDaily();
+  }catch(e){}
+}
+function passClaimable(){const P=passState(),lv=passLv(P.xp),o=[];for(let i=1;i<=lv;i++)if(!P.got.includes(i))o.push(i);return o}
+function claimPass(lvs){const P=passState();const got=[];lvs.forEach(lv=>{if(P.got.includes(lv)||lv>passLv(P.xp))return;P.got.push(lv);got.push(lv);grantRw(passReward(lv,P.k))});store.set('pass',P);if(got.length){[72,76,79,84,88].forEach((m,i)=>play(m,i*.06,.45));pushCloud()}renderDailyCard();return got}
+let dailyTab='login';
+function openDaily(tab){if(tab)dailyTab=tab;initAudio();$('daily').hidden=false;$('daily').scrollTop=0;renderDaily()}
+function renderDaily(){
+  ['login','miss'].forEach(t=>{$('dt_'+t).setAttribute('aria-selected',String(dailyTab===t));$('dp_'+t).hidden=dailyTab!==t});
+  const n=Date.now();
+  /* ログボ */
+  {const box=$('dpLoginDays');box.textContent='';const can=loginCanClaim(),nd=can?loginNextDay():loginState().streak;
+    LOGIN_RW.forEach((w,i)=>{const c=document.createElement('div');c.className='lgDay'+(i+1<nd||(!can&&i+1===nd)?' got':'')+(can&&i+1===nd?' now':'')+(i===6?' big':'');const h=document.createElement('b');h.textContent=(i+1)+'日目';const r=document.createElement('span');r.textContent=rwText({tk:{},items:[],...w});c.append(h,r);box.appendChild(c)});
+    $('dpLoginBtn').disabled=!can;$('dpLoginBtn').textContent=can?`${nd}日目のボーナスを受け取る`:`受け取り済み ・ 次は ${fmtLeft(jstTomorrow()-n)} 後`;
+    $('dpLoginNote').textContent=`連続 ${loginState().streak}日 ・ これまで ${loginState().days}日ログイン。1日休むと1日目に戻ります。7日目は豪華！`}
+  /* ミッション */
+  {const s=dailyState(),box=$('dpMissList');box.textContent='';
+    s.ids.forEach((id,i)=>{const m=MISS.find(x=>x.id===id);if(!m)return;const row=document.createElement('div');row.className='msRow'+(s.got[i]?' done':'');
+      const t=document.createElement('b');t.textContent=(s.got[i]?'✅ ':'⬜ ')+m.t;const bar=document.createElement('div');bar.className='msBar';const fill=document.createElement('span');fill.style.width=Math.min(100,num(s.p[i])/m.g*100)+'%';bar.appendChild(fill);
+      const sm=document.createElement('small');sm.textContent=`${Math.min(num(s.p[i]),m.g).toLocaleString()} / ${m.g.toLocaleString()} ・ 報酬 🪙600`;row.append(t,bar,sm);box.appendChild(row)});
+    $('dpMissAll').textContent=s.all?'🏆 今日のミッションをぜんぶ達成しました！':`3つぜんぶ達成で 🪙1,000 ＋ 💰コイン2倍チケット`;
+    $('dpMissReset').textContent=`新しいミッションまで ${fmtLeft(jstTomorrow()-n)}`}
+  $('dp_pass').hidden=true;
+  /* パス（なし） */
+  if(0){const P=passState(),lv=passLv(P.xp),box=$('dpPassList');box.textContent='';
+    $('dpPassName').textContent=`${seasonName(P.k)}シーズン（${+P.k.slice(5,7)}月）`;
+    $('dpPassLv').textContent=`Lv.${lv}`;$('dpPassXp').textContent=lv>=PASS_MAX?'MAX！':`次のレベルまで ${PASS_XP-P.xp%PASS_XP} XP`;
+    $('dpPassFill').style.width=(lv>=PASS_MAX?100:(P.xp%PASS_XP)/PASS_XP*100)+'%';
+    $('dpPassEnd').textContent=`シーズン終了まで ${fmtLeft(seasonEnd(P.k)-n)}（終わると限定アイテムはもう手に入りません）`;
+    {const sh=$('dpPassShow');sh.textContent='';const h=document.createElement('h3');h.textContent=`✦ ${seasonName(P.k)}シーズン限定アイテム ✦`;sh.appendChild(h);
+      const grid=document.createElement('div');grid.className='psGrid';const own=loadOwned();
+      Object.keys(PASS_ITEM_LV).map(Number).forEach(l=>{const its=passReward(l,P.k).items;its.forEach((it,j)=>{const [k,id]=it.split(':'),m={frame:FRAMES,tag:TAGS,skin:SKINS,fx:TAPFX}[k];
+        const c=document.createElement('div');c.className='psItem'+(l===50?' grand':'')+(own.includes(it)?' own':l<=lv?' open':'');
+        const lb=document.createElement('i');lb.textContent=own.includes(it)?'✓ GET':'Lv.'+l;const pc=lootPic(it);const nm=document.createElement('b');nm.textContent=m[id].name;
+        const kd=document.createElement('small');kd.textContent=({frame:'枠',tag:'称号',skin:'タイル',fx:'演出'})[k];c.append(lb,pc,nm,kd);grid.appendChild(c)})});
+      sh.appendChild(grid);const nt=document.createElement('p');nt.textContent='どれもシーズンパスでしか手に入りません。シーズンが終わると、もう二度と手に入りません。';sh.appendChild(nt)}
+    const can=passClaimable();$('dpPassAll').disabled=!can.length;$('dpPassAll').textContent=can.length?`まとめて受け取る（${can.length}個）`:'受け取れる報酬はありません';
+    for(let i=1;i<=PASS_MAX;i++){const w=passReward(i,P.k),got=P.got.includes(i),open=i<=lv;
+      const row=document.createElement('div');row.className='psRow'+(got?' got':open?' open':'')+(w.items.length?' sp':'');
+      const l=document.createElement('i');l.textContent=i;const pic=document.createElement('div');pic.className='psPic';
+      if(w.items.length){try{pic.appendChild(lootPic(w.items[0]))}catch(e){}}else pic.textContent=Object.keys(w.tk).length?TICKETS[Object.keys(w.tk)[0]].icon:'🪙';
+      const t=document.createElement('span');t.textContent=rwText(w);
+      const b=document.createElement('button');b.className='sound';b.textContent=got?'受取済':open?'受け取る':'🔒';b.disabled=got||!open;b.addEventListener('click',()=>{claimPass([i]);moveToast('🎁 '+rwText(w))});
+      row.append(l,pic,t,b);box.appendChild(row)}
+    $('dpPassHow').textContent='経験値: 1回遊ぶごとに叩いた枚数÷10（最大60）・曲を弾ききると+10・ミッション1つ+100・ぜんぶ達成+200・ログボ+50・ランク戦で勝つと+50'}
+}
+['login','miss'].forEach(t=>$('dt_'+t).addEventListener('click',()=>{dailyTab=t;renderDaily()}));
+$('dailyCard').addEventListener('click',()=>openDaily(loginCanClaim()?'login':'miss'));
+$('dailyBack').addEventListener('click',()=>{$('daily').hidden=true});
+$('dpLoginBtn').addEventListener('click',()=>{initAudio();const r=claimLogin();if(r)moveToast(`📅 ${r.d}日目のログボ: ${rwText({tk:{},items:[],...r.w})}`);renderDaily()});
+$('dpPassAll').addEventListener('click',()=>{const g=claimPass(passClaimable());if(g.length)moveToast(`🎁 パスの報酬を ${g.length}個 受け取りました`)});
+/* ---------- ランク戦 ---------- */
+const RANKS=[[0,'ブロンズ','#b07a4a'],[1100,'シルバー','#9aa4b2'],[1250,'ゴールド','#e2b13c'],[1400,'プラチナ','#4fd1c5'],[1550,'ダイヤ','#7aa8ff'],[1700,'マスター','#c77dff'],[1900,'レジェンド','#ff4d6d']];
+function myRate(){const v=store.get('rate',null);return v&&typeof v==='object'?{r:num(v.r)||1000,n:num(v.n),w:num(v.w),l:num(v.l),d:num(v.d),best:num(v.best)||1000}:{r:1000,n:0,w:0,l:0,d:0,best:1000}}
+const rankOf=r=>{let x=RANKS[0];RANKS.forEach(k=>{if(r>=k[0])x=k});return x};
+function rkApply(S,opp,K){const me=myRate(),E=1/(1+Math.pow(10,(opp-me.r)/400)),dlt=Math.round(K*(S-E)),before=me.r;me.r=Math.max(0,me.r+dlt);me.n++;if(S===1)me.w++;else if(S===0)me.l++;else me.d++;me.best=Math.max(me.best,me.r);store.set('rate',me);
+  const rb=rankOf(before),ra=rankOf(me.r);if(ra[0]>rb[0])setTimeout(()=>moveToast(`⬆ ランクアップ！ ${ra[1]} になった！`),800);if(S===1)addXp(50);pushCloud();try{renderRk()}catch(e){}return {before,after:me.r,dlt}}
+const RK={lobby:null,tok:'',t0:0,timer:null,offer:null,unsub:[],msg:'',wait:null};
+function rkMsg(t){RK.msg=t;renderRk()}
+function rkSong(){const ids=poolSongs().filter(s=>!s.audio&&s.speed>=3&&s.speed<=7).map(s=>s.id);return ids[Math.floor(Math.random()*ids.length)]||poolSongs()[0].id}
+async function rkCancel(){clearInterval(RK.timer);RK.timer=null;RK.unsub.forEach(u=>{try{u()}catch(e){}});RK.unsub=[];const l=RK.lobby;RK.lobby=null;RK.offer=null;if(l){try{await l.leave()}catch(e){}}renderRk()}
+async function rkQueue(){
+  const api=await vsApi();
+  if(!api){rkMsg('この開き方ではランダム対戦に入れません。下の「ゴーストとランク戦」ならすぐ遊べます。');return}
+  await vsLeave();await rkCancel();RK.msg='';
+  RK.tok=Math.random().toString(36).slice(2,10);RK.t0=Date.now();
+  try{RK.lobby=await api.join('kb-match')}catch(e){rkMsg('マッチングに入れませんでした（'+(e&&e.code||'error')+'）。');return}
+  RK.unsub.push(RK.lobby.onPeers(rkOnPeers,()=>{}));
+  try{await RK.lobby.presence({v:2,q:1,tok:RK.tok,nick:myNick(),rate:myRate().r,t:Date.now(),offer:null})}catch(e){}
+  RK.timer=setInterval(()=>{renderRk();rkOnPeers()},1000);renderRk();
+}
+function rkOnPeers(){
+  if(!RK.lobby)return;
+  const ps=RK.lobby.peers().filter(p=>p.kind==='viewer'&&p.presence&&p.presence.v===2&&!(p.isMe&&!p.sameTab));
+  const off=ps.find(p=>p.presence.offer&&p.presence.offer.to===RK.tok);
+  if(off&&!RK.offer){const o=off.presence.offer;RK.offer=o;rkGo(String(o.code),'guest',String(o.song),{nick:String(off.presence.nick||'プレイヤー').slice(0,16),rate:num(off.presence.rate)||1000});return}
+  if(RK.offer)return;
+  const q=ps.filter(p=>p.presence.q===1&&!p.presence.offer&&Date.now()-num(p.presence.t)<600000).sort((a,b)=>(num(a.presence.t)-num(b.presence.t))||String(a.presence.tok).localeCompare(String(b.presence.tok)));
+  const i=q.findIndex(p=>p.presence.tok===RK.tok);if(i<0||i%2===1||!q[i+1])return;
+  const opp=q[i+1].presence,code=String(100000+Math.floor(Math.random()*900000)),song=rkSong();RK.offer={code,song};
+  RK.lobby.presence({offer:{to:opp.tok,code,song},q:0}).catch(()=>{});
+  setTimeout(()=>rkGo(code,'host',song,{nick:String(opp.nick||'プレイヤー').slice(0,16),rate:num(opp.rate)||1000}),1500);
+}
+async function rkGo(code,role,song,opp){
+  const l=RK.lobby;RK.lobby=null;clearInterval(RK.timer);RK.timer=null;RK.unsub.forEach(u=>{try{u()}catch(e){}});RK.unsub=[];if(l){try{await l.leave()}catch(e){}}
+  VS.ranked={opp,song,code};VS.song=song;VS.rkStarted=false;RK.msg=`${opp.nick}（${rankOf(opp.rate)[1]} ${opp.rate}）と対戦！ 部屋に入っています…`;renderRk();
+  await vsJoin(code,role);RK.msg='';
+  clearTimeout(RK.wait);RK.wait=setTimeout(()=>{if(!G&&VS.ranked&&!vsOthers().length){vsLeave();VS.ranked=null;rkMsg('相手が来ませんでした。もう一度さがしてね。')}},20000);
+}
+function rkGhost(){
+  if(cloud.db&&!cloud.unsub)try{openRankFeed()}catch(e){}
+  const me=myRate().r,ids=new Set(poolSongs().filter(s=>!s.audio).map(s=>s.id));
+  const rows=(cloud.rows||[]).filter(r=>r.id!==cloud.uid&&r.best&&typeof r.best==='object').map(r=>({r,songs:Object.entries(r.best).filter(([id,v])=>ids.has(id)&&num(v)>0),rate:num(r.rate&&r.rate.r)||1000})).filter(x=>x.songs.length);
+  if(!rows.length){rkMsg(cloud.rows?'まだ対戦できる相手の記録がありません。':'ランキングを読み込んでいます…もう一度押してね。');return}
+  rows.sort((a,b)=>Math.abs(a.rate-me)-Math.abs(b.rate-me));const pick=rows[Math.floor(Math.random()*Math.min(5,rows.length))];
+  const [id,score]=pick.songs[Math.floor(Math.random()*pick.songs.length)];
+  initAudio();nextOpts={ghost:{nick:String(pick.r.nick||'プレイヤー').slice(0,16),score:num(score),ranked:{rate:pick.rate}}};$('battle').hidden=true;newGame(id);restoreBgSrc();
+}
+function renderRk(){
+  const box=$('rkBlock');if(!box)return;box.textContent='';
+  const me=myRate(),rk=rankOf(me.r),nx=RANKS.find(k=>k[0]>me.r);
+  const card=document.createElement('div');card.className='rkCard';card.style.setProperty('--rc',rk[2]);
+  const em=document.createElement('div');em.className='rkEmb';em.textContent=['🥉','🥈','🥇','💠','💎','👑','🔥'][RANKS.indexOf(rk)];
+  const tx=document.createElement('div');tx.className='rkTx';
+  const b=document.createElement('b');b.textContent=`${rk[1]}  ${me.r}`;const sm=document.createElement('small');sm.textContent=`${me.w}勝 ${me.l}敗${me.d?' '+me.d+'分':''} ・ 最高 ${me.best}`+(nx?` ・ ${nx[1]}まであと ${nx[0]-me.r}`:'');
+  const bar=document.createElement('div');bar.className='rkBar';const f=document.createElement('span');const lo=rk[0],hi=nx?nx[0]:rk[0]+200;f.style.width=Math.min(100,(me.r-lo)/(hi-lo)*100)+'%';bar.appendChild(f);
+  tx.append(b,sm,bar);card.append(em,tx);box.appendChild(card);
+  if(RK.lobby){const w=document.createElement('div');w.className='rkWait';const s=Math.floor((Date.now()-RK.t0)/1000);
+    const n=RK.lobby.peers().filter(p=>p.presence&&p.presence.v===2&&p.presence.q===1).length;
+    w.textContent=`⚔ 対戦相手をさがしています… ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')} ・ さがしている人 ${n}人`+(s>40?'\n見つからないときは「ゴーストとランク戦」でも遊べます':'');
+    const c=document.createElement('button');c.className='sound';c.textContent='やめる';c.addEventListener('click',rkCancel);box.append(w,c)}
+  else{const go=document.createElement('button');go.className='btn pri rkGo';go.textContent='⚔ ランダム対戦をさがす';go.addEventListener('click',()=>{initAudio();rkQueue()});
+    const gh=document.createElement('button');gh.className='btn';gh.textContent='👻 ゴーストとランク戦（すぐ遊べる）';gh.addEventListener('click',rkGhost);box.append(go,gh)}
+  if(RK.msg){const m=document.createElement('p');m.className='hint';m.textContent=RK.msg;box.appendChild(m)}
+  const h=document.createElement('p');h.className='hint';h.textContent='ランダム対戦: 今さがしている人と自動で組んで、同じ譜面で勝負。勝つとレートが上がります。ゴースト: レートの近い人の自己ベストに挑戦（変動は小さめ）。';box.appendChild(h);
+}
+/* 対戦の結果でレートを動かす */
+{const rv=renderVsResult;renderVsResult=function(){rv.apply(this,arguments);try{
+  if(G&&G.rkRes){const el=$('rBattle');G.rkRes.forEach(f=>f(el));return}
+  if(!G||G.rkDone)return;const el=$('rBattle');
+  if(G.ghost&&G.ghost.ranked){G.rkDone=true;const S=G.score>G.ghost.score?1:G.score===G.ghost.score?.5:0,x=rkApply(S,G.ghost.ranked.rate,20);G.rkRes=[e=>rkLine(e,x)];rkLine(el,x)}
+  else if(G.battle&&G.battle.ranked){
+    const others=vsOthers().filter(p=>p.presence.st==='play'||p.presence.st==='over');if(others.some(p=>p.presence.st==='play'))return;
+    G.rkDone=true;const best=Math.max(0,...others.map(p=>num(p.presence.sc)));const S=!others.length?1:G.score>best?1:G.score===best?.5:0;
+    const x=rkApply(S,G.battle.ranked.opp.rate,32),gone=!others.length;G.rkRes=[e=>rkLine(e,x),e=>{if(gone){const n=document.createElement('small');n.textContent='相手がいなくなったので、あなたの勝ち';e.appendChild(n)}}];G.rkRes.forEach(f=>f(el));
+    VS.ranked=null;setTimeout(()=>{if(!G||G.phase==='over')vsLeave()},5000);
+  }}catch(e){console.warn(e)}}}
+function rkLine(el,x){const d=document.createElement('div');d.className='rkRes'+(x.dlt>0?' up':x.dlt<0?' down':'');d.textContent=`⚔ レート ${x.before} → ${x.after}（${x.dlt>=0?'+':''}${x.dlt}） ・ ${rankOf(x.after)[1]}`;el.appendChild(d)}
+/* 対戦の部屋: ランク戦なら、相手が来たら部屋主が自動で始める */
+{const op=vsOnPeers;vsOnPeers=function(){op.apply(this,arguments);try{if(VS.ranked&&VS.ranked.code===VS.code&&VS.role==='host'&&!VS.rkStarted&&vsOthers().length>=1){VS.rkStarted=true;clearTimeout(RK.wait);setTimeout(vsGo,1200)}}catch(e){}}}
+{const vj=vsJoin;vsJoin=async function(code,role){await vj(code,role);try{if(VS.named)await vsPresence({rate:myRate().r})}catch(e){}}}
+/* 記録の送り先に足す */
+{const bc=buildCloud;buildCloud=function(){const d=bc();try{d.rate=myRate();d.prog={login:loginState(),pass:passState(),daily:dailyState()}}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){mc(d);try{
+  if(d.rate&&typeof d.rate==='object'&&num(d.rate.n)>myRate().n)store.set('rate',{r:num(d.rate.r)||1000,n:num(d.rate.n),w:num(d.rate.w),l:num(d.rate.l),d:num(d.rate.d),best:num(d.rate.best)});
+  const p=d.prog;if(p&&typeof p==='object'){
+    if(p.login&&String(p.login.last||'')>loginState().last)store.set('login',{last:String(p.login.last),streak:num(p.login.streak),days:Math.max(num(p.login.days),loginState().days)});
+    if(p.pass&&p.pass.k===seasonKey()){const P=passState();P.xp=Math.max(P.xp,num(p.pass.xp));(Array.isArray(p.pass.got)?p.pass.got:[]).forEach(x=>{if(typeof x==='number'&&!P.got.includes(x))P.got.push(x)});store.set('pass',P)}
+    if(p.daily&&p.daily.d===jstDay()){const s=dailyState();if(JSON.stringify(s.ids)===JSON.stringify(p.daily.ids)){[0,1,2].forEach(i=>{s.p[i]=Math.max(num(s.p[i]),num((p.daily.p||[])[i]));s.got[i]=s.got[i]||((p.daily.got||[])[i]?1:0)});s.all=s.all||!!p.daily.all;store.set('daily',s)}}
+  }renderDailyCard()}catch(e){}}}
+/* ランキングに「ランク戦レート」を足す */
+{const bd=boards;boards=function(){const a=bd();a.splice(1,0,['rate','⚔ ランク戦レート']);return a}}
+{const bv=boardValue;boardValue=function(d,key){if(key==='rate')return d.rate&&num(d.rate.n)>0?num(d.rate.r):0;return bv(d,key)}}
+$('battleBtn').addEventListener('click',()=>{try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}renderRk()});
+renderRk();renderDailyCard();
+setTimeout(showLoginFx,1800);
+setInterval(()=>{renderDailyCard();if(!G)showLoginFx()},60000);
+
+/* ======== みんなの広場: みんなの譜面（エディタと共有）・フレンドとスタンプ・チーム ========
+   social/<自分> に「いいね・フレンド・チーム・送ったスタンプ」、charts/<自分> に公開した譜面を置く。
+   ほかの人のドキュメントは書けないので、いいね数やチームのメンバーは全員分を読んで数える */
+const SOC={me:null,rows:[],charts:[],unsubS:null,unsubC:null,loaded:false,timer:null,tab:'chart',sort:'pop',msg:''};
+const STAMPS=[['👏','おめでとう！'],['🔥','もう一回！'],['😆','すごい！'],['💪','がんばれ！'],['🙏','ありがとう！'],['😤','負けないぞ！'],['🎹','いっしょに弾こう！'],['👑','さすが！']];
+const CLAN_EMB=['🐉','🦊','🐺','🦅','🐈‍⬛','🌙','⚡','🔥','❄','🌸','🎹','👑'],CLAN_COL=['#e0213a','#1747a6','#2fae7d','#c77dff','#ff8a00','#0d0f14'];
+const canSoc=()=>!!(cloud.db&&cloud.uid&&cloud.canWrite);
+function socDefault(){return {v:1,nick:myNick(),likes:[],friends:[],clan:null,stamps:[],t:0}}
+function mySoc(){if(!SOC.me){const v=store.get('social',null);SOC.me=v&&typeof v==='object'?{...socDefault(),...v}:socDefault()}return SOC.me}
+function cleanSocDoc(d){d=d&&typeof d==='object'?d:{};const arr=(x,n)=>Array.isArray(x)?x.filter(y=>typeof y==='string').slice(-n):[];
+  const c=d.clan&&typeof d.clan==='object'&&typeof d.clan.id==='string'?{id:d.clan.id.slice(0,60),name:String(d.clan.name||'チーム').slice(0,12),emblem:String(d.clan.emblem||'🎹').slice(0,4),color:/^#[0-9a-f]{6}$/i.test(d.clan.color)?d.clan.color:'#1747a6',leader:String(d.clan.leader||'').slice(0,60)}:null;
+  const st=Array.isArray(d.stamps)?d.stamps.filter(s=>s&&typeof s.to==='string'&&STAMPS[num(s.s)]).slice(-30).map(s=>({to:s.to.slice(0,60),s:num(s.s)|0,t:num(s.t)})):[];
+  return {v:1,nick:String(d.nick||'プレイヤー').slice(0,16),likes:arr(d.likes,300),friends:arr(d.friends,60),clan:c,stamps:st,t:num(d.t)}}
+function saveSoc(){const m=mySoc();m.nick=myNick();m.t=Date.now();store.set('social',m);if(!canSoc())return;clearTimeout(SOC.timer);
+  SOC.timer=setTimeout(()=>{cloud.db.doc('social/'+cloud.uid).set(cleanSocDoc(m)).catch(e=>{SOC.msg='保存できませんでした（'+(e&&e.code||'error')+'）';renderPlaza()})},500)}
+async function initSocial(){
+  if(SOC.loaded||!cloud.db||!cloud.uid)return;SOC.loaded=true;
+  if(store.get('stampSeen',null)===null)store.set('stampSeen',Date.now()-1);
+  try{const s=await cloud.db.doc('social/'+cloud.uid).get();if(s.exists){const d=cleanSocDoc(s.data()),m=mySoc();
+    d.likes.forEach(x=>{if(!m.likes.includes(x))m.likes.push(x)});d.friends.forEach(x=>{if(!m.friends.includes(x))m.friends.push(x)});
+    if(!m.clan&&d.clan)m.clan=d.clan;m.stamps=d.stamps.concat(m.stamps.filter(x=>!d.stamps.some(y=>y.t===x.t))).slice(-30);store.set('social',m)}}catch(e){}
+  try{SOC.unsubS=cloud.db.collection('social').limit(500).onSnapshot(s=>{SOC.rows=s.docs.map(d=>({id:d.id,...cleanSocDoc(d.data())}));checkStamps();renderPlazaCard();if(!$('plaza').hidden)renderPlaza();try{if(!$('raid').hidden)renderRaid()}catch(e){}},()=>{SOC.unsubS=null})}catch(e){}
+}
+function subCharts(){if(SOC.unsubC||!cloud.db)return;try{SOC.unsubC=cloud.db.collection('charts').limit(500).onSnapshot(s=>{SOC.charts=s.docs.map(d=>({id:d.id,...(d.data()||{})}));if(!$('plaza').hidden)renderPlaza()},()=>{SOC.unsubC=null})}catch(e){}}
+const nickOf=uid=>{const r=(cloud.rows||[]).find(x=>x.id===uid);if(r)return String(r.nick||'プレイヤー').slice(0,16);const s=SOC.rows.find(x=>x.id===uid);return s?s.nick:'プレイヤー'};
+const agoText=t=>{const s=Math.max(0,Math.floor((Date.now()-t)/1000));return s<60?'たった今':s<3600?Math.floor(s/60)+'分前':s<86400?Math.floor(s/3600)+'時間前':Math.floor(s/86400)+'日前'};
+/* ---------- スタンプ ---------- */
+function stampsToMe(){if(!cloud.uid)return [];const o=[];SOC.rows.forEach(r=>{if(r.id===cloud.uid)return;r.stamps.forEach(s=>{if(s.to===cloud.uid)o.push({from:r.id,nick:r.nick,...s})})});return o.sort((a,b)=>b.t-a.t)}
+function checkStamps(){const seen=num(store.get('stampSeen',0)),list=stampsToMe(),fresh=list.filter(s=>s.t>seen);
+  if(!fresh.length)return;store.set('stampSeen',Math.max(...list.map(s=>s.t)));
+  {fresh.slice(0,3).forEach(s=>{addNote('stamp',`${STAMPS[s.s][0]} ${s.nick} から「${STAMPS[s.s][1]}」`,'st:'+s.from+':'+s.t,'plaza')});moveToast(`${STAMPS[fresh[0].s][0]} ${fresh[0].nick} から「${STAMPS[fresh[0].s][1]}」`)}}
+function sendStamp(uid,i){if(!canSoc())return;const m=mySoc();m.stamps=(m.stamps||[]).concat({to:uid,s:i,t:Date.now()}).slice(-30);saveSoc();moveToast(`${STAMPS[i][0]} ${nickOf(uid)} に「${STAMPS[i][1]}」を送りました`);try{play(84,0,.4);play(91,.08,.4)}catch(e){}}
+/* ---------- チーム ---------- */
+function clans(){const map=new Map();
+  SOC.rows.forEach(r=>{if(r.clan&&r.clan.leader===r.id&&r.clan.id==='c'+r.id)map.set(r.clan.id,{...r.clan,members:[]})});
+  const me=mySoc();if(cloud.uid&&me.clan&&me.clan.leader===cloud.uid&&!map.has(me.clan.id))map.set(me.clan.id,{...me.clan,members:[]});
+  const all=SOC.rows.filter(r=>r.id!==cloud.uid).map(r=>({id:r.id,clan:r.clan,t:r.t})).concat(cloud.uid?[{id:cloud.uid,clan:me.clan,t:me.t}]:[]);
+  all.forEach(r=>{const c=r.clan&&map.get(r.clan.id);if(c&&c.members.length<5)c.members.push(r.id)});
+  const rows=cloud.rows||[],T=(()=>{try{return raidTotals()}catch(e){return null}})();
+  map.forEach(c=>{c.total=c.members.reduce((a,u)=>a+num((rows.find(x=>x.id===u)||{}).total),0);c.raid=T?c.members.reduce((a,u)=>a+num((T.list.find(x=>(x.me?cloud.uid:x.id)===u)||{}).dmg),0):0});
+  return [...map.values()].sort((a,b)=>b.total-a.total)}
+function myClan(){const me=mySoc();if(!me.clan)return null;const c=clans().find(x=>x.id===me.clan.id);return c&&c.members.includes(cloud.uid)?c:null}
+/* ---------- みんなの譜面 ---------- */
+const NOTE_NAMES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const midiOf=n=>{const m=/^([A-G]#?)(\d)$/.exec(n);return m?12*(+m[2]+1)+NOTE_NAMES.indexOf(m[1]):60};
+function allCharts(){const o=[];SOC.charts.forEach(d=>{(Array.isArray(d.list)?d.list:[]).slice(0,10).forEach(c=>{if(!c||typeof c.mel!=='string')return;const key=d.id+':'+String(c.id).slice(0,30);o.push({key,uid:d.id,id:String(c.id).slice(0,30),name:String(c.name||'無題').slice(0,30),nick:String(d.nick||nickOf(d.id)).slice(0,16),speed:Math.max(1,Math.min(12,num(c.speed)||4)),mel:c.mel.slice(0,4000),har:String(c.har||'').slice(0,400),t:num(c.t)})})});
+  const likes={};SOC.rows.forEach(r=>r.likes.forEach(k=>{likes[k]=(likes[k]||0)+1}));o.forEach(c=>{c.likes=likes[c.key]||0});return o}
+const ugcId=key=>'ugc-'+key.replace(/[^\w-]/g,'_');
+function installUgc(c){const s={id:ugcId(c.key),cat:'ugc',ugc:1,name:c.name,by:c.nick+' の譜面',speed:c.speed,mel:c.mel,har:c.har||'C:4'};compile(s);const i=SONGS.findIndex(x=>x.id===s.id);if(i>=0)SONGS[i]=s;else SONGS.push(s);return s}
+function playUgc(c,from){try{const s=installUgc(c);initAudio();SOC.from=from||'plaza';$('plaza').hidden=true;$('ugcEd').hidden=true;newGame(s.id);restoreBgSrc();G.fromPlaza=SOC.from}catch(e){SOC.msg='この譜面は読み込めませんでした（'+e.message+'）';renderPlaza()}}
+function toggleLike(key){if(!canSoc())return;const m=mySoc(),i=m.likes.indexOf(key);if(i>=0)m.likes.splice(i,1);else{m.likes.push(key);try{play(88,0,.35)}catch(e){}}saveSoc();renderPlaza()}
+function myCharts(){const d=SOC.charts.find(x=>x.id===cloud.uid);return d&&Array.isArray(d.list)?d.list.slice():store.get('myCharts',[])}
+async function saveMyCharts(list){store.set('myCharts',list);if(!canSoc())return false;try{await cloud.db.doc('charts/'+cloud.uid).set({nick:myNick(),list:list.slice(0,10),t:Date.now()});return true}catch(e){return false}}
+/* ---------- 広場の画面 ---------- */
+function openPlaza(tab){if(tab)SOC.tab=tab;initAudio();subCharts();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}initSocial();$('ugcEd').hidden=true;$('plaza').hidden=false;$('plaza').scrollTop=0;renderPlaza()}
+function renderPlazaCard(){try{const n=stampsToMe().filter(s=>Date.now()-s.t<864e5).length,c=myClan();$('plazaInfo').textContent=`🎼 みんなの譜面 ・ 👥 フレンド ${mySoc().friends.length}人 ・ 🛡 ${c?c.emblem+' '+c.name:'チーム未加入'}`+(n?` ・ 💌 今日のスタンプ ${n}`:'')}catch(e){}}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function renderPlaza(){
+  ['chart','friend','team'].forEach(t=>{$('pz_'+t).setAttribute('aria-selected',String(SOC.tab===t))});
+  const box=$('pzBody');box.textContent='';
+  if(!canSoc()){box.appendChild(el('p','pzNote',cloud.db?'この開き方では見るだけです。譜面の公開・いいね・フレンド・チームには、ログイン（Claude版は招待されたアカウント）が必要です。':'ネットにつながっていないので、みんなの広場は使えません。'))}
+  if(SOC.msg){box.appendChild(el('p','pzNote',SOC.msg));SOC.msg=''}
+  if(SOC.tab==='chart')renderPzCharts(box);else if(SOC.tab==='friend')renderPzFriends(box);else renderPzTeam(box);
+}
+function renderPzCharts(box){
+  const top=el('div','pzTop');const mk=el('button','btn pri','🎼 譜面をつくる');mk.addEventListener('click',()=>openEditor(null));top.appendChild(mk);
+  const sel=el('select','pzSort');[['pop','♥ 人気順'],['new','🆕 新着順'],['friend','👥 フレンドの譜面'],['mine','📝 自分の譜面']].forEach(([v,l])=>{const o=el('option',null,l);o.value=v;sel.appendChild(o)});sel.value=SOC.sort;sel.addEventListener('change',()=>{SOC.sort=sel.value;renderPlaza()});top.appendChild(sel);box.appendChild(top);
+  let list=allCharts();const me=mySoc();
+  if(SOC.sort==='pop')list.sort((a,b)=>b.likes-a.likes||b.t-a.t);else list.sort((a,b)=>b.t-a.t);
+  if(SOC.sort==='friend')list=list.filter(c=>me.friends.includes(c.uid));if(SOC.sort==='mine')list=list.filter(c=>c.uid===cloud.uid);
+  if(!list.length){box.appendChild(el('p','pzEmpty',SOC.unsubC||!cloud.db?'まだ譜面がありません。最初の1曲を作ってみよう！':'読み込んでいます…'));return}
+  list.slice(0,60).forEach((c,i)=>{const card=el('div','ucCard'+(i<3&&SOC.sort==='pop'&&c.likes?' hot':''));
+    const h=el('div','ucHead');h.append(el('b',null,c.name),el('span','ucLike',(me.likes.includes(c.key)?'❤':'♡')+' '+c.likes));
+    const notes=c.mel.trim().split(/\s+/).length,best=store.get('ugcBest:'+ugcId(c.key),null);
+    const sm=el('small',null,`by ${c.nick}${c.uid===cloud.uid?'（あなた）':''} ・ ${notes}音 ・ 毎秒${c.speed.toFixed(1)}枚 ・ ${agoText(c.t)}`+(best!==null?` ・ あなたのベスト ${best}`:''));
+    const row=el('div','ucBtns');const pl=el('button','btn pri','▶ 遊ぶ');pl.addEventListener('click',()=>playUgc(c));row.appendChild(pl);
+    if(c.uid!==cloud.uid){const lk=el('button','sound'+(me.likes.includes(c.key)?' on':''),me.likes.includes(c.key)?'❤ いいね済み':'♡ いいね');lk.disabled=!canSoc();lk.addEventListener('click',()=>toggleLike(c.key));row.appendChild(lk)}
+    else{const ed=el('button','sound','✏ 直す');ed.addEventListener('click',()=>openEditor(c));const del=el('button','sound danger','消す');del.addEventListener('click',async()=>{if(del.dataset.arm!=='1'){del.dataset.arm='1';del.textContent='本当に消す';return}await saveMyCharts(myCharts().filter(x=>x.id!==c.id));renderPlaza()});row.append(ed,del)}
+    card.append(h,sm,row);box.appendChild(card)});
+  box.appendChild(el('p','hint','みんなの譜面は練習扱いです（コイン・記録・ミッションには数えません）。気に入ったら ♡ で応援しよう。'));
+}
+function renderPzFriends(box){
+  const me=mySoc(),rows=(cloud.rows||[]).filter(r=>!String(r.id).startsWith('c-')&&r.id!==cloud.uid);
+  /* 届いたスタンプ */
+  const inbox=stampsToMe().slice(0,8);
+  if(inbox.length){const sec=el('div','pzSec');sec.appendChild(el('h3',null,'💌 届いたスタンプ'));inbox.forEach(s=>{const r=el('div','stRow');r.append(el('span','stBig',STAMPS[s.s][0]),el('span',null,`${s.nick}「${STAMPS[s.s][1]}」`),el('small',null,agoText(s.t)));
+      const rp=el('button','sound','返す');rp.disabled=!canSoc();rp.addEventListener('click',()=>{sendStamp(s.from,4);renderPlaza()});r.appendChild(rp);sec.appendChild(r)});box.appendChild(sec)}
+  /* フレンド */
+  const sec=el('div','pzSec');sec.appendChild(el('h3',null,`👥 フレンド（${me.friends.length}人）`));
+  if(!me.friends.length)sec.appendChild(el('p','pzEmpty','まだフレンドがいません。下でさがして追加しよう。ランキングの人をタップしても追加できます。'));
+  me.friends.forEach(uid=>{const r=rows.find(x=>x.id===uid)||{},s=SOC.rows.find(x=>x.id===uid),mutual=!!(s&&s.friends.includes(cloud.uid));
+    const card=el('div','frCard');const av=el('span','frAva');try{av.appendChild(avaEl(cleanProf(r.prof),40))}catch(e){}
+    const tx=el('div','frTx');const rk=r.rate&&num(r.rate.n)>0?rankOf(num(r.rate.r)):null;
+    tx.append(el('b',null,nickOf(uid)+(mutual?'  🤝':'')),el('small',null,`総合 ${Math.round(num(r.total)).toLocaleString()}`+(rk?` ・ ${rk[1]} ${num(r.rate.r)}`:'')+(s&&s.clan?` ・ ${s.clan.emblem}${s.clan.name}`:'')+(mutual?' ・ 相互フレンド':'')));
+    const bt=el('div','frBtns');const sp=el('div','stPick');sp.hidden=true;
+    STAMPS.forEach(([e,t],i)=>{const b=el('button','stBtn',e);b.title=t;b.setAttribute('aria-label',t);b.addEventListener('click',()=>{sendStamp(uid,i);sp.hidden=true});sp.appendChild(b)});
+    const st=el('button','sound','💌 スタンプ');st.disabled=!canSoc();st.addEventListener('click',()=>{sp.hidden=!sp.hidden});
+    const pv=el('button','sound','記録');pv.disabled=!r.id;pv.addEventListener('click',()=>{try{openPView(uid)}catch(e){}});
+    const rm=el('button','sound danger','外す');rm.disabled=!canSoc();rm.addEventListener('click',()=>{if(rm.dataset.arm!=='1'){rm.dataset.arm='1';rm.textContent='本当に外す';return}me.friends=me.friends.filter(x=>x!==uid);saveSoc();renderPlaza()});
+    bt.append(st,pv,rm);card.append(av,tx,bt,sp);sec.appendChild(card)});
+  box.appendChild(sec);
+  /* さがす */
+  const fs=el('div','pzSec');fs.appendChild(el('h3',null,'🔍 フレンドをさがす'));const inp=el('input','pzInput');inp.type='text';inp.placeholder='名前で検索';inp.value=SOC.q||'';
+  const res=el('div','frRes');const draw=()=>{res.textContent='';const q=norm(inp.value||'');SOC.q=inp.value;
+    rows.filter(r=>!me.friends.includes(r.id)&&(!q||norm(String(r.nick||'')).includes(q))).slice(0,15).forEach(r=>{const row=el('div','frAdd');row.append(el('span',null,String(r.nick||'プレイヤー').slice(0,16)),el('small',null,`総合 ${Math.round(num(r.total)).toLocaleString()}`));
+      const ad=el('button','sound','＋ フレンド');ad.disabled=!canSoc();ad.addEventListener('click',()=>{if(me.friends.length>=60)return;me.friends.push(r.id);saveSoc();moveToast(`👥 ${String(r.nick||'プレイヤー').slice(0,16)} をフレンドに追加しました`);renderPlaza()});row.appendChild(ad);res.appendChild(row)});
+    if(!res.children.length)res.appendChild(el('p','pzEmpty',cloud.rows?'見つかりませんでした。':'読み込んでいます…'))};
+  inp.addEventListener('input',draw);draw();fs.append(inp,res);box.appendChild(fs);
+}
+function renderPzTeam(box){
+  const me=mySoc(),mc=myClan(),list=clans(),rows=cloud.rows||[];
+  if(mc){const card=el('div','tmCard');card.style.setProperty('--tc',mc.color);
+    const h=el('div','tmHead');h.append(el('span','tmEmb',mc.emblem),el('div',null));h.lastChild.append(el('b',null,mc.name),el('small',null,`メンバー ${mc.members.length}/5 ・ チーム順位 ${list.findIndex(x=>x.id===mc.id)+1}位`));card.appendChild(h);
+    const st=el('div','tmStats');st.append(el('div',null,'チーム総合'),el('div',null,'魔王へのダメージ'));st.children[0].appendChild(el('b',null,Math.round(mc.total).toLocaleString()));st.children[1].appendChild(el('b',null,Math.round(mc.raid).toLocaleString()));card.appendChild(st);
+    mc.members.forEach(u=>{const r=rows.find(x=>x.id===u)||{};const m=el('div','tmMem');m.append(el('span',null,(u===mc.leader?'👑 ':'')+nickOf(u)+(u===cloud.uid?'（あなた）':'')),el('b',null,Math.round(num(r.total)).toLocaleString()));card.appendChild(m)});
+    const lv=el('button','sound danger',mc.leader===cloud.uid?'チームを解散する':'チームを抜ける');lv.disabled=!canSoc();lv.addEventListener('click',()=>{if(lv.dataset.arm!=='1'){lv.dataset.arm='1';lv.textContent='本当に'+(mc.leader===cloud.uid?'解散する':'抜ける');return}me.clan=null;saveSoc();renderPlaza()});card.appendChild(lv);box.appendChild(card);
+  }else{
+    const mk=el('div','pzSec');mk.appendChild(el('h3',null,'🛡 チームをつくる'));
+    const nm=el('input','pzInput');nm.type='text';nm.maxLength=10;nm.placeholder='チームの名前（10文字まで）';
+    const em=el('div','tmPick');let ce=CLAN_EMB[0],cc=CLAN_COL[0];CLAN_EMB.forEach(e=>{const b=el('button','tmEmbBtn',e);b.addEventListener('click',()=>{ce=e;[...em.children].forEach(x=>x.classList.toggle('on',x===b))});if(e===ce)b.classList.add('on');em.appendChild(b)});
+    const co=el('div','tmPick');CLAN_COL.forEach(c=>{const b=el('button','tmColBtn');b.style.background=c;b.setAttribute('aria-label','色');b.addEventListener('click',()=>{cc=c;[...co.children].forEach(x=>x.classList.toggle('on',x===b))});if(c===cc)b.classList.add('on');co.appendChild(b)});
+    const go=el('button','btn pri','チームをつくる');go.disabled=!canSoc();go.addEventListener('click',()=>{const n=nm.value.trim().slice(0,10);if(!n){nm.focus();return}me.clan={id:'c'+cloud.uid,name:n,emblem:ce,color:cc,leader:cloud.uid};saveSoc();moveToast(`🛡 チーム「${n}」をつくりました！`);renderPlaza()});
+    mk.append(nm,em,co,go);box.appendChild(mk);
+  }
+  const rk=el('div','pzSec');rk.appendChild(el('h3',null,'🏆 チームランキング'));
+  if(!list.length)rk.appendChild(el('p','pzEmpty','まだチームがありません。最初のチームをつくろう！'));
+  list.slice(0,30).forEach((c,i)=>{const r=el('div','tmRow');r.style.setProperty('--tc',c.color);r.append(el('i',null,i+1),el('span','tmEmb s',c.emblem),el('div',null),el('b',null,Math.round(c.total).toLocaleString()));
+    r.children[2].append(el('b',null,c.name),el('small',null,`リーダー ${nickOf(c.leader)} ・ ${c.members.length}/5人`+(c.raid?` ・ 魔王 ${Math.round(c.raid).toLocaleString()}`:'')));
+    if(!mc&&c.members.length<5){const j=el('button','sound','入る');j.disabled=!canSoc();j.addEventListener('click',()=>{me.clan={id:c.id,name:c.name,emblem:c.emblem,color:c.color,leader:c.leader};saveSoc();moveToast(`🛡 チーム「${c.name}」に入りました！`);renderPlaza()});r.appendChild(j)}
+    rk.appendChild(r)});
+  box.appendChild(rk);
+}
+/* ---------- 譜面エディタ ---------- */
+const ED={tokens:[],len:1,mode:'one',edit:null,open:false};
+const HAR_PRESETS=[['','伴奏なし'],['C:4 Am:4 F:4 G:4','定番（C→Am→F→G）'],['F:4 G:4 Em:4 Am:4','王道進行'],['C:2 G:2 Am:2 Em:2 F:2 C:2 F:2 G:2','カノン進行'],['Am:4 F:4 G:4 C:4','小室進行'],['Dm:4 A#:4 C:4 A:4','かっこいいマイナー'],['Cm:4 G#:4 A#:4 G:4','ダーク']];
+function openEditor(c){
+  ED.edit=c;ED.tokens=c?c.mel.trim().split(/\s+/).filter(Boolean):[];
+  $('edName').value=c?c.name:'';$('edSpeed').value=c?c.speed:4;$('edSpeedV').textContent=(+$('edSpeed').value).toFixed(1);
+  const hs=$('edHar');if(!hs.options.length)HAR_PRESETS.forEach(([v,l])=>{const o=el('option',null,l);o.value=v;hs.appendChild(o)});
+  hs.value=c&&HAR_PRESETS.some(p=>p[0]===c.har)?c.har:(c?'':'C:4 Am:4 F:4 G:4');
+  if(!$('edKeys').children.length)buildKeys();
+  $('plaza').hidden=true;$('ugcEd').hidden=false;$('ugcEd').scrollTop=0;edRender();
+}
+function buildKeys(){
+  const box=$('edKeys');const whites=[],blacks=[];
+  for(let o=4;o<=5;o++)NOTE_NAMES.forEach((n,i)=>{const nm=n+o;(n.includes('#')?blacks:whites).push([nm,whites.length])});whites.push(['C6',14]);
+  whites.forEach(([nm],i)=>{const b=el('button','wk',nm.startsWith('C')?nm:'');b.style.left=(i*100/15)+'%';b.style.width=(100/15)+'%';b.addEventListener('pointerdown',e=>{e.preventDefault();edKey(nm)});box.appendChild(b)});
+  blacks.forEach(([nm,wi])=>{const b=el('button','bk');b.style.left=((wi-.32)*100/15)+'%';b.style.width=(100/15*.64)+'%';b.addEventListener('pointerdown',e=>{e.preventDefault();edKey(nm)});box.appendChild(b)});
+}
+function edKey(nm){
+  initAudio();try{play(midiOf(nm),0,.6)}catch(e){}
+  const lenS=ED.len>1?'-'+ED.len:'';
+  if(ED.mode!=='one'&&ED.open&&ED.tokens.length){const last=ED.tokens[ED.tokens.length-1].replace(/-\d+$/,''),sep=ED.mode==='chord'?'.':'+';
+    if(last.split(/[.+]/).length<(ED.mode==='chord'?4:2)){ED.tokens[ED.tokens.length-1]=last+sep+nm+lenS;edRender();return}}
+  ED.tokens.push(nm+lenS);ED.open=ED.mode!=='one';edRender();
+}
+function edRender(){
+  const box=$('edToks');box.textContent='';
+  ED.tokens.forEach((t,i)=>{const c=el('span','edTok',t.replace(/-(\d+)$/,'（$1）'));box.appendChild(c)});
+  if(!ED.tokens.length)box.appendChild(el('span','edHint','下の鍵盤を押すと、ここに音が並びます'));
+  box.scrollTop=box.scrollHeight;
+  $('edText').value=ED.tokens.join(' ');$('edCount').textContent=`${ED.tokens.length}音`;
+  [...document.querySelectorAll('#edLen button')].forEach(b=>b.classList.toggle('on',+b.dataset.len===ED.len));
+  [...document.querySelectorAll('#edMode button')].forEach(b=>b.classList.toggle('on',b.dataset.mode===ED.mode));
+}
+function edSong(){const mel=ED.tokens.join(' ').trim();if(!mel)throw new Error('音がまだありません');const s={id:'ugc-draft',cat:'ugc',ugc:1,name:$('edName').value.trim()||'無題',by:myNick()+' の譜面',speed:+$('edSpeed').value,mel,har:$('edHar').value||'C:4'};compile(s);return s}
+function edListen(){
+  initAudio();let t=0;const sp=+$('edSpeed').value||4;
+  ED.tokens.slice(0,120).forEach(tok=>{const m=/^(.*?)(?:-(\d+))?$/.exec(tok),len=+(m[2]||1);
+    m[1].split(/[.+>]/).forEach((n,j)=>{const at=m[1].includes('>')?t+j*(len/sp)/m[1].split('>').length:t;try{play(midiOf(n),at,.5)}catch(e){}});t+=len/sp});
+}
+$('edLen').addEventListener('click',e=>{const b=e.target.closest('button');if(b){ED.len=+b.dataset.len;ED.open=false;edRender()}});
+$('edMode').addEventListener('click',e=>{const b=e.target.closest('button');if(b){ED.mode=b.dataset.mode;ED.open=false;edRender()}});
+$('edUndo').addEventListener('click',()=>{ED.tokens.pop();edRender()});
+$('edClear').addEventListener('click',()=>{const b=$('edClear');if(b.dataset.arm!=='1'){b.dataset.arm='1';b.textContent='本当に消す';setTimeout(()=>{b.dataset.arm='';b.textContent='🗑 ぜんぶ消す'},2500);return}b.dataset.arm='';b.textContent='🗑 ぜんぶ消す';ED.tokens=[];edRender()});
+$('edSpeed').addEventListener('input',()=>{$('edSpeedV').textContent=(+$('edSpeed').value).toFixed(1)});
+$('edText').addEventListener('change',()=>{ED.tokens=$('edText').value.trim().split(/\s+/).filter(Boolean);edRender()});
+$('edListen').addEventListener('click',edListen);
+$('edTry').addEventListener('click',()=>{try{const s=edSong();const i=SONGS.findIndex(x=>x.id===s.id);if(i>=0)SONGS[i]=s;else SONGS.push(s);initAudio();$('ugcEd').hidden=true;newGame(s.id);restoreBgSrc();G.fromPlaza='editor'}catch(e){$('edMsg').textContent='⚠ '+e.message}});
+$('edPub').addEventListener('click',async()=>{
+  const msg=$('edMsg');let s;try{s=edSong()}catch(e){msg.textContent='⚠ '+e.message+'。音の書き方を確かめてください。';return}
+  if(ED.tokens.length<8){msg.textContent='⚠ 8音以上にしてから公開してね。';return}
+  const name=$('edName').value.trim();if(!name){msg.textContent='⚠ 曲名を入れてください。';$('edName').focus();return}
+  const list=myCharts(),id=ED.edit&&ED.edit.uid===cloud.uid?ED.edit.id:'c'+Date.now().toString(36);
+  const rec={id,name:name.slice(0,30),speed:+$('edSpeed').value,mel:ED.tokens.join(' ').slice(0,4000),har:$('edHar').value,t:Date.now()};
+  const nl=[rec].concat(list.filter(x=>x.id!==id));if(nl.length>10){msg.textContent='⚠ 公開できるのは10曲までです。古い譜面を消してから公開してね。';return}
+  $('edPub').disabled=true;const ok=await saveMyCharts(nl);$('edPub').disabled=false;
+  if(ok){moveToast(`🎼「${rec.name}」を公開しました！`);SOC.sort='new';openPlaza('chart')}else msg.textContent=canSoc()?'⚠ 公開できませんでした。少し待ってからもう一度。':'⚠ この開き方では公開できません（ログイン、Claude版は招待が必要）。';
+});
+$('edBack').addEventListener('click',()=>openPlaza('chart'));
+['chart','friend','team'].forEach(t=>$('pz_'+t).addEventListener('click',()=>{SOC.tab=t;renderPlaza()}));
+$('plazaBack').addEventListener('click',()=>{$('plaza').hidden=true});
+$('plazaCard').addEventListener('click',()=>openPlaza());
+/* プロフィール（ランキングから開く）に「フレンドに追加」 */
+{const op=openPView;openPView=function(id){op.apply(this,arguments);try{
+  let b=$('pvFriend');if(!b){b=el('button','btn','');b.id='pvFriend';$('pvClose').before(b)}
+  const me=mySoc(),is=me.friends.includes(id);b.hidden=id===cloud.uid||String(id).startsWith('c-');b.disabled=!canSoc()||is;b.textContent=is?'👥 フレンドです':'＋ フレンドに追加';
+  b.onclick=()=>{if(me.friends.includes(id))return;me.friends.push(id);saveSoc();b.disabled=true;b.textContent='👥 フレンドになりました';moveToast('👥 フレンドに追加しました')}}catch(e){}}}
+/* 魔王レイドにチーム別のダメージ */
+{const rr=renderRaid;renderRaid=function(){rr.apply(this,arguments);try{const box=$('rdTeams');box.textContent='';const cl=clans().filter(c=>c.raid>0).sort((a,b)=>b.raid-a.raid).slice(0,10);
+  if(!cl.length){box.appendChild(el('p','hint','チームに入っている人のダメージが、ここにチームごとに出ます。'));return}
+  cl.forEach((c,i)=>{const li=el('li');if(myClan()&&myClan().id===c.id)li.className='me';li.append(el('i',null,i===0?'🛡':i+1),el('span',null,c.emblem+' '+c.name),el('b',null,Math.round(c.raid).toLocaleString()));box.appendChild(li)})}catch(e){}}}
+/* みんなの譜面のベストは、別に覚えておく（練習扱い） */
+{const ph=progressHook;progressHook=function(slow){try{if(G&&G.song&&G.song.cat==='ugc'&&G.song.id!=='ugc-draft'){const k='ugcBest:'+G.song.id;if(G.score>num(store.get(k,0)))store.set(k,G.score)}}catch(e){}return ph.apply(this,arguments)}}
+setInterval(()=>{if(cloud.loaded&&cloud.uid&&!SOC.loaded)initSocial()},2000);
+renderPlazaCard();
+{const ng=newGame;newGame=function(){const r=ng.apply(this,arguments);try{$('plaza').hidden=true;$('ugcEd').hidden=true;if(G&&G.song&&G.song.cat==='ugc')G.fromPlaza=G.song.id==='ugc-draft'?'editor':(SOC.from||'plaza')}catch(e){}return r}}
+
 })();
 </script>
 
