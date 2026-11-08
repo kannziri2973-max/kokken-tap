@@ -8733,7 +8733,7 @@ var RP_SEED=0;
 {const seq=[];$('hero').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;seq.push(b.textContent);if(seq.length>5)seq.shift();
   if(seq.join('')==='プッタ鍵黒'){seq.length=0;const first=!store.get('secretOpen',false);store.set('secretOpen',true);
     if(first){const o=loadOwned();if(!o.includes('tag:himitsu'))o.push('tag:himitsu');store.set('owned',o);addNote('ach','🔓 ひみつの曲が開いた！ 称号「ひみつを知る者」','secret')}
-    setTimeout(()=>{[60,64,67,72,76,79,84,88,91,96].forEach((n,i)=>play(n,i*.05,.5))},200);moveToast(first?'🔓 ひみつの曲が開いた！ 曲の一覧のいちばん上を見てね':'🔓 ひみつの曲は開いています');renderSongs()}})}
+    secretFx(first);renderSongs()}})}
 /* ---------- 結果を自慢する画像 ---------- */
 function shareImage(){
   if(!G)return null;const c=document.createElement('canvas');c.width=1080;c.height=1350;const g=c.getContext('2d');
@@ -8903,12 +8903,75 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='89';
+const APP_VER='90';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
   location.replace(location.pathname+'?v='+m[1]+location.hash)}).catch(()=>{})}catch(e){}}
 setTimeout(verCheck,3000);setInterval(verCheck,5*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)verCheck()});
+
+/* ---------- 隠しコマンドの演出: 封印解除 ---------- */
+function secretFx(first){
+  try{initAudio()}catch(e){}
+  let ov=$('secretFx');if(!ov){ov=document.createElement('div');ov.id='secretFx';ov.style.cssText='position:absolute;inset:0;z-index:90;background:#000;touch-action:none';const c=document.createElement('canvas');c.style.cssText='position:absolute;inset:0;width:100%;height:100%;display:block';ov.appendChild(c);$('stage').appendChild(ov)}
+  ov.hidden=false;const cv=ov.firstChild,dpr=Math.min(2,window.devicePixelRatio||1),R=ov.getBoundingClientRect(),w=R.width,h=R.height;cv.width=w*dpr;cv.height=h*dpr;const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);
+  const KEYS=[['黒',0,0],['鍵',0,2],['タ',1,1],['ッ',1,3],['プ',2,2]],NOTES=[72,76,79,84,88];
+  const T0=performance.now(),DUR=first?5200:3400;let done=false,raf=0;
+  const P=[];const rnd=Math.random;
+  const end=()=>{if(done)return;done=true;cancelAnimationFrame(raf);ov.style.transition='opacity .45s';ov.style.opacity='0';setTimeout(()=>{ov.hidden=true;ov.style.opacity='';ov.style.transition='';if(first){try{const sl=$('songs');sl&&sl.scrollIntoView({block:'start',behavior:'smooth'})}catch(e){}}},460)};
+  ov.onpointerdown=()=>{if(performance.now()-T0>900)end()};
+  // 音: 黒鍵が順に鳴る → 低い一撃 → 和音のきらめき
+  KEYS.forEach((k,i)=>setTimeout(()=>{if(!done)play(NOTES[i],0,.75)},250+i*190));
+  setTimeout(()=>{if(done)return;play(36,0,.9);play(48,0,.7);play(55,.02,.5)},1300);
+  setTimeout(()=>{if(done)return;[72,76,79,84,88,91,96,100].forEach((n,i)=>play(n,i*.06,.45))},1450);
+  const cx=w/2,cy=h*.42,cw=Math.min(w*.82,360)/4,chh=cw*.62,gx=cx-cw*2,gy=cy-chh*1.5;
+  const ease=t=>t<0?0:t>1?1:1-Math.pow(1-t,3);
+  const step=now=>{if(done)return;const t=(now-T0)/1000;g.clearRect(0,0,w,h);
+    // 背景: 闇から金の光
+    g.fillStyle='#000';g.fillRect(0,0,w,h);
+    const burst=ease((t-1.3)/.5);
+    if(t>1.3){const gr=g.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h)*.8);gr.addColorStop(0,`rgba(255,215,106,${.35*burst*Math.max(0,1-(t-1.3)/3)+.08})`);gr.addColorStop(.5,'rgba(120,70,10,.12)');gr.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=gr;g.fillRect(0,0,w,h)}
+    // 回る光の筋
+    if(t>1.3){g.save();g.translate(cx,cy);g.rotate(t*.25);g.globalCompositeOperation='lighter';const n=14;for(let i=0;i<n;i++){g.rotate(Math.PI*2/n);const L=Math.max(w,h);const lg=g.createLinearGradient(0,0,L,0);lg.addColorStop(0,`rgba(255,220,130,${.22*burst})`);lg.addColorStop(1,'rgba(255,220,130,0)');g.fillStyle=lg;g.beginPath();g.moveTo(0,0);g.lineTo(L,-L*.06);g.lineTo(L,L*.06);g.closePath();g.fill()}g.restore()}
+    // 鍵盤: 黒鍵が順番に金に灯る
+    const shake=t>1.3&&t<1.55?(1.55-t)*14:0;g.save();g.translate((rnd()-.5)*shake,(rnd()-.5)*shake);
+    const kIn=ease(t/.35);g.globalAlpha=kIn;
+    for(let r=0;r<3;r++)for(let c=0;c<4;c++){const x=gx+c*cw,y=gy+r*chh;const ki=KEYS.findIndex(k=>k[1]===r&&k[2]===c);
+      if(ki<0){const gr=g.createLinearGradient(0,y,0,y+chh);gr.addColorStop(0,'#fbf8f1');gr.addColorStop(1,'#d6cfbf');g.fillStyle=gr;g.fillRect(x+1,y+1,cw-2,chh-2);continue}
+      const lt=t-(.25+ki*.19),on=lt>0;const fl=on?Math.max(0,1-lt*2.2):0;
+      g.fillStyle=on?`rgb(${20+fl*120|0},${16+fl*90|0},${6})`:'#07080b';g.fillRect(x+1,y+1,cw-2,chh-2);
+      g.save();g.font=`${chh*.62}px ${FONT_D}`;g.textAlign='center';g.textBaseline='middle';
+      if(on){g.shadowColor='#ffd76a';g.shadowBlur=18+fl*30;g.fillStyle=fl>.3?'#fff8dc':'#f3d27a'}else{g.fillStyle='#3a3424'}
+      g.fillText(KEYS[ki][0],x+cw/2,y+chh/2+2);g.restore()}
+    g.strokeStyle=`rgba(243,210,122,${.5+burst*.5})`;g.lineWidth=2;g.shadowColor='#ffd76a';g.shadowBlur=burst*24;g.strokeRect(gx-2,gy-2,cw*4+4,chh*3+4);g.shadowBlur=0;
+    g.restore();g.globalAlpha=1;
+    // 衝撃の輪
+    if(t>1.3&&t<2.6){const k=(t-1.3)/1.3;g.strokeStyle=`rgba(255,236,170,${1-k})`;g.lineWidth=6*(1-k)+1;g.beginPath();g.arc(cx,cy,k*Math.max(w,h)*.7,0,Math.PI*2);g.stroke()}
+    // 金の粒
+    if(t>1.3&&!P.spawned){P.spawned=1;for(let i=0;i<160;i++){const a=rnd()*Math.PI*2,v=120+rnd()*420;P.push({x:cx,y:cy,vx:Math.cos(a)*v,vy:Math.sin(a)*v-80,s:1+rnd()*2.6,l:1.4+rnd()*1.8,c:rnd()<.7?'#ffd76a':'#fff6d6'})}}
+    if(P.length){const dt=1/60;g.save();g.globalCompositeOperation='lighter';for(const q of P){const age=t-1.3;if(age>q.l)continue;q.vy+=160*dt;q.vx*=.985;q.vy*=.985;q.x+=q.vx*dt;q.y+=q.vy*dt;g.globalAlpha=Math.max(0,1-age/q.l);g.fillStyle=q.c;g.fillRect(q.x-q.s/2,q.y-q.s/2,q.s,q.s)}g.restore();g.globalAlpha=1}
+    // 文字
+    if(t>1.55){const a=ease((t-1.55)/.6),fade=Math.min(1,Math.max(0,(DUR/1000-t)/.6));g.save();g.globalAlpha=a*fade;g.textAlign='center';g.textBaseline='middle';
+      const y1=gy+chh*3+56;g.font=`700 ${Math.min(42,w*.1)}px "Shippori Mincho",serif`;const sp=(1-a)*14;
+      const txt=first?'封印解除':'封印は解かれている';g.shadowColor='#ffb300';g.shadowBlur=26;g.fillStyle='#fff3c4';
+      if('letterSpacing' in g)g.letterSpacing=(4+sp)+'px';g.fillText(txt,cx,y1);if('letterSpacing' in g)g.letterSpacing='0px';
+      g.shadowBlur=0;g.font=`700 ${Math.min(15,w*.04)}px ${FONT_B}`;g.fillStyle='#e8d49a';g.fillText(first?'ひみつの曲が開いた — 曲の一覧のいちばん上へ':'ひみつの曲は、曲の一覧のいちばん上にあります',cx,y1+38);
+      if(first&&t>2.3){g.font=`700 ${Math.min(13,w*.035)}px ${FONT_B}`;g.fillStyle='#ffd76a';g.fillText('称号「ひみつを知る者」を手に入れた',cx,y1+64)}
+      g.font=`500 11px ${FONT_B}`;g.fillStyle='rgba(255,255,255,.45)';g.fillText('タップで閉じる',cx,h-34);g.restore()}
+    if(t*1000>=DUR){end();return}
+    raf=requestAnimationFrame(step)};
+  raf=requestAnimationFrame(step);
+}
+/* ---------- プレイ中は、みんなの記録以外の大きな受信（プレゼント・広場・譜面）も止める ---------- */
+function subSocialFeed(){if(SOC.unsubS||!cloud.db)return;try{SOC.unsubS=cloud.db.collection('social').limit(500).onSnapshot(s=>{SOC.rows=s.docs.map(d=>({id:d.id,...cleanSocDoc(d.data())}));checkStamps();renderPlazaCard();if(!$('plaza').hidden)renderPlaza();try{if(!$('raid').hidden)renderRaid()}catch(e){}},()=>{SOC.unsubS=null})}catch(e){}}
+const FEEDS=[
+  {k:'pg',on:()=>!!PG.unsub,off:()=>{try{PG.unsub()}catch(e){}PG.unsub=null},re:()=>subscribePG()},
+  {k:'soc',on:()=>!!SOC.unsubS,off:()=>{try{SOC.unsubS()}catch(e){}SOC.unsubS=null},re:()=>subSocialFeed()},
+  {k:'ch',on:()=>!!SOC.unsubC,off:()=>{try{SOC.unsubC()}catch(e){}SOC.unsubC=null},re:()=>subCharts()}];
+const FEED_P={};
+{const a=subscribePG;subscribePG=function(){if(gameBusy()){FEED_P.pg=1;return}return a.apply(this,arguments)}}
+{const a=subCharts;subCharts=function(){if(gameBusy()){FEED_P.ch=1;return}return a.apply(this,arguments)}}
+setInterval(()=>{try{const busy=gameBusy();FEEDS.forEach(f=>{if(busy&&f.on()){f.off();FEED_P[f.k]=1}else if(!busy&&FEED_P[f.k]&&!f.on()&&cloud.db){FEED_P[f.k]=0;f.re()}})}catch(e){}},700);
 })();
 </script>
 
