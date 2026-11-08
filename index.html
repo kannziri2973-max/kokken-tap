@@ -39,14 +39,54 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
     return;
   }
   let F=null;
+
+  /* ---- ログイン画面（ログインするまでゲームの上にかぶせる） ---- */
+  let gateEl=null;
+  const inApp=/Line\/|FBAN|FBAV|Instagram|Twitter|TikTok|MicroMessenger|KAKAOTALK/i.test(navigator.userAgent);
+  function showGate(auth,au){
+    const mk=()=>{
+      if(gateEl){gateEl.hidden=false;return}
+      gateEl=document.createElement('div');gateEl.id='fbGate';
+      gateEl.style.cssText='position:fixed;inset:0;z-index:90;background:radial-gradient(90% 60% at 50% 25%,#1c2240,#0d0f14 70%);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px 18px;text-align:center;font-family:"Zen Kaku Gothic New","Hiragino Sans",sans-serif';
+      gateEl.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,52px);gap:2px;background:#2a2d3a;border:2px solid #2a2d3a"><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">黒</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">鍵</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">タ</span><span style="height:52px;background:#f6f7f9"></span><span style="height:52px;background:#0d0f14;color:#fff;display:grid;place-items:center;font:900 24px sans-serif">ッ</span></div>'
+        +'<div style="font:700 22px/1.4 sans-serif">黒鍵タップ</div>'
+        +'<div style="font-size:14px;line-height:1.7;color:#c9cbd6;max-width:340px">ログインすると、記録・コイン・アイテムがアカウントに保存されて、どの端末からでも続きから遊べます。ランキングやレイドにも参加できます。</div>'
+        +'<button id="fbGateBtn" style="display:flex;align-items:center;justify-content:center;gap:10px;width:100%;max-width:320px;min-height:54px;border:0;background:#fff;color:#1f1f1f;font:700 16px sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.35)"><svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.4c-.5 2.9-2.2 5.3-4.6 6.9l7.4 5.7c4.3-4 6.9-9.9 6.9-17.1z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-2.9-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.4-5.7c-2.1 1.4-4.8 2.3-8.5 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>Googleでログインして遊ぶ</button>'
+        +'<div id="fbGateMsg" style="font-size:13px;line-height:1.6;color:#ffd76a;max-width:340px;min-height:1.6em"></div>'
+        +(inApp?'<div style="font-size:13px;line-height:1.7;color:#ff9aa8;max-width:340px;border:1px solid #ff5a6a;padding:10px">⚠ LINEなどのアプリの中で開いているとログインできません。右上（か右下）のメニューから「ブラウザで開く」を選んで、Safari か Chrome で開いてください。</div>':'')
+        +'<div style="font-size:11px;color:#8a8da0;max-width:340px;line-height:1.6">ゲームに表示されるのはニックネームだけです。メールアドレスはほかの人には見えません。</div>';
+      document.body.appendChild(gateEl);
+      gateEl.querySelector('#fbGateBtn').onclick=async()=>{
+        const msg=gateEl.querySelector('#fbGateMsg');msg.textContent='ログインしています…';
+        const p=new auth.GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+        try{await auth.signInWithPopup(au,p)}
+        catch(e){const c=String(e&&e.code||'');
+          if(/popup-blocked|operation-not-supported|web-storage/.test(c)){try{await auth.signInWithRedirect(au,p);return}catch(x){msg.textContent='ログインできませんでした（'+(x.code||x.message)+'）'}}
+          else if(/popup-closed|cancelled-popup/.test(c))msg.textContent='ログインがキャンセルされました。もう一度押してください。';
+          else if(/unauthorized-domain/.test(c))msg.textContent='このURLはまだFirebaseに登録されていません（承認済みドメイン）。';
+          else msg.textContent='ログインできませんでした（'+c+'）';}
+      };
+    };
+    if(document.body)mk();else window.addEventListener('DOMContentLoaded',mk);
+  }
+  function hideGate(){if(gateEl)gateEl.hidden=true}
   const boot=(async()=>{
     const [app,auth,fs,rtdb]=await Promise.all([import(U+'firebase-app.js'),import(U+'firebase-auth.js'),import(U+'firebase-firestore.js'),import(U+'firebase-database.js')]);
     const a=app.initializeApp(FIREBASE_CONFIG);
     const au=auth.getAuth(a);
     let db;try{db=fs.initializeFirestore(a,{ignoreUndefinedProperties:true})}catch(e){db=fs.getFirestore(a)}
     const rd=FIREBASE_CONFIG.databaseURL?rtdb.getDatabase(a):null;
-    const user=await new Promise(res=>{let done=false;auth.onAuthStateChanged(au,u=>{if(u){if(!done){done=true;res(u)}}else auth.signInAnonymously(au).catch(e=>{console.error(e);if(!done){done=true;res(null)}})})});
+    /* ログインは必ず Google で。ログインするまでゲームの記録はサーバーに送らない */
+    try{await auth.getRedirectResult(au)}catch(e){console.warn(e)}
+    const user=await new Promise(res=>{let done=false;auth.onAuthStateChanged(au,u=>{
+      if(u&&u.isAnonymous){auth.signOut(au).catch(()=>{});return}
+      if(u){hideGate();if(!done){done=true;res(u)}else if(F&&F.user&&F.user.uid!==u.uid)location.reload()}
+      else showGate(auth,au);
+    })});
     F={app,auth,fs,rtdb,a,au,db,rd,user};
+    /* 管理者がログインしたら、Claude版のガチャ・アイテム・お知らせ・プレゼントコードのうち、まだ無いものを自動で入れる */
+    if(user&&user.uid===OWNER_UID&&window.KOKKEN_MIGRATE)(async()=>{let n=0;for(const [p,d] of Object.entries(window.KOKKEN_MIGRATE)){try{const ref=fs.doc(db,p);if(!(await fs.getDoc(ref)).exists()){await fs.setDoc(ref,d);n++}}catch(e){console.warn('migrate',p,e)}}
+      if(n){const t=document.createElement('div');t.textContent='✅ Claude版のガチャ・アイテム・お知らせなどを入れました（'+n+'件）';t.style.cssText='position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:95;background:#0d0f14;color:#fff;font:700 14px sans-serif;padding:12px 16px;border:2px solid #ffd76a';document.body.appendChild(t);setTimeout(()=>t.remove(),6000)}})();
     return F;
   })();
   const errCode=e=>{const c=String(e&&e.code||'').replace(/^.*\//,'');return c==='permission-denied'?'permission_denied':c==='resource-exhausted'?'quota_exceeded':c==='invalid-argument'?'invalid_argument':c||'unknown'};
@@ -108,8 +148,7 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
     info.innerHTML='';
     const line=t=>{const d=document.createElement('div');d.textContent=t;info.appendChild(d);return d};
     const btn=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.style.cssText='display:block;width:100%;margin-top:8px;min-height:40px;font:700 14px sans-serif;background:#ffd76a;color:#1a1200;border:0;cursor:pointer';b.onclick=f;info.appendChild(b);return b};
-    if(!isG){line('まだGoogleでログインしていません。');btn('Googleでログイン',async()=>{const p=new auth.GoogleAuthProvider();try{await auth.signInWithPopup(au,p);location.reload()}catch(e){try{await auth.signInWithRedirect(au,p)}catch(x){alert('ログインできませんでした: '+(x.code||x.message))}}})}
-    else{
+    {
       line('ログイン中: '+(user.email||''));
       const u=line('あなたのUID: '+user.uid);u.style.wordBreak='break-all';
       btn('UIDをコピー',()=>{navigator.clipboard&&navigator.clipboard.writeText(user.uid)});
@@ -118,7 +157,7 @@ const OWNER_UID = "hVXxmYs1i0SzOayr6tpri01GWpH2";
         const b=e.target;b.disabled=true;b.textContent='入れています…';let n=0;
         try{for(const [p,d] of Object.entries(window.KOKKEN_MIGRATE)){const ref=F.fs.doc(F.db,p);const s=await F.fs.getDoc(ref);if(!s.exists()){await F.fs.setDoc(ref,d);n++}}b.textContent=`入れました（${n}件。すでにあったものはそのまま）。ページを開き直してください。`}
         catch(x){b.textContent='できませんでした: '+(x.code||x.message)}});
-      btn('ログアウト（このあとは普通のプレイヤーとして匿名で遊びます）',async()=>{await auth.signOut(au);location.hash='';location.reload()});
+      btn('ログアウト（この端末の記録も消して、ログイン画面に戻ります。記録はアカウントに残っています）',async()=>{try{await new Promise(r=>setTimeout(r,800))}catch(e){}await auth.signOut(au);try{Object.keys(localStorage).filter(k=>k.startsWith('kokken:')).forEach(k=>localStorage.removeItem(k))}catch(e){}location.hash='';location.reload()});
     }
   });
 })();
@@ -4801,9 +4840,9 @@ $('keepLoadBtn').addEventListener('click',()=>{
 });
 function renderRSave(){$('rSave').hidden=canSync()}
 function renderKeepNote(){
-  if(canSync()||(storageOK&&store.get('keepNoteOff',false)&&!looksFresh())){$('keepNote').hidden=true;return}
+  if((canSync()&&!looksFresh())||(storageOK&&store.get('keepNoteOff',false)&&!looksFresh())){$('keepNote').hidden=true;return}
   $('keepLoad').hidden=!looksFresh();
-  $('keepText').textContent=storageOK
+  $('keepText').textContent=canSync()?'Claude版で遊んでいた人へ: Claude版のページで「引っ越し」ボタンを押すか、セーブコードを下に貼ると、続きから遊べます。':storageOK
     ?'あなたの記録は、この端末のこのアプリ（ブラウザ）の中にだけ保存されます。別のアプリで開いたり、データが消えたりすると最初からになります。プロフィールの「引き継ぎ」でセーブコードを保存しておくと、続きから遊べます。'
     :'この開き方では、記録がこの端末に保存されません。閉じると最初からになります。遊び終わったら、プロフィールの「引き継ぎ」でセーブコードを保存してください。';
   $('keepNote').hidden=false;
@@ -7619,6 +7658,14 @@ setInterval(()=>{
 },1000);
 raidCheck();
 
+/* Claude版の帯から、記録をつけたままWeb版を開く */
+try{const wl=$('webLink');if(wl)wl.addEventListener('click',()=>{try{wl.href='https://kannziri2973-max.github.io/kokken-tap/#kks='+encodeURIComponent(makeSave())}catch(e){}})}catch(e){}
+/* 引っ越しリンク: URL の #kks=KKS1:... で開くと、そのセーブコードを読み込んで続きから遊べる */
+function moveToast(t){const e=document.createElement('div');e.textContent=t;e.style.cssText='position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:80;max-width:92vw;background:#0d0f14;color:#fff;font:700 14px/1.5 sans-serif;padding:12px 16px;border:2px solid #ffd76a;box-shadow:0 6px 24px rgba(0,0,0,.4);text-align:center';document.body.appendChild(e);setTimeout(()=>e.remove(),6000)}
+try{const m=/#kks=([^#&]+)/.exec(location.hash||'');if(m){const code=decodeURIComponent(m[1]);history.replaceState(null,'',location.pathname+location.search);
+  setTimeout(()=>{try{const d=loadSave(code);renderSongs();renderGate();renderCoins();try{renderProf()}catch(e){}try{renderKeepNote()}catch(e){}{let n=0;const tp=()=>{if(cloud.loaded&&cloud.uid)pushCloud();else if(n++<400)setTimeout(tp,1500)};tp()}
+    moveToast(`🎉 引っ越し完了！ ${String(d.nick||'プレイヤー').slice(0,16)} ・ 総合 ${Math.round(num(d.total)).toLocaleString()} の記録を読み込みました`)}
+  catch(e){moveToast('引っ越しできませんでした: '+(e&&e.message||''))}},400)}}catch(e){}
 })();
 </script>
 
