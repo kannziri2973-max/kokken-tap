@@ -465,7 +465,7 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#e9ebf0;paddin
 .dailyCard .dcRow{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:#d8d2ff}
 .dailyCard .dcBarW{height:6px;background:rgba(255,255,255,.15)}
 .dailyCard .dcBarW span{display:block;height:100%;background:linear-gradient(90deg,#ffd76a,#ff7aa8);transition:width .6s}
-.dTabs{flex:none;display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.dTabs{flex:none;display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 .dTabs button{background:#fff;min-height:46px;font-weight:700;font-size:14px}
 .dTabs button[aria-selected="true"]{background:var(--ink);color:#fff}
 .dPane{display:flex;flex-direction:column;gap:12px}
@@ -603,6 +603,49 @@ code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#e9ebf0;paddin
 .edBtns .btn{min-height:46px;font-size:14px}
 #edText{width:100%;box-sizing:border-box;min-height:80px;font:12px/1.5 ui-monospace,Menlo,monospace;border:1px solid var(--ink);padding:8px;-webkit-user-select:text;user-select:text}
 #edMsg{margin:0;color:var(--red);font-weight:700;font-size:13px;min-height:1.2em}
+
+/* ---------- 今日の1曲・トーナメント・クイズ・自慢画像 ---------- */
+.xRow{flex:none;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.xBtn{display:block;text-align:left;padding:10px 12px;font-weight:700;font-size:12.5px;line-height:1.45;color:#fff;border:0;min-height:52px}
+#xD1{grid-column:1/-1;background:linear-gradient(110deg,#0f6b5c,#2fae7d)}
+#xTn{background:linear-gradient(110deg,#6b4a00,#c79a1f)}
+#xQuiz{background:linear-gradient(110deg,#5a1f8a,#c2457a)}
+.d1Card{display:flex;flex-direction:column;gap:4px;padding:16px;background:linear-gradient(120deg,#0f6b5c,#1747a6);color:#fff;text-align:center}
+.d1Card small{font-size:12px;color:#d0f0ea}.d1Card b{font-size:22px}.d1Card span{font-size:12px;color:#d0f0ea}
+.d1Rank,.qzBoard{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.d1Rank li,.qzBoard li{display:grid;grid-template-columns:34px minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 10px;background:#fff;border:1px solid var(--line);font-size:14px}
+.d1Rank li.me,.qzBoard li.me{background:#ffe6ea}
+.d1Rank i,.qzBoard i{font-style:normal;text-align:center;font-family:var(--display)}
+.d1Rank b,.qzBoard b{font-family:var(--display);font-weight:400}
+#dpOne h3{margin:8px 0 0;font-size:14px}
+.tnHead{display:flex;flex-direction:column;gap:4px;padding:16px;text-align:center;color:#fff;background:radial-gradient(120% 120% at 50% 0%,#c79a1f,#3a2a00 70%)}
+.tnHead b{font-size:24px;font-family:var(--display);font-weight:400}.tnHead small,.tnHead span{font-size:12.5px;color:#fff3c4}
+.tnSongs{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.tnSongs div{background:#fff;border:1px solid var(--line);padding:8px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.tnSongs small{font-size:10.5px;color:var(--mute)}.tnSongs b{font-size:12.5px;overflow-wrap:anywhere}
+.tnMatch{display:flex;flex-direction:column;gap:8px;padding:14px;background:#0d0f14;color:#fff}
+.tnMatch b{font-size:16px;color:#ffd76a}.tnMatch span{font-size:13px;color:#d6d9e6}
+.tnTree{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;overflow-x:auto}
+.tnCol{display:flex;flex-direction:column;justify-content:space-around;gap:4px;min-width:0}
+.tnCol small{font-size:10.5px;color:var(--mute);text-align:center}
+.tnSlot{padding:6px 4px;background:#fff;border:1px solid var(--line);font-size:11px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tnSlot.me{border:2px solid #c79a1f;background:#fff8de;font-weight:800}.tnSlot.wait{color:var(--mute);background:#f3f4f7}
+.qzHead{display:flex;justify-content:space-between;font-size:15px}
+.qzBar{height:8px;background:#e3e5ec}.qzBar span{display:block;height:100%;background:linear-gradient(90deg,#c2457a,#5a1f8a);transition:width .1s linear}
+.qzNote{font-size:64px;text-align:center;color:#c9c0e6;transition:transform .2s,color .2s}.qzNote.on{color:#c2457a;animation:qzBeat .5s ease-in-out infinite alternate}
+@keyframes qzBeat{to{transform:scale(1.15)}}
+.qzChoices{display:grid;grid-template-columns:1fr;gap:8px}
+.qzC{min-height:54px;padding:8px 12px;background:#fff;border:2px solid var(--ink);font-weight:800;font-size:15px;text-align:left}
+.qzC.ok{background:#2fae7d;border-color:#2fae7d;color:#fff}.qzC.ng{background:#e0213a;border-color:#e0213a;color:#fff}
+.qzEnd{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px;background:linear-gradient(120deg,#5a1f8a,#c2457a);color:#fff;text-align:center}
+.qzEnd b{font-family:var(--display);font-weight:400;font-size:48px}.qzEnd em{font-style:normal;color:#ffd76a;font-weight:800}
+#shareFx{position:fixed;inset:0;z-index:75;background:rgba(5,6,12,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px}
+#shareFx img{max-width:min(92vw,420px);max-height:62vh;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#shareFx .btn{width:100%;max-width:340px;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center}
+#shareFx p{margin:0;color:#c9cbd6;font-size:12px;text-align:center}
+.invBox{display:flex;flex-direction:column;gap:8px;padding:14px;background:linear-gradient(120deg,#13204a,#2a1450);color:#fff}
+.invBox b{font-size:15px}.invBox small{font-size:12px;color:#d8d2ff;line-height:1.6}
+.invBox input{width:100%;box-sizing:border-box;min-height:42px;padding:6px 10px;font:12px ui-monospace,monospace;border:1px solid #4a4f70;background:#0d0f14;color:#fff}
 
 #exGate{flex:none;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 14px;align-items:center;text-align:left;padding:14px 16px;background:linear-gradient(120deg,#12040d,#2a0838 35%,#03243c 70%,#2c2010);color:#f6eefc;border:1px solid #4a2a66}
 #exGate.open{box-shadow:0 0 0 1px #d9a8ff inset}
@@ -1237,6 +1280,7 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
     <button id="mailBar" class="eventBar on mailBar" hidden></button>
     <button id="raidBar" hidden><canvas id="rbCv" width="152" height="152" aria-hidden="true"></canvas><span class="rbK" id="rbKick"></span><b id="rbName"></b><div class="rbHp"><span id="rbHpIn"></span></div><small id="rbInfo"></small></button>
     <button id="dailyCard" class="dailyCard"><span class="dcTop"><span id="dcLogin"></span><em id="dcBadge" hidden></em></span><span class="dcRow"><span id="dcMiss"></span><span id="dcPass"></span></span><span class="dcBarW"><span id="dcBar"></span></span></button>
+    <div class="xRow"><button class="xBtn" id="xD1">🎵 今日の1曲</button><button class="xBtn" id="xTn">🏆 週末トーナメント</button><button class="xBtn" id="xQuiz">🎵 イントロクイズ<br><small>曲のはじめで曲名当て・早押し対戦</small></button></div>
     <button id="plazaCard" class="plazaCard"><b>👥 みんなの広場</b><small id="plazaInfo">みんなの譜面・フレンド・チーム</small></button>
     <button id="surpriseBar" class="eventBar on surprise" hidden></button>
     <button id="eventBar" class="eventBar"></button>
@@ -1733,6 +1777,18 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 
   <div id="raidFx" hidden><canvas id="rfxCv"></canvas><div class="stripe t">WARNING ⚠ 魔王襲来 ⚠ WARNING ⚠ 魔王襲来 ⚠ WARNING</div><div class="stripe b">WARNING ⚠ 魔王襲来 ⚠ WARNING ⚠ 魔王襲来 ⚠ WARNING</div><div class="fxT" id="rfxT"></div></div>
 
+  <section id="tour" class="screen panel" hidden>
+    <div class="toprow"><h1>週末トーナメント</h1><button class="sound" id="tourBack">メニューに戻る</button></div>
+    <div id="tourBody" class="dPane"></div>
+  </section>
+
+  <section id="quiz" class="screen panel" hidden>
+    <div class="toprow"><h1>イントロクイズ</h1><button class="sound" id="quizBack">メニューに戻る</button></div>
+    <div id="quizBody" class="dPane"></div>
+  </section>
+
+  <div id="shareFx" hidden><img id="shImg" alt="結果の画像"><button class="btn pri" id="shShare">📤 共有する（LINE・Xなど）</button><a class="btn" id="shSave">⬇ 画像を保存</a><p>うまく保存できないときは、画像を長押しして保存してね</p><button class="sound" id="shClose">閉じる</button></div>
+
   <section id="plaza" class="screen panel" hidden>
     <div class="toprow"><h1>みんなの広場</h1><button class="sound" id="plazaBack">メニューに戻る</button></div>
     <div class="pzTabs" role="tablist"><button role="tab" id="pz_chart">🎼 みんなの譜面</button><button role="tab" id="pz_friend">👥 フレンド</button><button role="tab" id="pz_team">🛡 チーム</button></div>
@@ -1758,8 +1814,9 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 
   <section id="daily" class="screen panel" hidden>
     <div class="toprow"><h1>デイリー</h1><button class="sound" id="dailyBack">メニューに戻る</button></div>
-    <div class="dTabs" role="tablist"><button role="tab" id="dt_login">📅 ログボ</button><button role="tab" id="dt_miss">✅ ミッション</button></div>
+    <div class="dTabs" role="tablist"><button role="tab" id="dt_login">📅 ログボ</button><button role="tab" id="dt_miss">✅ ミッション</button><button role="tab" id="dt_one">🎵 今日の1曲</button></div>
     <div id="dp_login" class="dPane"><div class="lgDays" id="dpLoginDays"></div><button class="btn pri" id="dpLoginBtn"></button><p class="hint" id="dpLoginNote"></p></div>
+    <div id="dp_one" class="dPane" hidden><div id="dpOne" class="dPane"></div></div>
     <div id="dp_miss" class="dPane" hidden><div id="dpMissList" class="msList"></div><p class="msAll" id="dpMissAll"></p><p class="hint" id="dpMissReset"></p></div>
     <div id="dp_pass" class="dPane" hidden><div class="psHead"><div><small id="dpPassName"></small><b id="dpPassLv"></b></div><span id="dpPassXp"></span></div><div class="psBar"><span id="dpPassFill"></span></div><p class="hint" id="dpPassEnd"></p><div class="psShow" id="dpPassShow"></div><button class="btn pri" id="dpPassAll"></button><div id="dpPassList" class="psList"></div><p class="hint" id="dpPassHow"></p></div>
   </section>
@@ -1947,6 +2004,7 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
         <div>最高速度<b id="rSpeed">0</b></div>
       </div>
       <div class="btns">
+        <button class="btn alt" id="rShare">📸 結果を自慢する（画像）</button>
         <button class="btn alt" id="contBtn" hidden>ここから続ける（1回だけ）</button>
         <button class="btn alt" id="reviveBtn" hidden>復活チケットで続ける</button>
         <button class="btn pri" id="retryBtn">もう一度</button>
@@ -2675,6 +2733,10 @@ const LOOK={
  god:{edge:'#e9c877',top:'#1f2024',topL:'#2c2618',fill:['#fff1c9','#c98a2c'],grid:'rgba(255,236,190,.26)',overlay:'rgba(20,30,55,.24)',wet:.5},
 };
 SONGS.push(
+{id:'himitsu1',cat:'secret',beat:1,synth:1,name:'秘密の鍵盤',by:'ひみつ',speed:6.0,
+ mel:`F#5 A#5 C#6 F#6 D#6 C#6 A#5 G#5 F#5 G#5 A#5 C#6 D#6-2 C#6-2 A#5 C#6 D#6 F#6 G#6 F#6 D#6 C#6 A#5 G#5 F#5 D#5 F#5-4 F#4+F#5-2 C#6 A#5 D#4+D#5-2 A#5 G#5 B3+B4-2 F#5 D#5 C#4+C#5-4`,har:`F#:4 C#:4 F#:4 B:4 F#:4 C#:4 B:4 C#:4 F#:4`},
+{id:'himitsu2',cat:'secret',beat:1,synth:1,name:'裏・黒鍵ラプソディ',by:'ひみつ',speed:8.8,
+ mel:`D#6 C#6 A#5 F#5 D#5 F#5 A#5 C#6 D#6 F#6 D#6 C#6 A#5 C#6 D#6 F#6 G#6 F#6 D#6 C#6 A#5 G#5 F#5 G#5 A#5 C#6 D#6 C#6 A#5 G#5 F#5-2 D#4+D#5-2 F#5 A#5 B3+B4-2 D#5 F#5 C#4+C#5-2 F#5 A#5 F#4+F#5-4`,har:`D#:4 B:4 C#:4 F#:4 D#:4 B:4 C#:4 D#:4`},
 /* 異界の扉の各部屋（その部屋でしか弾けない曲） */
 {id:'maouth',cat:'maou',beat:1,synth:1,name:'黒鍵の魔王',by:'魔王の間',speed:8.4,
  mel:`C5 C5 D#5 C5 F#5 C5 G5 C5 G#5 G5 F#5 D#5 C5 D#5 F#5 G5 C5 C5 D#5 C5 F#5 C5 G5 C5 A#5 G#5 G5 F#5 G5-2 D#5 C5 C4+C5-2 G5 D#6 G#3+G#4-2 D#5 C6 A#3+A#4-2 F5 D6 G3+G4-2 B4 D5 F5 G5 B5 D6 F6 G6-2 C6.G6 D#6 D6 C6 G5 D#5 D5 C5 G#4.G#5 G5 F5 D#5 C5 G#4 G4 D#4 G4.B4 D5 F5 G5 B5 D6 F6 G6 C5+C6-4`,har:`Cm:8 Cm:8 Cm:4 G#:4 A#:4 G:4 G:8 Cm:8 G#:8 G:8 Cm:4`},
@@ -2839,7 +2901,7 @@ function nextEvent(){
   return best&&{...best.e,days:Math.round((best.st-base)/864e5),month:best.e.from[0],day:best.e.from[1]};
 }
 
-const GROUPS=[['mine','自分の曲'],['fresh','🆕 新作（追加したばかりの名曲）'],['new','最近の曲風オリジナル'],['classic','クラシック'],['std','定番の曲']];
+const GROUPS=[['secret','🔓 ひみつの曲'],['mine','自分の曲'],['fresh','🆕 新作（追加したばかりの名曲）'],['new','最近の曲風オリジナル'],['classic','クラシック'],['std','定番の曲']];
 
 function parseToken(tok){
   let len=1, body=tok;
@@ -3033,7 +3095,7 @@ function chime(notes){notes.forEach((m,i)=>play(m,i*.07,.4))}
 function preload(song){
   if(!ac)return;
   /* 開始前に全音を作り切る。プレイ中の合成でタップが遅れるのを防ぐ */
-  song.all.forEach(noteBuffer);
+  song.all.forEach(noteBuffer);[40,41,46,47].forEach(noteBuffer);
   if(song.cat==='sanct')song.all.forEach(n=>noteBuffer(n+12));
   if(song.synth)song.all.forEach(n=>{noteBuffer(n+1000);noteBuffer(n+988)});
   [-1,-2,-3].forEach(noteBuffer);
@@ -3099,7 +3161,7 @@ function newGame(songId,audio){
   const song=SONGS.find(s=>s.id===songId)||SONGS[0];
   const chal=pendingChallenge;pendingChallenge=null;
   const opt=nextOpts;nextOpts=null;
-  const mode=isStage(song)||song.audio||chal||opt?'song':curMode();
+  const mode=FORCE_SONG||isStage(song)||song.audio||chal||opt?'song':curMode();
   if(wet)wet.gain.value=(song.cat==='sanct'?.55:LOOK[song.cat]?LOOK[song.cat].wet:.16)*.7;
   ['sanctum','ash','ice','sun','god','exroom','exmap'].forEach(id=>{$(id).hidden=true});
   G={mode,song,audio:audio||null,videoUrl:song.videoUrl||null,phase:'ready',tiles:[],head:0,scroll:0,target:0,speed:AUTO[mode]?(mode==='song'?baseOf(song):mode==='rush'?4.2:3):0,
@@ -3115,6 +3177,7 @@ function newGame(songId,audio){
   if(chal){G.challenge=chal;G.mult=WEEK_MULT;G.speed*=WEEK_MULT;G.challengePreview=!!weeklyPreview()}
   try{G.fest=!isStage(song)&&!song.audio&&isFestToday();G.festPreview=!!weeklyPreview()}catch(e){G.fest=false}
   if(opt){G.endless=true;if(opt.seed)G.rng=seeded(opt.seed%2147483646+1);G.battle=opt.battle||null;G.ghost=opt.ghost||null}
+  {const sd=RP_SEED||(opt&&opt.seed)||((Math.random()*2e9)|0)+1;G.seed=sd;if(!G.rng)G.rng=seeded(sd%2147483646+1);RP_SEED=0}
   G.bonus=bonusFor(song);
   if(G.bonus)G.banner={text:`コイン×${G.bonus.m}`,sub:G.bonus.name,t:1.8};
   if(!opt)useTicket(G);
@@ -3172,7 +3235,7 @@ function genMore(){
       G.lastLanes=lanes;G.nextRow=row+1;
     }
   }
-  while(G.tiles.length>60&&G.head>30){G.tiles.shift();G.head--}
+  while(G.tiles.length>60&&G.head>30&&(!AUTO[G.mode]||G.audio||(G.lIdx||0)>30)){G.tiles.shift();G.head--;if(G.lIdx)G.lIdx--}
 }
 const yBottom=row=>H-PF-(row-G.scroll+1)*rh;
 function activeTiles(){
@@ -3188,6 +3251,7 @@ function hitTile(t,id,x,y){
   G.lastHit={lane:t.lane,t:t.hitAt};
   G.count++;G.score+=G.pts||1;G.stageCount++;
   if(G.raid)raidHit(t);
+  if(G.rec)G.rec.push(+G.scroll.toFixed(2));
   const sp=AUTO[G.mode]?G.speed:G.rate;
   if(!AUTO[G.mode]&&G.lastTap){
     const iv=(t.hitAt-G.lastTap)/1000;
@@ -3249,7 +3313,7 @@ const JUDGE={base:[.64,.58,120,200,.16,.85,3],sanct:[.6,.55,105,180,.12,.78,2],a
 const JUDGE_NAME={base:'ふつう',sanct:'やや厳しい',ash:'厳しい',ice:'かなり厳しい',sun:'激辛',god:'神判定'};
 function judgeOf(song){return JUDGE[song&&song.cat]||JUDGE.base}
 function press(x,y,id){
-  if(!G)return;
+  if(!G||G.replay)return;
   if(G.phase!=='ready'&&G.phase!=='play')return;
   /* 判定は列を優先する。次に押すタイルの列なら高さは問わず、隣の列へ少しはみ出しても拾う */
   let best=null,bd=1e9;
@@ -3338,7 +3402,7 @@ function update(dt){
   if(G.banner){G.banner.t-=dt;if(G.banner.t<=0)G.banner=null}
   if(G.flash>0)G.flash=Math.max(0,G.flash-dt*2);
   if(G.phase==='play'){
-    G.time+=dt;
+    G.time+=G.mode==='classic'?RAW_DT:dt;
     if(AUTO[G.mode]){
       if(G.lapTarget)G.speed+=(G.lapTarget-G.speed)*Math.min(1,dt*1.6);
       if(G.audio&&track)G.scroll=Math.max(G.scroll,trackScroll());else G.scroll+=G.speed*dt;
@@ -3358,6 +3422,7 @@ function update(dt){
         G.lIdx++;
       }
     }
+    if(G.replay)replayTick();
     for(const t of G.holds){
       const p=G.scroll-t.s0;t.prog=Math.min(1,(p+.5)/t.len);
       const whole=Math.min(t.len-1,Math.floor(p+.35));
@@ -3979,11 +4044,11 @@ function draw(now){
 }
 
 let last=performance.now();
-let slowAcc=0,slowN=0;
+let slowAcc=0,slowN=0,RAW_DT=0;
 function frame(now){
   const raw=now-last;
   if(G&&G.phase==='play'&&!lowRes){slowN++;if(raw>26)slowAcc++;if(slowN>=90){if(slowAcc>=30){lowRes=true;resize()}slowAcc=0;slowN=0}}
-  const dt=Math.min(.05,(now-last)/1000);last=now;
+  const dt=Math.min(.05,(now-last)/1000);RAW_DT=Math.min(.5,Math.max(0,(now-last)/1000));last=now;
   if(G&&G.phase!=='paused'&&G.phase!=='over')update(dt);
   draw(now);
   syncVideo();
@@ -4002,7 +4067,7 @@ function showResult(){
   const k=bestKey(G),classic=G.mode==='classic';
   const prev=store.get(k,null);
   const value=classic?(G.finished?G.time:null):G.score;
-  const slow=G.assisted||(G.mode==='song'&&!G.audio&&speedScale<1)||(G.song&&G.song.cat==='ugc');
+  const slow=G.assisted||(G.mode==='song'&&!G.audio&&speedScale<1)||(G.song&&G.song.cat==='ugc')||!!G.replay;
   let isNew=false;
   if(!slow&&value!==null&&value>0&&(prev===null||(classic?value<prev:value>prev))){isNew=true;store.set(k,value)}
   const bestVal=store.get(k,null);
@@ -4047,7 +4112,7 @@ function continueGame(){
   G.resultShown=false;
   $('result').hidden=true;$('pauseBtn').hidden=false;
   const t=G.tiles[G.head];
-  if(t)G.scroll=t.row-1.5;
+  if(t)G.scroll=AUTO[G.mode]?t.row-1.5:Math.max(0,G.target||0);
   G.bad=null;G.phase='countdown';G.cd=3;
 }
 function toMenu(){const fr=G&&G.fromRaid,fp=G&&G.fromPlaza;if(fr){}else if(G&&isStage(G.song))openRoom(G.song.cat);stopTrack();G=null;restoreBgSrc();$('result').hidden=true;$('pause').hidden=true;$('pauseBtn').hidden=true;$('menu').hidden=false;renderSongs();renderTicket();renderSurprise();renderKeepNote();if(fr)setTimeout(openRaid,0);if(fp==='editor')setTimeout(()=>{$('ugcEd').hidden=false},0);else if(fp)setTimeout(()=>openPlaza(),0);setTimeout(raidPump,600);releaseWake()}
@@ -4221,7 +4286,7 @@ function renderSongs(){
     }
   }
   GROUPS.forEach(([cat,title])=>{
-   const list=SONGS.filter(s=>(s.cat||'classic')===cat&&!hiddenSongs.includes(s.id)&&(mode==='song'||!s.audio)&&(!q||norm(s.name+' '+s.by+' '+title).includes(q)));
+   const list=SONGS.filter(s=>(s.cat||'classic')===cat&&(cat!=='secret'||store.get('secretOpen',false))&&!hiddenSongs.includes(s.id)&&(mode==='song'||!s.audio)&&(!q||norm(s.name+' '+s.by+' '+title).includes(q)));
    if(!list.length)return;
    shown+=list.length;
    const h=document.createElement('div');h.className='group';h.textContent=`${title}（${list.length}）`;box.appendChild(h);
@@ -4558,7 +4623,7 @@ const loadStats=()=>{
   const s=store.get('stats',{});
   return {clears:Array.isArray(s.clears)?s.clears:[],tiles:+s.tiles||0,fast:!!s.fast,maxLap:+s.maxLap||0,relay:+s.relay||1,ashLap:+s.ashLap||0,godLap:+s.godLap||0,sunPerfect:!!s.sunPerfect,perf:Array.isArray(s.perf)?s.perf:[],granted:Array.isArray(s.granted)?s.granted.filter(x=>typeof x==='string'):[],doors:Array.isArray(s.doors)?s.doors.filter(x=>typeof x==='string'):[],unlocked:Array.isArray(s.unlocked)?s.unlocked:[],events:Array.isArray(s.events)?s.events:[],wed:Array.isArray(s.wed)?s.wed:[],fest:Array.isArray(s.fest)?s.fest:[]};
 };
-const builtinIds=()=>SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='event'&&!isStage(x)).map(x=>x.id);
+const builtinIds=()=>SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='secret'&&x.cat!=='event'&&!isStage(x)).map(x=>x.id);
 const countCat=(s,cat)=>s.clears.filter(id=>SONGS.some(x=>x.id===id&&(x.cat||'classic')===cat)).length;
 const totalCat=cat=>SONGS.filter(x=>(x.cat||'classic')===cat).length;
 const countIn=(s,cat)=>s.clears.filter(id=>SONGS.some(x=>x.id===id&&x.cat===cat)).length;
@@ -5222,7 +5287,7 @@ function jpHoliday(d){
 function weeklyPreview(){try{return cloud.isOwner?store.get('owner:weekly',''):''}catch(e){return ''}}
 function isWedToday(){const p=weeklyPreview();return p?p==='wed':new Date().getDay()===3}
 function isFestToday(){const p=weeklyPreview();if(p)return p==='fest';const d=new Date();return d.getDay()===0||d.getDay()===6||jpHoliday(d)}
-function poolSongs(){return SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='event'&&!isStage(x))}
+function poolSongs(){return SONGS.filter(x=>x.cat!=='mine'&&x.cat!=='ugc'&&x.cat!=='secret'&&x.cat!=='event'&&!isStage(x))}
 function wedKey(){const d=new Date();d.setDate(d.getDate()-((d.getDay()+4)%7));return dkey(d)}
 function wedSong(key){const p=poolSongs();return p[hashStr('wed'+key)%p.length]}
 function festSongs(key){const p=poolSongs(),out=[];for(let i=0;out.length<3&&i<60;i++){const x=p[hashStr('fest'+key+i)%p.length];if(!out.includes(x))out.push(x)}return out}
@@ -5402,6 +5467,16 @@ Object.assign(TAGS,{maouslayer:{name:'魔王を討ちし者',style:'cu',c1:'#1a0
 FRAMES.maoucrown={name:'魔王の王冠',gift:1,raid:1};
 SKINS.maou={name:'黒鍵の魔王',gift:1,raid:1,top:'#2a0006',bot:'#050001',edge:'#ff2a3a',glow:'#ff0022'};
 TAPFX.maoufx={name:'魔王の爪',gift:1,raid:1,glyph:'ϟ',amb:'bolt',pal:['#ff2a3a','#ffd76a','#ffffff'],edge:'#ff2a3a'};
+/* ボスごとの討伐限定アイテム（ボスを倒したときだけ手に入る） */
+{const B={ice:['竜殺し','氷竜の環','氷鍵の鱗','氷の息吹','#5fe0ff','#1d6fd0','#e8fbff','❄','snow'],thunder:['オルガン破り','雷管の環','雷鳴の鍵盤','落雷','#ffe94a','#7a3cff','#fffbd0','ϟ','bolt'],
+  void:['沈黙を破る者','虚無の光輪','虚無の鍵盤','静寂の波紋','#c08aff','#3a0f6a','#f0e0ff','◐','star'],fire:['業火を制す者','業火の環','焦熱の鍵盤','火の粉','#ffb000','#d02000','#fff0c0','✹','firework']};
+ let css='';Object.entries(B).forEach(([k,v])=>{const id='bs_'+k;
+  TAGS[id]={name:v[0],style:'cu',c1:'#0d0f14',c2:v[5],tc:v[6],gift:1,raid:1};
+  FRAMES[id]={name:v[1],gift:1,raid:1};SKINS[id]={name:v[2],gift:1,raid:1,top:v[5],bot:'#05050a',edge:v[4],glow:v[4]};
+  TAPFX[id]={name:v[3],gift:1,raid:1,glyph:v[7],amb:v[8],pal:[v[4],v[5],v[6]],edge:v[4]};
+  css+=`.ava.f-${id}::before{content:'';inset:calc(var(--s)*-.1);border-radius:50%;z-index:0;background:conic-gradient(${v[4]},${v[5]},${v[6]},${v[5]},${v[4]});box-shadow:0 0 calc(var(--s)*.3) ${v[4]};animation:spin 2.6s linear infinite}`});
+ TAGS.bossmvp={name:'討伐MVP',style:'cu',c1:'#000',c2:'#ffd76a',tc:'#3a0008',gift:1,raid:1};TAGS.bosshero={name:'討伐の英雄',style:'cu',c1:'#3a0008',c2:'#ff7a2a',tc:'#fff3d6',gift:1,raid:1};
+ try{const st=document.createElement('style');st.textContent=css;document.head.appendChild(st)}catch(e){}}
 /* （シーズンパスはやめた。すでに持っている人のために、アイテムの定義だけ残して全部隠す） */
 {const MN=['睦月','如月','弥生','卯月','皐月','水無月','文月','葉月','長月','神無月','霜月','師走'];
  const GL=['❄','❄','✿','✿','☘','☂','☀','✸','☾','✦','❖','❄'],AM=['snow','snow','petal','petal','star','bubble','star','firework','star','note','star','snow'];
@@ -7426,9 +7501,9 @@ const RAID_STEPS=[75,50,25];
 const RAID_PH=[['第一形態','目覚め'],['第二形態','憤怒'],['第三形態','覚醒'],['最終形態','終焉の旋律']];
 const RAID_KEY=['seal1','seal2','seal3','kill'];
 const RAID_RW=['第一の封印（残り75%）','第二の封印（残り50%）','第三の封印（残り25%）','討伐（残り0%）'];
-const RAID_DEF={name:'黒鍵の魔王',sub:'八十八鍵を喰らう者',tiers:[{coins:3000,tk:{coin2:1}},{coins:5000,tk:{heart:1}},{coins:8000,tk:{revive:1}}],kill:{coins:30000,tk:{speed:1},items:['tag:maouslayer','frame:maoucrown','skin:maou','fx:maoufx']}};
+const RAID_DEF={name:'黒鍵の魔王',sub:'八十八鍵を喰らう者',tiers:[{coins:5000,tk:{coin2:1}},{coins:10000,tk:{heart:1}},{coins:15000,tk:{revive:1}}],kill:{coins:50000,tk:{speed:1},items:['tag:maouslayer','frame:maoucrown','skin:maou','fx:maoufx']}};
 const RAID_LOOT=[['tag:maouslayer','称号'],['frame:maoucrown','枠'],['skin:maou','タイル'],['fx:maoufx','タップ演出']];
-const RAID_MVP=[{coins:50000,items:['tag:maoumvp']},{coins:20000,items:['tag:maouhero']},{coins:20000,items:['tag:maouhero']}];
+const RAID_MVP=[{coins:80000,items:['tag:maoumvp']},{coins:30000,items:['tag:maouhero']},{coins:30000,items:['tag:maouhero']}];
 const hexA=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`};
 function rwClean(x){
   x=x&&typeof x==='object'?x:{};const tk={};
@@ -7477,7 +7552,7 @@ function fmtLeft(ms){ms=Math.max(0,ms);const d=Math.floor(ms/864e5),h=Math.floor
 const RUNES=['♪','♫','♩','♬','♭','♯','𝄞'];
 function drawBoss(g,w,h,t,o){
   o=o||{};const ph=o.ph||0,s=Math.min(w,h)*(o.scale||1),cx=w/2+(o.sx||0),cy=h*.52+(1-(o.rise??1))*h*.7+(o.sy||0);
-  const br=Math.sin(t*1.6)*s*.006,col=['#ff2a3a','#ff5a1f','#ff1f8a','#ff0022'][ph];
+  const tp=o.tpl||RAID.tpl||BOSS_T.maou,br=Math.sin(t*1.6)*s*.006,col=tp.cols[ph];
   g.save();
   /* 後ろの光と炎 */
   g.globalCompositeOperation='lighter';
@@ -7518,13 +7593,17 @@ function drawBoss(g,w,h,t,o){
   }
   /* 頭 */
   const hy=cy-s*.08+br,hw=s*.14,hh=s*.19;
-  for(const sd of [-1,1]){
+  if(tp.horns)for(const sd of [-1,1]){const hk=tp.horns===2?1.35:1;g.save();g.translate(cx+sd*hw*.55,hy-hh*.4);g.scale(hk,hk);g.translate(-(cx+sd*hw*.55),-(hy-hh*.4));
     g.fillStyle='#0e0b10';g.beginPath();g.moveTo(cx+sd*hw*.55,hy-hh*.4);
     g.bezierCurveTo(cx+sd*hw*1.7,hy-hh*.6,cx+sd*hw*2.2,hy-hh*1.45,cx+sd*hw*1.55,hy-hh*2.15);
     g.bezierCurveTo(cx+sd*hw*1.75,hy-hh*1.3,cx+sd*hw*1.2,hy-hh*.9,cx+sd*hw*.8,hy-hh*.05);g.closePath();g.fill();
-    g.strokeStyle=hexA(col,.7);g.lineWidth=Math.max(1,s*.004);g.stroke();
+    g.strokeStyle=hexA(col,.7);g.lineWidth=Math.max(1,s*.004);g.stroke();g.restore();
   }
-  for(let i=-3;i<=3;i++){
+  if(tp.crown==='pipes'){for(let i=-4;i<=4;i++){const kx=cx+i*hw*.21,kh=hh*(.6+(4-Math.abs(i))*.16)*(1+.06*Math.sin(t*3+i)),w2=hw*.15;const pg=g.createLinearGradient(kx-w2/2,0,kx+w2/2,0);pg.addColorStop(0,'#5a4a10');pg.addColorStop(.5,'#ffe48a');pg.addColorStop(1,'#5a4a10');g.fillStyle=pg;g.fillRect(kx-w2/2,hy-hh*.6-kh,w2,kh);g.fillStyle='#1a1406';g.fillRect(kx-w2*.35,hy-hh*.6-kh*.35,w2*.7,w2*.4);g.fillStyle=hexA(col,.9);g.beginPath();g.ellipse(kx,hy-hh*.6-kh,w2/2,w2*.22,0,0,7);g.fill()}}
+  else if(tp.crown==='ice'){g.globalCompositeOperation='lighter';for(let i=-3;i<=3;i++){const kx=cx+i*hw*.28,kh=hh*(.6+(3-Math.abs(i))*.22)*(1+.04*Math.sin(t*2+i));g.fillStyle=hexA(i%2?col:'#e8fbff',.55);g.beginPath();g.moveTo(kx-hw*.12,hy-hh*.6);g.lineTo(kx,hy-hh*.6-kh);g.lineTo(kx+hw*.12,hy-hh*.6);g.closePath();g.fill()}g.globalCompositeOperation='source-over'}
+  else if(tp.crown==='halo'){g.save();g.globalCompositeOperation='lighter';g.strokeStyle=hexA(col,.9);g.shadowColor=col;g.shadowBlur=s*.04;g.lineWidth=Math.max(2,s*.012);g.beginPath();g.ellipse(cx,hy-hh*1.05,hw*1.3,hh*.28,0,0,7);g.stroke();g.lineWidth=Math.max(1,s*.004);g.beginPath();g.ellipse(cx,hy-hh*1.05,hw*1.55+Math.sin(t*2)*hw*.05,hh*.36,0,0,7);g.stroke();g.restore()}
+  else if(tp.crown==='flame'){g.globalCompositeOperation='lighter';for(let i=-4;i<=4;i++){const kx=cx+i*hw*.22,f=.6+.4*Math.sin(t*6+i*1.7),kh=hh*(.5+(4-Math.abs(i))*.18)*f;const fg=g.createLinearGradient(0,hy-hh*.6-kh,0,hy-hh*.6);fg.addColorStop(0,hexA(tp.cols[2],0));fg.addColorStop(.4,hexA(tp.cols[2],.8));fg.addColorStop(1,hexA(col,.95));g.fillStyle=fg;g.beginPath();g.moveTo(kx-hw*.13,hy-hh*.6);g.quadraticCurveTo(kx-hw*.1+Math.sin(t*5+i)*hw*.08,hy-hh*.6-kh*.6,kx,hy-hh*.6-kh);g.quadraticCurveTo(kx+hw*.1,hy-hh*.6-kh*.5,kx+hw*.13,hy-hh*.6);g.closePath();g.fill()}g.globalCompositeOperation='source-over'}
+  else for(let i=-3;i<=3;i++){
     const kx=cx+i*hw*.27,kh=hh*(.5+(3-Math.abs(i))*.17)*(1+.05*Math.sin(t*2.4+i)),w2=hw*.17;
     g.fillStyle='#08080c';g.fillRect(kx-w2/2,hy-hh*.6-kh,w2,kh);
     g.fillStyle=hexA(col,.95);g.fillRect(kx-w2/2,hy-hh*.6-kh,w2,Math.max(1,s*.006));
@@ -7533,10 +7612,10 @@ function drawBoss(g,w,h,t,o){
   g.fillStyle='#c8962c';g.fillRect(cx-hw*1.02,hy-hh*.66,hw*2.04,hh*.08);
   g.fillStyle='#ffd76a';g.fillRect(cx-hw*1.02,hy-hh*.66,hw*2.04,Math.max(1,hh*.015));
   g.beginPath();g.moveTo(cx-hw,hy-hh*.58);g.lineTo(cx+hw,hy-hh*.58);g.quadraticCurveTo(cx+hw*1.06,hy+hh*.2,cx+hw*.36,hy+hh*.74);g.lineTo(cx,hy+hh*.96);g.lineTo(cx-hw*.36,hy+hh*.74);g.quadraticCurveTo(cx-hw*1.06,hy+hh*.2,cx-hw,hy-hh*.58);g.closePath();
-  const mg=g.createLinearGradient(cx-hw,0,cx+hw,0);mg.addColorStop(0,'#040306');mg.addColorStop(.5,'#1d1822');mg.addColorStop(1,'#040306');
+  const mg=g.createLinearGradient(cx-hw,0,cx+hw,0);mg.addColorStop(0,'#040306');mg.addColorStop(.5,tp.mask||'#1d1822');mg.addColorStop(1,'#040306');
   g.fillStyle=mg;g.shadowColor=col;g.shadowBlur=s*.04;g.fill();g.shadowBlur=0;g.strokeStyle=col;g.lineWidth=Math.max(1,s*.005);g.stroke();
   /* 目 */
-  const bl=Math.sin(t*.9+1)>.97?.12:1,eye=ph===3?'#ffffff':ph===2?'#ff9ad0':'#ff3a3a';
+  const bl=Math.sin(t*.9+1)>.97?.12:1,eye=tp.eyes?tp.eyes[ph]:(ph===3?'#ffffff':ph===2?'#ff9ad0':'#ff3a3a');
   for(const sd of [-1,1]){g.save();g.translate(cx+sd*hw*.42,hy-hh*.1);g.scale(sd,1);
     g.beginPath();g.moveTo(-hw*.3,-hh*.02*bl);g.quadraticCurveTo(0,-hh*.16*bl,hw*.32,hh*.07*bl);g.quadraticCurveTo(0,hh*.09*bl,-hw*.3,-hh*.02*bl);g.closePath();
     g.fillStyle=eye;g.shadowColor=col;g.shadowBlur=s*(.05+.025*Math.sin(t*4));g.fill();g.fill();g.restore()}
@@ -7560,7 +7639,7 @@ function drawBoss(g,w,h,t,o){
 /* 魔王の間の背景 */
 function paintMaou(g,w,h){
   const bg=g.createLinearGradient(0,0,0,h);bg.addColorStop(0,'#050001');bg.addColorStop(.6,'#2a0006');bg.addColorStop(1,'#5a000c');g.fillStyle=bg;g.fillRect(0,0,w,h);
-  drawBoss(g,w,h*.62,2.1,{ph:3});
+  drawBoss(g,w,h*.62,2.1,{ph:3,tpl:BOSS_T.maou});
   g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,0,w,h);
   g.fillStyle='#030001';g.beginPath();g.moveTo(0,h);const r=seeded(91);for(let x=0;x<=w;x+=w/14)g.lineTo(x,h*(.86+r()*.08));g.lineTo(w,h);g.closePath();g.fill();
 }
@@ -7585,7 +7664,7 @@ function raidHit(t){
   const crit=Math.random()<.08,sp=AUTO[G.mode]?G.speed:G.rate;
   const d=Math.round((10+Math.min(30,(sp||3)*2))*(1+((G.pts||1)-1)*.25)*(crit?3:1)*(R.boss?2:1));
   R.dmg+=d;R.hits++;if(crit){R.crit++;rsfx('hit')}
-  if(R.pops.length<26){const x=Math.max(70,Math.min(W-70,(t.lane+.5)*lw+(Math.random()-.5)*lw*.3));R.pops.push({x,y:Math.max(RAID.hudY||rh*.7,yBottom(t.row)-rh*.7),v:d,crit,t0:performance.now(),life:crit?1100:700})}
+  if(R.pops.length<(G.mode==='classic'?5:10)){const x=Math.max(70,Math.min(W-70,(t.lane+.5)*lw+(Math.random()-.5)*lw*.3));R.pops.push({x,y:Math.max(RAID.hudY||rh*.7,yBottom(t.row)-rh*.7),v:d,crit,t0:performance.now(),life:crit?1100:700})}
   R.flash=crit?1:Math.max(R.flash,.35);
 }
 function drawRaidHud(now,y){
@@ -7641,7 +7720,7 @@ function raidPump(){
   playRaidFx(it,()=>{RAID.busy=false;if(!$('raid').hidden)renderRaid();setTimeout(raidPump,300)});
 }
 function raidGrant(r,i){
-  const key='raid:'+r.id+':'+RAID_KEY[i],w=i<3?r.tiers[i]:r.kill,doors=i===3?['maou']:[];
+  const key='raid:'+r.id+':'+RAID_KEY[i],w=i<3?r.tiers[i]:r.kill,doors=i===3&&(!r.boss||r.boss==='maou')?['maou']:[];
   if(r.prev){RAID.pg=RAID.pg||new Set();if(RAID.pg.has(key))return null;RAID.pg.add(key)}
   else{
     if(giftUsed().includes(key))return null;
@@ -7663,7 +7742,7 @@ function raidCheck(){
   if(seen===null){store.set(sk,T.phase);if(st==='live'&&!T.down){raidQueue({k:'appear'});addNote('event',`👹 特大イベント「${r.name}」が始まりました。みんなでHPを削ろう！`,'raid:'+r.id)}}
   else if(T.phase>seen){store.set(sk,T.phase);if(!T.down&&!T.me.dmg)raidQueue({k:'phase',ph:T.phase,rws:[]})}
   if(T.me.dmg>0){const got=[];RAID_STEPS.forEach((p,i)=>{if(T.pct<=p){const x=raidGrant(r,i);if(x)got.push(x)}});if(T.down){const x=raidGrant(r,3);if(x)got.push(x)}
-    if(T.down&&T.rank>=1&&T.rank<=3&&!r.prev){const key='raid:'+r.id+':mvp';if(!giftUsed().includes(key)){const w=RAID_MVP[T.rank-1],g={from:{kind:'staff',name:''},to:{name:myNick()},theme:'staff',title:'与ダメージ'+T.rank+'位のボーナス',msg:'',coins:w.coins,tk:{},items:w.items.filter(x=>validItem(x)),ach:[],doors:[]};if(applyGift(key,g))got.push({i:4,label:`🏆 与ダメージ${T.rank}位のボーナス`,lines:rwLines(rwClean(w),[])})}}
+    if(T.down&&T.rank>=1&&T.rank<=3&&!r.prev){const key='raid:'+r.id+':mvp';if(!giftUsed().includes(key)){const w=mvpFor(r,T.rank),g={from:{kind:'staff',name:''},to:{name:myNick()},theme:'staff',title:'与ダメージ'+T.rank+'位のボーナス',msg:'',coins:w.coins,tk:{},items:w.items.filter(x=>validItem(x)),ach:[],doors:[]};if(applyGift(key,g))got.push({i:4,label:`🏆 与ダメージ${T.rank}位のボーナス`,lines:rwLines(rwClean(w),[])})}}
     if(got.length)raidQueue(T.down&&got.some(x=>x.i===3)?{k:'kill',rws:got,prev:r.prev}:{k:'phase',ph:Math.max(...got.map(x=>x.i+1)),rws:got,prev:r.prev})}
   else if(T.down&&!store.get('raidDown:'+r.id,false)&&st!=='none'){store.set('raidDown:'+r.id,true);raidQueue({k:'kill',none:1,rws:[]})}
   if(T.down&&T.me.dmg>0)store.set('raidDown:'+r.id,true);
@@ -7887,9 +7966,9 @@ async function postRaid(){
   const start=new Date($('raStart').value).getTime(),end=new Date($('raEnd').value).getTime(),hp=Math.floor(+$('raHp').value||0);
   if(!(hp>=100)){note.textContent='HPは100以上にしてください。';return}
   if(!start||!end||end<=start){note.textContent='期間を確かめてください（おわりは、はじまりより後に）。';return}
-  const rw=i=>{const tk={},k=$('raT'+i).value,n=Math.max(1,Math.min(99,Math.floor(+$('raN'+i).value||1)));if(k)tk[k]=n;return {coins:Math.max(0,Math.min(1e7,Math.floor(+$('raC'+i).value||0))),tk,items:i===3?RAID_LOOT.filter((_,j)=>$('raL'+j).checked).map(([x])=>x):[]}};
+  const rw=i=>{const tk={},k=$('raT'+i).value,n=Math.max(1,Math.min(99,Math.floor(+$('raN'+i).value||1)));if(k)tk[k]=n;return {coins:Math.max(0,Math.min(1e7,Math.floor(+$('raC'+i).value||0))),tk,items:i===3?RAID_LOOT.map(([x],j)=>$('raL'+j).checked?(bossTpl(adminLook()).items[j]||x):null).filter(Boolean):[]}};
   const keep=RAID.cur&&(raidState(RAID.cur)==='live'||raidState(RAID.cur)==='soon');
-  const doc={id:keep?RAID.cur.id:'r'+Date.now().toString(36),name:$('raName').value.trim().slice(0,20)||RAID_DEF.name,sub:$('raSub').value.trim().slice(0,30),hp,start,end,tiers:[0,1,2].map(rw),kill:rw(3),t:Date.now()};
+  const doc={...bossDocExtra(),id:keep?RAID.cur.id:'r'+Date.now().toString(36),name:$('raName').value.trim().slice(0,20)||RAID_DEF.name,sub:$('raSub').value.trim().slice(0,30),hp,start,end,tiers:[0,1,2].map(rw),kill:rw(3),t:Date.now()};
   $('raPost').disabled=true;
   try{await cloud.db.doc('live/raid').set(doc);note.textContent=keep?'直しました。ダメージの記録はそのままです。':`出しました。${fmtTime(start)} に魔王が現れます（開いている人の画面に警告が出ます）。`}
   catch(e){note.textContent='出せませんでした。少し待ってからもう一度押してください。'}
@@ -8260,6 +8339,8 @@ function renderPzCharts(box){
 }
 function renderPzFriends(box){
   const me=mySoc(),rows=(cloud.rows||[]).filter(r=>!String(r.id).startsWith('c-')&&r.id!==cloud.uid);
+  if(window.KOKKEN_WEB&&cloud.uid){const iv=el('div','invBox');iv.append(el('b',null,'🎁 友だちを招待しよう'),el('small',null,`このリンクから来た友だちが登録すると、ふたりとも 3,000コイン！ ・ 招待した人数 ${invCount()}人`));const inp=el('input');inp.readOnly=true;inp.value=invLink();const cp=el('button','btn pri','📤 招待リンクを送る／コピー');cp.addEventListener('click',async()=>{try{if(navigator.share){await navigator.share({text:'黒鍵タップで勝負しよう！',url:invLink()});return}}catch(e){}try{await navigator.clipboard.writeText(invLink());cp.textContent='コピーしました！'}catch(e){inp.select()}});iv.append(inp,cp);box.appendChild(iv)}
+  else if(!window.KOKKEN_WEB)box.appendChild(el('p','pzNote','友だち招待（ふたりとも3,000コイン）は、Web版（'+WEB_URL+'）で使えます。'));
   /* 届いたスタンプ */
   const inbox=stampsToMe().slice(0,8);
   if(inbox.length){const sec=el('div','pzSec');sec.appendChild(el('h3',null,'💌 届いたスタンプ'));inbox.forEach(s=>{const r=el('div','stRow');r.append(el('span','stBig',STAMPS[s.s][0]),el('span',null,`${s.nick}「${STAMPS[s.s][1]}」`),el('small',null,agoText(s.t)));
@@ -8385,6 +8466,371 @@ setInterval(()=>{if(cloud.loaded&&cloud.uid&&!SOC.loaded)initSocial()},2000);
 renderPlazaCard();
 {const ng=newGame;newGame=function(){const r=ng.apply(this,arguments);try{$('plaza').hidden=true;$('ugcEd').hidden=true;if(G&&G.song&&G.song.cat==='ugc')G.fromPlaza=G.song.id==='ugc-draft'?'editor':(SOC.from||'plaza')}catch(e){}return r}}
 
+/* ======== 今日の1曲・イントロクイズ・週末トーナメント・リプレイ・隠しコマンド・自慢画像・友だち招待 ======== */
+var FORCE_SONG=false,RP_NEXT=null;
+const WEB_URL='https://kannziri2973-max.github.io/kokken-tap/';
+const pickSeeded=(arr,seed,n)=>{const r=seeded(hashStr(seed)%2147483646+1),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a.slice(0,n)};
+const playableSongs=(lo,hi)=>poolSongs().filter(s=>!s.audio&&s.cat!=='secret'&&s.speed>=lo&&s.speed<=hi);
+/* ---------- 共通: 特別なプレイ（今日の1曲・トーナメント・リプレイ）の目印をつける ---------- */
+const XP={d1:false,tn:null};
+{const ng=newGame;newGame=function(id){
+  const rp=RP_NEXT;RP_NEXT=null;const d1=XP.d1,tn=XP.tn;XP.d1=false;XP.tn=null;
+  const r=ng.apply(this,arguments);FORCE_SONG=false;
+  try{if(G){
+    if(rp){G.replay={h:rp.h,i:0,nick:rp.nick};G.speed=rp.sp;G.lapTarget=null}
+    else if(G.mode==='song'&&!G.audio&&!G.battle&&!G.ghost&&G.song.cat!=='ugc'){G.rec=[];G.recSp=G.speed}
+    if(d1){G.d1=jstDay();store.set('d1try:'+G.d1,true)}
+    if(tn){G.tn=tn;const t=tnMine();if(t){t.s[tn.r]=0;tnSave(t)}}
+  }}catch(e){console.warn(e)}
+  return r}}
+function replayTick(){
+  const R=G.replay;if(!R)return;
+  while(R.i<R.h.length&&G.scroll>=R.h[R.i]){const t=G.tiles[G.head];if(t&&t.state===0)hitTile(t,'rp');advanceHead();R.i++}
+}
+/* ---------- 今日の1曲 ---------- */
+function d1Song(d){d=d||jstDay();const list=playableSongs(3.6,6.5);return pickSeeded(list,'kk-d1-'+d,1)[0]||list[0]}
+function d1Mine(){const v=store.get('d1',null);return v&&typeof v==='object'?v:{d:'',s:0,y:null}}
+function d1Record(score){const d=jstDay(),v=d1Mine();const nv={d,s:Math.max(v.d===d?num(v.s):0,score),y:v.d===yesterday()?{d:v.d,s:num(v.s)}:(v.y&&v.y.d===yesterday()?v.y:null)};store.set('d1',nv);pushCloud()}
+const d1Val=(row,d)=>{const x=row.d1;if(!x)return null;if(x.d===d)return num(x.s);if(x.y&&x.y.d===d)return num(x.y.s);return null};
+function d1Rank(d){const me=d1Mine(),list=[];(cloud.rows||[]).forEach(r=>{if(r.id===cloud.uid)return;const v=d1Val(r,d);if(v!==null)list.push({nick:String(r.nick||'プレイヤー').slice(0,16),s:v})});
+  const mv=me.d===d?num(me.s):(me.y&&me.y.d===d?num(me.y.s):null);if(mv!==null&&store.get('d1try:'+d,false))list.push({nick:myNick(),s:mv,me:1});return list.sort((a,b)=>b.s-a.s)}
+function d1Reward(){const y=yesterday();if(!store.get('d1try:'+y,false)||store.get('d1rw:'+y,false)||!cloud.rows)return;
+  const list=d1Rank(y),i=list.findIndex(x=>x.me);if(i<0)return;store.set('d1rw:'+y,true);
+  const c=[8000,5000,3000][i]||500;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();
+  addNote('take',`🎵 きのうの「今日の1曲」で${i+1}位！ +${c.toLocaleString()}コイン`,'d1rw:'+y);if(i<3)moveToast(`🏆 きのうの今日の1曲で ${i+1}位！ +${c.toLocaleString()}コイン`)}
+function startD1(){const d=jstDay();if(store.get('d1try:'+d,false))return;const s=d1Song(d);XP.d1=true;FORCE_SONG=true;initAudio();$('daily').hidden=true;startSong(s.id)}
+function renderD1(){
+  const box=$('dpOne');if(!box)return;box.textContent='';const d=jstDay(),s=d1Song(d),tried=store.get('d1try:'+d,false),me=d1Mine();
+  const card=el('div','d1Card');card.append(el('small',null,`${+d.slice(5,7)}月${+d.slice(8)}日の1曲`),el('b',null,s.name),el('span',null,`${s.by} ・ 毎秒${s.speed.toFixed(1)}枚 ・ 1日1回だけ`));box.appendChild(card);
+  const go=el('button','btn pri',tried?`挑戦済み ・ あなたのスコア ${me.d===d?num(me.s):0}`:'🎵 1回だけ勝負する（やり直しなし）');go.disabled=tried;go.addEventListener('click',startD1);box.appendChild(go);
+  box.appendChild(el('p','hint','楽曲モードで1回だけ。途中でやめても1回に数えます。毎日0時に曲が変わり、前の日の1位 8,000・2位 5,000・3位 3,000・参加 500 コイン。'));
+  const list=d1Rank(d),ol=el('ol','d1Rank');if(!list.length)ol.appendChild(el('li',null,'まだ誰も挑戦していません。一番乗りしよう！'));
+  list.slice(0,10).forEach((x,i)=>{const li=el('li',x.me?'me':null);li.append(el('i',null,['🥇','🥈','🥉'][i]||i+1),el('span',null,x.nick+(x.me?'（あなた）':'')),el('b',null,x.s.toLocaleString()));ol.appendChild(li)});
+  box.append(el('h3',null,'今日のランキング'),ol);
+}
+/* ---------- 週末トーナメント（8人の勝ち抜き。対戦はおたがいのスコアで決まる） ---------- */
+const TN={test:false};
+function tnInfo(){
+  if(TN.test&&cloud.isOwner){const b=TN.t0;return {wk:'test-'+jstDay(b),open:true,entryEnd:b+20*6e4,dl:[b+40*6e4,b+60*6e4,b+80*6e4],end:b+80*6e4,test:1}}
+  const now=Date.now(),j=new Date(now+9*3600e3),dow=j.getUTCDay(),sat0=Math.floor((now+9*3600e3)/864e5)*864e5-9*3600e3-((dow+1)%7)*864e5;
+  const satStart=dow===6||dow===0?sat0:sat0+7*864e5;
+  return {wk:jstDay(satStart),open:now>=satStart&&now<satStart+2*864e5,start:satStart,entryEnd:satStart+18*3600e3,dl:[satStart+864e5-1,satStart+864e5+15*3600e3-1,satStart+2*864e5-1],end:satStart+2*864e5};
+}
+function tnMine(){const I=tnInfo(),v=store.get('tn',null);return v&&v.wk===I.wk?v:null}
+function tnSave(v){store.set('tn',v);pushCloud()}
+function tnSongs(wk){const a=pickSeeded(playableSongs(4,5.6),'kk-tn1-'+wk,1)[0],b=pickSeeded(playableSongs(5.2,7).filter(x=>x!==a),'kk-tn2-'+wk,1)[0],c=pickSeeded(playableSongs(6.2,12).filter(x=>x!==a&&x!==b),'kk-tn3-'+wk,1)[0]||b;return [a,b,c]}
+function tnBracket(){
+  const I=tnInfo(),me=tnMine(),ents=[];
+  (cloud.rows||[]).forEach(r=>{if(r.id===cloud.uid)return;const t=r.tn;if(t&&t.wk===I.wk&&num(t.e))ents.push({id:r.id,nick:String(r.nick||'プレイヤー').slice(0,16),e:num(t.e),s:Array.isArray(t.s)?t.s:[]})});
+  if(me&&cloud.uid)ents.push({id:cloud.uid,nick:myNick(),e:me.e,s:me.s,me:1});
+  ents.sort((a,b)=>a.e-b.e||String(a.id).localeCompare(String(b.id)));
+  const i=ents.findIndex(x=>x.me);if(i<0)return {I,ents,seats:null};
+  const b=Math.floor(i/8),seats=Array.from({length:8},(_,k)=>ents[b*8+k]||null);return {I,ents,seats,b};
+}
+function tnWin(seats,I){
+  const now=Date.now(),R=[seats];
+  if(now<I.entryEnd){for(let r=0;r<3;r++)R.push(Array(8>>(r+1)).fill(undefined));return R}
+  for(let r=0;r<3;r++){const prev=R[r],next=[];
+    for(let k=0;k<prev.length;k+=2){const a=prev[k],c=prev[k+1];
+      if(!a||!c){next.push(a||c||null);continue}
+      const sa=a.s[r],sc=c.s[r],done=(sa!=null&&sc!=null)||now>I.dl[r];
+      if(!done){next.push(undefined);continue}
+      const va=sa==null?-1:num(sa),vc=sc==null?-1:num(sc);next.push(va>vc||(va===vc&&a.e<=c.e)?a:c)}
+    R.push(next)}
+  return R;}
+function tnStatus(){
+  const B=tnBracket();if(!B.seats)return {B};const R=tnWin(B.seats,B.I);
+  let round=-1,opp=null;for(let r=0;r<3;r++){const idx=R[r].findIndex(x=>x&&x.me);if(idx<0)break;round=r;opp=R[r][idx^1]||null;if(R[r+1][idx>>1]===undefined||!(R[r+1][idx>>1]&&R[r+1][idx>>1].me))break}
+  const champ=R[3][0];return {B,R,round,opp,champ};
+}
+function tnEnter(){const I=tnInfo();if(!I.open||Date.now()>I.entryEnd||tnMine()||!canSync())return;tnSave({wk:I.wk,e:Date.now(),s:[null,null,null]});moveToast('🏆 週末トーナメントにエントリーしました！');renderTour()}
+function tnPlay(r){const I=tnInfo(),me=tnMine();if(!me||me.s[r]!=null)return;const song=tnSongs(I.wk)[r];XP.tn={wk:I.wk,r};FORCE_SONG=true;initAudio();$('tour').hidden=true;startSong(song.id)}
+function tnReward(){const S=tnStatus();if(!S.R)return;const I=S.B.I,ch=S.champ;if(!ch)return;
+  if(store.get('tnrw:'+I.wk,false))return;store.set('tnrw:'+I.wk,true);
+  const real=S.B.seats.filter(Boolean).length;if(Date.now()<I.entryEnd)return;
+  const me=ch.me&&real>=2,second=!me&&real>=2&&S.R[2].some(x=>x&&x.me);const c=me?20000:second?5000:1000;const w=loadWallet();w.e+=c;store.set('wallet',w);
+  if(me){const o=loadOwned();if(!o.includes('tag:tnking'))o.push('tag:tnking');store.set('owned',o)}
+  renderCoins();pushCloud();addNote('take',me?`👑 週末トーナメント優勝！ 称号「週末王者」と ${c.toLocaleString()}コイン`:second?`🥈 週末トーナメント準優勝 ${c.toLocaleString()}コイン`:`🏆 週末トーナメント参加賞 ${c.toLocaleString()}コイン`,'tnrw:'+I.wk);
+  moveToast(me?'👑 週末トーナメント優勝！ 称号「週末王者」ゲット！':second?'🥈 準優勝！ +5,000コイン':'🏆 参加賞 +1,000コイン')}
+TAGS.tnking={name:'週末王者',style:'cu',c1:'#3a2a00',c2:'#ffd76a',tc:'#1a1200',gift:1};
+TAGS.himitsu={name:'ひみつを知る者',style:'cu',c1:'#0d0f14',c2:'#7a3cff',tc:'#e8dcff',gift:1};
+function openTour(){initAudio();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}$('tour').hidden=false;$('tour').scrollTop=0;renderTour()}
+function renderTour(){
+  const box=$('tourBody');if(!box)return;box.textContent='';const I=tnInfo(),now=Date.now(),me=tnMine(),songs=tnSongs(I.wk);
+  const head=el('div','tnHead');head.append(el('small',null,I.test?'（管理者のテスト開催）':`${+I.wk.slice(5,7)}月${+I.wk.slice(8)}日（土）〜日曜`),el('b',null,'🏆 週末トーナメント'),
+    el('span',null,!I.open?`開催まで ${fmtLeft(I.start-now)}`:now<I.entryEnd?`エントリー受付中（あと ${fmtLeft(I.entryEnd-now)}）`:now<I.end?`試合中 ・ 終了まで ${fmtLeft(I.end-now)}`:'終了'));box.appendChild(head);
+  if(cloud.isOwner){const tb=el('button','sound',TN.test?'管理者: テスト開催をやめる':'管理者: 今すぐテスト開催（自分の画面だけ・20分ごとに進む）');tb.addEventListener('click',()=>{TN.test=!TN.test;TN.t0=Date.now();renderTour()});box.appendChild(tb)}
+  box.appendChild(el('p','hint','8人ずつの勝ち抜き戦。1回戦→準決勝→決勝、それぞれ決まった曲を1回だけ弾いて、相手より高いスコアなら勝ち。相手が時間内に弾かなければ不戦勝。優勝で称号「週末王者」＋20,000コイン、準優勝5,000、参加賞1,000。'));
+  const rs=el('div','tnSongs');['1回戦（土曜まで）','準決勝（日曜15時まで）','決勝（日曜まで）'].forEach((t,i)=>{const d=el('div');d.append(el('small',null,t),el('b',null,songs[i]?songs[i].name:'-'));rs.appendChild(d)});box.appendChild(rs);
+  if(!me){const b=el('button','btn pri','エントリーする');b.disabled=!I.open||now>I.entryEnd||!canSync();b.addEventListener('click',tnEnter);box.appendChild(b);
+    if(!canSync())box.appendChild(el('p','pzNote','エントリーにはログイン（Claude版は招待されたアカウント）が必要です。'));
+    else if(!I.open)box.appendChild(el('p','hint','土曜0時から18時までエントリーできます。'));return}
+  const S=tnStatus();if(!S.R){box.appendChild(el('p','pzEmpty','読み込んでいます…'));return}
+  /* 自分の試合 */
+  const r=S.round,decided=S.R[r+1]&&S.R[r+1][S.R[r].findIndex(x=>x&&x.me)>>1];
+  const mine=el('div','tnMatch');
+  if(now<I.entryEnd)mine.append(el('b',null,'エントリー完了！'),el('span',null,`組み合わせはエントリー締め切り（${fmtTime(I.entryEnd)}）のあとに決まります。待っててね。`));
+  else if(S.champ&&S.champ.me)mine.append(el('b',null,'👑 優勝おめでとう！'));
+  else if(r>=0&&decided&&!decided.me)mine.append(el('b',null,`敗退… ${['1回戦','準決勝','決勝'][r]}で ${decided.nick} に負けました`));
+  else{const rn=['1回戦','準決勝','決勝'][r];mine.append(el('b',null,`あなたの次の試合: ${rn}`),el('span',null,`相手: ${S.opp?S.opp.nick:'不戦勝（相手なし）'}`+(S.opp&&S.opp.s[r]!=null?` ・ 相手は弾き終わっています（スコアは試合後に公開）`:'')));
+    if(me.s[r]==null&&now<I.dl[r]){const b=el('button','btn pri',`🎹 ${rn}を戦う（${songs[r].name}・1回だけ）`);b.addEventListener('click',()=>tnPlay(r));mine.appendChild(b)}
+    else if(me.s[r]!=null)mine.appendChild(el('span',null,`あなたのスコア ${num(me.s[r])} ・ 相手の結果を待っています`))}
+  box.appendChild(mine);
+  /* トーナメント表 */
+  const tb=el('div','tnTree');for(let k=0;k<4;k++){const col=el('div','tnCol');col.appendChild(el('small',null,['1回戦','準決勝','決勝','優勝'][k]));
+    S.R[k].forEach((p,i)=>{const c=el('div','tnSlot'+(p&&p.me?' me':'')+(p===undefined?' wait':''));const sc=k<3&&p&&p.s[k]!=null&&(S.R[k+1][i>>1]!==undefined)?' '+num(p.s[k]):'';c.textContent=p===undefined?'…':p?p.nick+sc:'—';col.appendChild(c)});tb.appendChild(col)}
+  box.appendChild(tb);
+}
+/* ---------- イントロクイズ ---------- */
+const QZ={mode:'solo',qs:[],i:0,score:0,ok:0,t0:0,timer:null,answered:false,room:null,code:'',role:'',unsub:[],go:null};
+function qzPool(){return poolSongs().filter(s=>!s.audio&&typeof s.mel==='string'&&s.mel.trim().split(/\s+/).length>=8&&s.cat!=='secret')}
+function qzMake(seed){const pool=qzPool(),r=seeded(hashStr('kk-qz-'+seed)%2147483646+1),sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+  const pick=sh(pool).slice(0,10);return pick.map(s=>{const others=sh(pool.filter(x=>x.name!==s.name)).slice(0,3);return {id:s.id,name:s.name,choices:sh([s,...others]).map(x=>x.name)}})}
+function qzIntro(id){const s=SONGS.find(x=>x.id===id);if(!s)return;initAudio();let t=0;const u=.24;
+  s.mel.trim().split(/\s+/).slice(0,10).forEach(tok=>{const m=/^(.*?)(?:-(\d+))?$/.exec(tok),len=+(m[2]||1),ns=m[1].split(/[.+>]/);ns.forEach((n,j)=>{if(/^[A-G]#?\d$/.test(n))try{play(midiOf(n),m[1].includes('>')?t+j*u*len/ns.length:t,.6)}catch(e){}});t+=len*u})}
+function openQuiz(){initAudio();$('quiz').hidden=false;$('quiz').scrollTop=0;qzMenu()}
+function qzMenu(){clearInterval(QZ.timer);const box=$('quizBody');box.textContent='';
+  box.appendChild(el('p','hint','曲のはじめが流れます。4つの中から曲名を当てよう！ 早く答えるほど高得点。'));
+  const solo=el('button','btn pri','🎵 ひとりで遊ぶ（10問）');solo.addEventListener('click',()=>qzStart(String(Date.now()),'solo'));box.appendChild(solo);
+  box.appendChild(el('p','hint',`ベスト ${num(store.get('quizBest',0)).toLocaleString()}点 ・ 1日3回まで、正解数×30コイン`));
+  const v=el('div','pzSec');v.appendChild(el('h3',null,'⚡ 早押し対戦（2〜4人）'));
+  const mk=el('button','btn','部屋を作る');mk.addEventListener('click',()=>qzJoin(String(1000+Math.floor(Math.random()*9000)),'host'));
+  const row=el('div','nickRow');const inp=el('input','pzInput');inp.inputMode='numeric';inp.maxLength=4;inp.placeholder='部屋番号（4けた）';const jn=el('button','sound','入る');jn.addEventListener('click',()=>{const c=inp.value.normalize('NFKC').replace(/\D/g,'');if(c.length===4)qzJoin(c,'guest')});row.append(inp,jn);
+  v.append(mk,row);box.appendChild(v);if(QZ.msg){box.appendChild(el('p','pzNote',QZ.msg));QZ.msg=''}
+}
+function qzStart(seed,mode,startAt){QZ.mode=mode;QZ.qs=qzMake(seed);QZ.i=0;QZ.score=0;QZ.ok=0;QZ.my={};QZ.startAt=startAt||Date.now();qzShow()}
+function qzShow(){
+  clearInterval(QZ.timer);const box=$('quizBody');box.textContent='';const q=QZ.qs[QZ.i];if(!q){qzEnd();return}
+  QZ.answered=false;const head=el('div','qzHead');head.append(el('b',null,`第${QZ.i+1}問 / 10`),el('span',null,`${QZ.score.toLocaleString()}点`));box.appendChild(head);
+  const bar=el('div','qzBar'),fill=el('span');bar.appendChild(fill);box.appendChild(bar);
+  const big=el('div','qzNote','♪');box.appendChild(big);
+  const again=el('button','sound','🔊 もう一回聴く');again.addEventListener('click',()=>qzIntro(q.id));box.appendChild(again);
+  const ch=el('div','qzChoices');q.choices.forEach((c,ci)=>{const b=el('button','qzC',c);b.addEventListener('click',()=>qzAnswer(ci,b));ch.appendChild(b)});box.appendChild(ch);
+  if(QZ.mode==='vs'){const sb=el('div','qzScores');sb.id='qzScores';box.appendChild(sb);qzRenderScores()}
+  const start=QZ.mode==='vs'?QZ.startAt+QZ.i*13000+1500:Date.now()+500;QZ.qStart=start;
+  const tick=()=>{const left=Math.max(0,1-(Date.now()-start)/10000);fill.style.width=(left*100)+'%';if(Date.now()>=start&&!QZ.played){QZ.played=true;qzIntro(q.id);big.classList.add('on')}
+    if(Date.now()-start>10000&&!QZ.answered)qzAnswer(-1,null);if(QZ.mode==='vs'){qzRenderScores();if(Date.now()>=QZ.startAt+(QZ.i+1)*13000){QZ.i++;QZ.played=false;qzShow()}}};
+  QZ.played=false;QZ.timer=setInterval(tick,100);tick();
+}
+function qzAnswer(ci,btn){
+  if(QZ.answered||Date.now()<QZ.qStart)return;QZ.answered=true;const q=QZ.qs[QZ.i],ok=ci>=0&&q.choices[ci]===q.name,ms=Math.max(0,Date.now()-QZ.qStart);
+  const pts=ok?Math.max(100,1000-Math.floor(ms/10)):0;QZ.score+=pts;if(ok)QZ.ok++;
+  [...document.querySelectorAll('.qzC')].forEach(b=>{if(b.textContent===q.name)b.classList.add('ok');else if(b===btn)b.classList.add('ng');b.disabled=true});
+  try{ok?[84,88,91].forEach((n,i)=>play(n,i*.06,.5)):play(48,0,.5)}catch(e){}
+  if(QZ.mode==='vs'){QZ.my['q'+QZ.i]=[ok?1:0,ms];qzPres({a:QZ.my,sc:QZ.score})}
+  else{clearInterval(QZ.timer);setTimeout(()=>{QZ.i++;qzShow()},1200)}
+}
+function qzEnd(){
+  clearInterval(QZ.timer);const box=$('quizBody');box.textContent='';
+  box.append(el('div','qzEnd'));const e=box.lastChild;e.append(el('small',null,'結果'),el('b',null,`${QZ.score.toLocaleString()}点`),el('span',null,`10問中 ${QZ.ok}問 正解`));
+  if(QZ.mode==='solo'){const best=num(store.get('quizBest',0));if(QZ.score>best){store.set('quizBest',QZ.score);e.appendChild(el('em',null,'自己ベスト更新！'));pushCloud()}
+    const k='quizPlay:'+jstDay(),n=num(store.get(k,0));if(n<3&&QZ.ok){store.set(k,n+1);const c=QZ.ok*30;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();e.appendChild(el('span',null,`+${c}コイン（今日 ${n+1}/3回目）`))}}
+  else{qzRenderScores(box);const ps=qzPeers().sort((a,b)=>b.sc-a.sc);if(ps[0]&&ps[0].me&&!QZ.paid&&ps.length>1){QZ.paid=true;const w=loadWallet();w.e+=500;store.set('wallet',w);renderCoins();e.appendChild(el('em',null,'🏆 優勝！ +500コイン'))}}
+  const again=el('button','btn pri','メニューへ');again.addEventListener('click',()=>{qzLeave();qzMenu()});box.appendChild(again);
+}
+async function qzJoin(code,role){
+  const api=await vsApi();if(!api){QZ.msg='この開き方では早押し対戦に入れません（ログイン、Claude版は招待が必要）。';qzMenu();return}
+  await qzLeave();try{QZ.room=await api.join('kb-quiz-'+code)}catch(e){QZ.msg='部屋に入れませんでした。';qzMenu();return}
+  QZ.code=code;QZ.role=role;QZ.mode='vs';QZ.my={};QZ.score=0;QZ.paid=false;
+  QZ.unsub.push(QZ.room.onPeers(()=>{const h=qzPeers().find(p=>p.role==='host'&&p.go);if(h&&h.go&&(!QZ.go||QZ.go.seed!==h.go.seed)){QZ.go=h.go;qzStart(String(h.go.seed),'vs',h.go.start)}else if(!QZ.go)qzLobby()},()=>{}));
+  await qzPres({v:1,nick:myNick(),role,a:{},sc:0,go:null});qzLobby();
+}
+const qzPres=p=>QZ.room?QZ.room.presence(p).catch(()=>{}):Promise.resolve();
+function qzPeers(){if(!QZ.room)return [];return QZ.room.peers().filter(p=>p.kind==='viewer'&&p.presence&&p.presence.v===1&&!(p.isMe&&!p.sameTab)).map(p=>({nick:String(p.presence.nick||'プレイヤー').slice(0,16),role:p.presence.role,go:p.presence.go,a:p.presence.a||{},sc:num(p.presence.sc),me:!!p.sameTab}))}
+function qzLobby(){if(QZ.go)return;const box=$('quizBody');box.textContent='';box.append(el('div','vsCode'));box.lastChild.append(el('small',null,'部屋番号'),el('b',null,QZ.code));
+  const ul=el('ul','vsList');qzPeers().forEach(p=>{const li=el('li');li.append(el('span',null,p.nick+(p.me?'（あなた）':'')),el('em',null,p.role==='host'?'部屋主':''));ul.appendChild(li)});box.appendChild(ul);
+  if(QZ.role==='host'){const go=el('button','btn pri','スタート！');go.disabled=qzPeers().length<2;go.addEventListener('click',()=>{const g={seed:Math.floor(Math.random()*1e9),start:Date.now()+3000};QZ.go=g;qzPres({go:g});qzStart(String(g.seed),'vs',g.start)});box.appendChild(go)}
+  else box.appendChild(el('p','hint','部屋主がスタートするのを待っています…'));
+  const lv=el('button','sound','部屋を出る');lv.addEventListener('click',()=>{qzLeave();qzMenu()});box.appendChild(lv)}
+function qzRenderScores(target){const box=target||$('qzScores');if(!box)return;const ps=qzPeers().map(p=>({...p,sc:Object.values(p.a||{}).reduce((s,[ok,ms])=>s+(ok?Math.max(100,1000-Math.floor(ms/10)):0),0)})).sort((a,b)=>b.sc-a.sc);
+  const ul=el('ol','qzBoard');ps.forEach((p,i)=>{const li=el('li',p.me?'me':null);li.append(el('i',null,i+1),el('span',null,p.nick),el('b',null,p.sc.toLocaleString()));ul.appendChild(li)});if(!target)box.textContent='';box.appendChild(ul)}
+async function qzLeave(){QZ.unsub.forEach(u=>{try{u()}catch(e){}});QZ.unsub=[];const r=QZ.room;QZ.room=null;QZ.go=null;QZ.mode='solo';if(r){try{await r.leave()}catch(e){}}}
+/* ---------- リプレイ ---------- */
+const rpEnc=h=>{let last=0;return h.map(v=>{const d=Math.round((v-last)*100);last=Math.round(v*100)/100;return d.toString(36)}).join(',')};
+const rpDec=s=>{let acc=0;return String(s||'').split(',').filter(Boolean).map(x=>{acc+=parseInt(x,36)/100;return Math.round(acc*100)/100})};
+function rpSave(){
+  if(!G||!G.rec||G.replay||!G.rec.length)return;const cur=store.get('myReplay',null);if(cur&&num(cur.score)>G.score)return;
+  const rec={song:G.song.id,name:G.song.name,seed:G.seed,sp:G.recSp||G.speed,score:G.score,h:rpEnc(G.rec.slice(0,3000)),t:Date.now()};if(rec.h.length>12000)return;store.set('myReplay',rec);
+}
+function watchReplay(rp,nick){
+  const s=SONGS.find(x=>x.id===rp.song);if(!s){moveToast('この曲が見つかりません');return}
+  ['pview','rank','plaza','battle'].forEach(id=>{try{$(id).hidden=true}catch(e){}});
+  RP_NEXT={h:rpDec(rp.h),sp:num(rp.sp)||s.speed,nick};FORCE_SONG=true;RP_SEED=num(rp.seed);initAudio();newGame(s.id);restoreBgSrc();
+}
+var RP_SEED=0;
+/* ---------- 隠しコマンド: タイトルの「プ・ッ・タ・鍵・黒」 ---------- */
+{const seq=[];$('hero').addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b)return;seq.push(b.textContent);if(seq.length>5)seq.shift();
+  if(seq.join('')==='プッタ鍵黒'){seq.length=0;const first=!store.get('secretOpen',false);store.set('secretOpen',true);
+    if(first){const o=loadOwned();if(!o.includes('tag:himitsu'))o.push('tag:himitsu');store.set('owned',o);addNote('ach','🔓 ひみつの曲が開いた！ 称号「ひみつを知る者」','secret')}
+    setTimeout(()=>{[60,64,67,72,76,79,84,88,91,96].forEach((n,i)=>play(n,i*.05,.5))},200);moveToast(first?'🔓 ひみつの曲が開いた！ 曲の一覧のいちばん上を見てね':'🔓 ひみつの曲は開いています');renderSongs()}})}
+/* ---------- 結果を自慢する画像 ---------- */
+function shareImage(){
+  if(!G)return null;const c=document.createElement('canvas');c.width=1080;c.height=1350;const g=c.getContext('2d');
+  const bg=g.createLinearGradient(0,0,1080,1350);bg.addColorStop(0,'#0d0f14');bg.addColorStop(.55,'#1c2240');bg.addColorStop(1,'#3a1440');g.fillStyle=bg;g.fillRect(0,0,1080,1350);
+  for(let r=0;r<3;r++)for(let k=0;k<4;k++){const on=[[0,0],[0,2],[1,1],[1,3],[2,2]].some(([a,b])=>a===r&&b===k);g.fillStyle=on?'#000':'rgba(255,255,255,.92)';g.fillRect(140+k*200,90+r*110,196,106)}
+  g.fillStyle='#fff';g.font='900 64px "Dela Gothic One",sans-serif';g.textAlign='center';[['黒',0,0],['鍵',0,2],['タ',1,1],['ッ',1,3],['プ',2,2]].forEach(([t,r,k])=>g.fillText(t,140+k*200+98,90+r*110+78));
+  const song=G.song.name,score=G.mode==='classic'?(G.finished?G.time.toFixed(3)+'"':'-'):String(G.score);
+  g.font='700 40px sans-serif';g.fillStyle='#c9cbd6';g.fillText(G.mode==='song'?'楽曲モード':(MODES[G.mode]&&MODES[G.mode].name)||G.mode,540,520);
+  g.font='900 64px sans-serif';g.fillStyle='#fff';const nm=song.length>14?song.slice(0,13)+'…':song;g.fillText(nm,540,600);
+  g.font='120px "Dela Gothic One",sans-serif';const sg=g.createLinearGradient(0,640,0,800);sg.addColorStop(0,'#fff6c8');sg.addColorStop(1,'#ffbf1f');g.fillStyle=sg;g.fillText(score,540,780);
+  g.font='700 54px sans-serif';g.fillStyle='#ffd76a';g.fillText(G.mode==='song'?(rankText(G.lap)||'—'):'',540,860);
+  g.font='600 36px sans-serif';g.fillStyle='#c9cbd6';g.fillText(`タイル ${G.count}枚 ・ 最高 毎秒${(G.maxSpeed||0).toFixed(1)}枚`,540,930);
+  try{const me=myRate(),rk=rankOf(me.r);if(me.n)g.fillText(`ランク ${rk[1]} ${me.r}`,540,985)}catch(e){}
+  g.fillStyle='rgba(255,255,255,.1)';g.fillRect(90,1040,900,2);
+  g.font='700 44px sans-serif';g.fillStyle='#fff';g.fillText(myNick()+' の記録',540,1110);
+  g.font='600 30px sans-serif';g.fillStyle='#9a9db0';g.fillText(jstDay().replace(/-/g,'/'),540,1160);
+  g.font='700 34px sans-serif';g.fillStyle='#9ee7ff';g.fillText('黒鍵タップで勝負しよう！',540,1240);g.font='600 28px sans-serif';g.fillStyle='#c9cbd6';g.fillText(WEB_URL.replace('https://',''),540,1290);
+  return c;
+}
+async function shareResult(){
+  const c=shareImage();if(!c)return;const url=c.toDataURL('image/png');$('shImg').src=url;$('shareFx').hidden=false;
+  $('shSave').href=url;$('shSave').download='kokken-'+Date.now()+'.png';
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));$('shShare').hidden=!(navigator.canShare&&blob&&navigator.canShare({files:[new File([blob],'kokken.png',{type:'image/png'})]}));
+  $('shShare').onclick=async()=>{try{await navigator.share({files:[new File([blob],'kokken.png',{type:'image/png'})],text:`黒鍵タップで ${G?G.score:''}点！ ${invLink()}`})}catch(e){}};
+}
+$('rShare').addEventListener('click',shareResult);$('shClose').addEventListener('click',()=>{$('shareFx').hidden=true});
+/* ---------- 友だち招待（Web版） ---------- */
+const invLink=()=>WEB_URL+(cloud.uid&&window.KOKKEN_WEB?'?inv='+encodeURIComponent(cloud.uid):'');
+try{const m=/[?&]inv=([^&#]+)/.exec(location.search);if(m&&window.KOKKEN_WEB&&!store.get('invBy',null))store.set('invBy',decodeURIComponent(m[1]).slice(0,60))}catch(e){}
+function invCheck(){
+  if(!window.KOKKEN_WEB||!cloud.uid||!cloud.loaded)return;const by=store.get('invBy',null);
+  if(by&&by!==cloud.uid&&!store.get('invDone',false)&&!store.get('invOld',false)){
+    const fresh=num(loadStats().tiles)<200;store.set('invDone',true);if(fresh){const w=loadWallet();w.e+=3000;store.set('wallet',w);renderCoins();moveToast('🎁 招待ボーナス +3,000コイン！ ようこそ黒鍵タップへ');addNote('take','🎁 招待ボーナス +3,000コイン','inv')}else store.set('invOld',true);pushCloud()}
+  const paid=store.get('invPaid',[]);const list=(cloud.rows||[]).filter(r=>r.inv===cloud.uid&&r.id!==cloud.uid&&!paid.includes(r.id));
+  if(list.length){const w=loadWallet();w.e+=3000*list.length;store.set('wallet',w);store.set('invPaid',paid.concat(list.map(r=>r.id)));renderCoins();pushCloud();
+    list.forEach(r=>addNote('take',`🎁 ${String(r.nick||'プレイヤー').slice(0,16)} さんが招待で来てくれました！ +3,000コイン`,'invp:'+r.id));moveToast(`🎁 招待した友だちが来てくれた！ +${(3000*list.length).toLocaleString()}コイン`)}
+}
+function invCount(){return (cloud.rows||[]).filter(r=>r.inv===cloud.uid&&r.id!==cloud.uid).length}
+/* ---------- 記録に足す ---------- */
+{const bc=buildCloud;buildCloud=function(){const d=bc();try{const v=d1Mine();if(v.d)d.d1=v;const t=tnMine();if(t)d.tn=t;const q=num(store.get('quizBest',0));if(q)d.quiz=q;const rp=store.get('myReplay',null);if(rp)d.rp=rp;
+  const by=store.get('invBy',null);if(by&&store.get('invDone',false)&&!store.get('invOld',false))d.inv=by}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){mc(d);try{
+  if(d.d1&&d.d1.d){const v=d1Mine();if(d.d1.d>v.d||(d.d1.d===v.d&&num(d.d1.s)>num(v.s)))store.set('d1',d.d1);store.set('d1try:'+d.d1.d,true)}
+  if(d.tn&&d.tn.wk===tnInfo().wk&&!tnMine())store.set('tn',d.tn);
+  if(num(d.quiz)>num(store.get('quizBest',0)))store.set('quizBest',num(d.quiz));
+  if(d.rp&&!store.get('myReplay',null))store.set('myReplay',d.rp);
+  if(d.inv&&!store.get('invDone',false)){store.set('invBy',d.inv);store.set('invDone',true)}}catch(e){}}}
+{const bd=boards;boards=function(){const a=bd();a.splice(2,0,['d1','🎵 今日の1曲'],['quiz','🎵 イントロクイズ']);return a}}
+{const bv=boardValue;boardValue=function(d,key){if(key==='d1'){const v=d1Val(d,jstDay());return v===null?0:v}if(key==='quiz')return num(d.quiz);return bv(d,key)}}
+/* 結果のときの処理 */
+{const ph=progressHook;progressHook=function(slow){try{if(G){
+  if(G.d1&&!G.d1done){G.d1done=true;d1Record(slow?0:G.score)}
+  if(G.tn&&!G.tndone){G.tndone=true;const t=tnMine();if(t&&t.wk===G.tn.wk){t.s[G.tn.r]=slow?0:G.score;tnSave(t)}}
+  if(!slow)rpSave();
+}}catch(e){console.warn(e)}return ph.apply(this,arguments)}}
+/* 結果画面の注意書き */
+{const rv=renderVsResult;renderVsResult=function(){rv.apply(this,arguments);try{if(!G)return;const n=$('rNote');
+  if(G.d1||G.tn){$('contBtn').hidden=true;$('reviveBtn').hidden=true}
+  if(G.replay){n.hidden=false;n.textContent=`▶ ${G.replay.nick} のリプレイでした`}
+  else if(G.d1){n.hidden=false;n.textContent=`🎵 今日の1曲 ・ あなたのスコア ${d1Mine().s} ・ 結果は明日の0時に決まります`}
+  else if(G.tn){n.hidden=false;n.textContent=`🏆 週末トーナメント ${['1回戦','準決勝','決勝'][G.tn.r]} ・ スコア ${G.score} を記録しました`}}catch(e){}}}
+/* プロフィールに「リプレイを見る」 */
+{const op=openPView;openPView=function(id){op.apply(this,arguments);try{
+  const row=(cloud.rows||[]).find(x=>x.id===id),rp=id===cloud.uid?store.get('myReplay',null):row&&row.rp;
+  let b=$('pvReplay');if(!b){b=el('button','btn','');b.id='pvReplay';$('pvClose').before(b)}
+  b.hidden=!(rp&&rp.h);if(rp&&rp.h){b.textContent=`▶ リプレイを見る（${String(rp.name||'').slice(0,14)} ・ ${num(rp.score)}点）`;b.onclick=()=>watchReplay(rp,id===cloud.uid?myNick():String(row&&row.nick||'プレイヤー').slice(0,16))}}catch(e){}}}
+/* メニューのカード */
+function renderXCards(){try{
+  const d=jstDay(),s=d1Song(d),tried=store.get('d1try:'+d,false);$('xD1').textContent=tried?`🎵 今日の1曲: ${s.name}（挑戦済み ${d1Mine().d===d?d1Mine().s:0}点）`:`🎵 今日の1曲: ${s.name} ・ 1回だけ勝負！`;
+  const I=tnInfo(),now=Date.now();$('xTn').textContent=I.open?(now<I.entryEnd?'🏆 週末トーナメント エントリー受付中！':'🏆 週末トーナメント 開催中'):`🏆 週末トーナメント（次は土曜 ・ あと${fmtLeft(I.start-now).replace(/:\d\d$/,'')}）`;
+  }catch(e){}}
+$('xD1').addEventListener('click',()=>{if(!$('daily').hidden)return;openDaily('one')});
+$('xTn').addEventListener('click',openTour);$('xQuiz').addEventListener('click',openQuiz);
+$('tourBack').addEventListener('click',()=>{$('tour').hidden=true});$('quizBack').addEventListener('click',()=>{qzLeave();clearInterval(QZ.timer);$('quiz').hidden=true});
+$('dt_one').addEventListener('click',()=>{dailyTab='one';renderDaily()});
+{const rd=renderDaily;renderDaily=function(){rd.apply(this,arguments);try{$('dt_one').setAttribute('aria-selected',String(dailyTab==='one'));$('dp_one').hidden=dailyTab!=='one';if(dailyTab==='one'){['login','miss'].forEach(t=>{$('dp_'+t).hidden=true});renderD1()}}catch(e){}}}
+setInterval(()=>{renderXCards();d1Reward();tnReward();invCheck();if(!$('tour').hidden)renderTour()},5000);
+setTimeout(()=>{renderXCards();invCheck()},1500);renderXCards();
+
+/* ======== いろいろなボス・ゲリラ出現・自分で作るボス ======== */
+const BOSS_T={
+ maou:{name:'黒鍵の魔王',sub:'八十八鍵を喰らう者',cols:['#ff2a3a','#ff5a1f','#ff1f8a','#ff0022'],eyes:['#ff3a3a','#ff3a3a','#ff9ad0','#ffffff'],crown:'keys',horns:1,mask:'#1d1822',items:['tag:maouslayer','frame:maoucrown','skin:maou','fx:maoufx'],door:'maou'},
+ ice:{name:'氷鍵の魔竜',sub:'凍てつく旋律',cols:['#5fe0ff','#3aa8ff','#9ee7ff','#e8fbff'],eyes:['#9ee7ff','#5fe0ff','#ffffff','#ffffff'],crown:'ice',horns:2,mask:'#0f2236',items:['tag:bs_ice','frame:bs_ice','skin:bs_ice','fx:bs_ice']},
+ thunder:{name:'雷鳴のオルガン王',sub:'千の管が吠える',cols:['#ffe94a','#c77dff','#ffb300','#ffffff'],eyes:['#fff27a','#fff27a','#ffffff','#ffffff'],crown:'pipes',horns:0,mask:'#1c1640',items:['tag:bs_thunder','frame:bs_thunder','skin:bs_thunder','fx:bs_thunder']},
+ void:{name:'虚無の指揮者',sub:'沈黙を奏でる者',cols:['#a06bff','#7a3cff','#ff4df2','#ffffff'],eyes:['#e0c8ff','#c08aff','#ff9af2','#ffffff'],crown:'halo',horns:0,mask:'#120a1e',items:['tag:bs_void','frame:bs_void','skin:bs_void','fx:bs_void']},
+ fire:{name:'業火の鍵盤獣',sub:'すべてを焦がす連打',cols:['#ff8a00','#ff4a00','#ffd000','#fff3c0'],eyes:['#ffd000','#ffd000','#ffffff','#ffffff'],crown:'flame',horns:1,mask:'#2a0c04',items:['tag:bs_fire','frame:bs_fire','skin:bs_fire','fx:bs_fire']},
+};
+const BOSS_KEYS=Object.keys(BOSS_T);
+function bossTpl(r){const b=BOSS_T[r&&r.boss]||BOSS_T.maou;if(!r||!r.look)return b;const L=r.look,c=L.col||b.cols[0];
+  return {...b,cols:[c,L.col2||c,L.col2||b.cols[2],'#ffffff'],eyes:[L.eye||b.eyes[0],L.eye||b.eyes[1],L.eye||b.eyes[2],'#ffffff'],crown:L.crown||b.crown,horns:L.horns??b.horns,mask:L.mask||b.mask}}
+/* ---------- ゲリラボス: 毎日2回、決まっていない時間にランダムなボスが現れる（全員の画面で同じ） ---------- */
+const RCFG={auto:true,unsub:null};
+function gSlot(d,k){const r=seeded(hashStr('kk-guerrilla-'+d+'-'+k)%2147483646+1);const base=Date.parse(d+'T00:00:00+09:00');
+  const h=k===0?12+Math.floor(r()*5):18+Math.floor(r()*4),m=Math.floor(r()*4)*15,start=base+(h*60+m)*6e4,boss=BOSS_KEYS[Math.floor(r()*BOSS_KEYS.length)],hp=Math.round((20000+r()*60000)/1000)*1000;
+  const t=BOSS_T[boss];return {id:'g'+d.replace(/-/g,'')+k,name:t.name,sub:t.sub+' ・ ゲリラ出現',boss,hp,start,end:start+2*3600e3,rand:1,
+    tiers:[{coins:3000,tk:{},items:[]},{coins:6000,tk:{coin2:1},items:[]},{coins:9000,tk:{heart:1},items:[]}],kill:{coins:30000,tk:{revive:1},items:t.items.filter(i=>validItem(i))}}}
+function gRaid(){if(!RCFG.auto)return null;const now=Date.now();
+  for(const d of [jstDay(now-864e5),jstDay(now),jstDay(now+864e5)])for(const k of [0,1]){const s=gSlot(d,k);if(now>=s.start-3600e3&&now<s.end+2*3600e3)return s}return null}
+function subscribeRaidCfg(){if(!cloud.db||RCFG.unsub)return;try{RCFG.unsub=cloud.db.doc('live/raidcfg').onSnapshot(s=>{const d=s.exists?s.data():null;RCFG.auto=!(d&&d.auto===false);raidCheck();if(!$('admin').hidden)try{renderRaidAdmin()}catch(e){}},()=>{RCFG.unsub=null})}catch(e){}}
+/* raid(): 管理者が出したボスを優先。いなければゲリラボス */
+{const orig=raid;raid=function(){const r=orig();if(raidPreviewOn())return r;const st=r?raidState(r):'none';if(r&&(st==='live'||st==='soon'))return r;const g=gRaid();if(g)return g;return r}}
+{const os=raidState;raidState=function(r){r=r===undefined?raid():r;if(r&&r.rand){const n=Date.now();if(n<r.start)return n>=r.start-3600e3?'soon':'none';if(n<r.end)return 'live';return n<r.end+2*3600e3?'after':'none'}return os(r)}}
+/* 討伐報酬: ボスごとの限定アイテム。上位ボーナスもボスに合わせる */
+{const og=raidGrant;raidGrant=function(r,i){
+  if(i===3){const tp=bossTpl(r);r={...r,kill:{...r.kill,items:(r.kill.items||[]).length?r.kill.items:tp.items}}}
+  const x=og(r,i);if(x&&i===3&&!(bossTpl(r).door)){x.lines=x.lines.filter(l=>!/魔王の間/.test(l))}return x}}
+/* ---------- 演出と画面でボスの見た目・名前を使う ---------- */
+{const pf=playRaidFx;playRaidFx=function(it,done){pf.apply(this,arguments);try{const r=raid()||{};const nm=r.name||'ボス';
+  document.querySelectorAll('#raidFx .stripe').forEach(e=>{e.textContent=`WARNING ⚠ ${nm} 襲来 ⚠ WARNING ⚠ ${nm} 襲来 ⚠`});
+  const k=document.querySelector('#raidFx .fxK');if(k&&it.k==='kill')k.textContent=(r.boss&&r.boss!=='maou'?'ボス 討伐':'魔王 討伐');
+  const s=document.querySelector('#raidFx .fxS');if(s&&it.k==='appear'&&r.rand)s.textContent='ゲリラボス出現！ ・ 2時間だけ';
+  if(it.k==='kill'&&!bossTpl(r).door){[...document.querySelectorAll('#raidFx .fxR b')].forEach(b=>{if(/魔王の間/.test(b.textContent))b.remove()})}}catch(e){}}}
+{const rr=renderRaid;renderRaid=function(){rr.apply(this,arguments);try{const r=raid();if(!r)return;if(r.rand)$('rdKick').textContent='ゲリラボス出現！（2時間だけ）';
+  const tp=bossTpl(r);$('rdName').style.textShadow=`0 0 18px ${tp.cols[0]},0 0 42px ${tp.cols[1]}`}catch(e){}}}
+{const rl=renderLoot;renderLoot=function(r,T){r={...r,kill:{...r.kill,items:(r.kill.items||[]).length?r.kill.items:bossTpl(r).items}};rl(r,T);try{if(!bossTpl(r).door){const p=document.querySelector('#rdLoot .lootPlus');if(p)p.lastChild.textContent=p.lastChild.textContent.replace(' ・ 🚪 魔王の間（異界の扉）','')}
+  const mv=document.querySelector('#rdLoot .lootMvp');if(mv)mv.innerHTML='';if(mv){const b1=el('b',null,'🏆 与ダメージ1位');const b2=el('b',null,'🥈🥉 2〜3位');mv.append(b1,document.createTextNode(` 称号「${r.boss&&r.boss!=='maou'?'討伐MVP':'魔王殺し'}」＋${RAID_MVP[0].coins.toLocaleString()}コイン`),el('br'),b2,document.createTextNode(` 称号「討伐の英雄」＋${RAID_MVP[1].coins.toLocaleString()}コイン`),el('br'),document.createTextNode('（倒した瞬間の順位で決まります）'))}}catch(e){}}}
+/* ---------- 運営: ボスの種類・自分で作る・ランダムに出す・ゲリラのオンオフ ---------- */
+function setupBossAdmin(){
+  if($('raBoss'))return;const anchor=$('raName');
+  const wrap=el('div','gfSec');wrap.appendChild(el('b',null,'ボスの種類'));
+  const sel=el('select');sel.id='raBoss';BOSS_KEYS.forEach(k=>{const o=el('option',null,BOSS_T[k].name);o.value=k;sel.appendChild(o)});{const o=el('option',null,'🎨 自分で作る（色と形を選ぶ）');o.value='custom';sel.appendChild(o)}
+  const cv=el('canvas');cv.id='raPrevCv';cv.width=cv.height=320;cv.style.cssText='width:160px;height:160px;align-self:center;background:#0d0f14';
+  const cus=el('div');cus.id='raCustom';cus.hidden=true;cus.style.cssText='display:flex;flex-direction:column;gap:8px';
+  cus.innerHTML='<div class="cuCols"><label>体の色<input id="raCol" type="color" value="#2fd1a0"></label><label>2つ目の色<input id="raCol2" type="color" value="#1747a6"></label><label>目の色<input id="raEye" type="color" value="#ffffff"></label></div>'
+   +'<div class="bgrow"><label for="raCrown">かんむり</label><select id="raCrown"><option value="keys">黒鍵</option><option value="pipes">パイプオルガン</option><option value="ice">氷の結晶</option><option value="halo">光の輪</option><option value="flame">炎</option></select><label for="raHorn">つの</label><select id="raHorn"><option value="1">あり</option><option value="2">大きい</option><option value="0">なし</option></select></div>'
+   +'<div class="bgrow"><label for="raBase">ごほうびのアイテム</label><select id="raBase">'+BOSS_KEYS.map(k=>`<option value="${k}">${BOSS_T[k].name}の限定アイテム</option>`).join('')+'</select></div>';
+  const rnd=el('button','btn','🎲 ランダムなボスを今すぐ出す（3時間）');rnd.addEventListener('click',postRandomBoss);
+  const auto=el('label','check');auto.innerHTML='<input id="raAuto" type="checkbox">ゲリラボスを出す（毎日ランダムな時間に2回・2時間ずつ）';
+  wrap.append(sel,cv,cus,rnd,auto);anchor.closest('.gfSec').before(wrap);
+  const relabel=()=>{try{const it=bossTpl(adminLook()).items;RAID_LOOT.forEach((_,j)=>{const cb=$('raL'+j);if(cb&&cb.parentNode)cb.parentNode.lastChild.textContent=itemName(it[j])})}catch(e){}};
+  $('raBase')&&0;
+  sel.addEventListener('change',()=>{relabel();cus.hidden=sel.value!=='custom';const t=BOSS_T[sel.value];if(t){$('raName').value=t.name;$('raSub').value=t.sub}bossPreview()});
+  ['raCol','raCol2','raEye','raCrown','raHorn'].forEach(id=>$(id).addEventListener('input',bossPreview));$('raBase').addEventListener('change',relabel);
+  $('raAuto').addEventListener('change',async e=>{try{await cloud.db.doc('live/raidcfg').set({auto:e.target.checked,t:Date.now()});$('raNote').textContent=e.target.checked?'ゲリラボスを出すようにしました。':'ゲリラボスを止めました。'}catch(x){$('raNote').textContent='変えられませんでした。'}});
+  bossPreview();
+}
+function adminLook(){const v=$('raBoss').value;if(v!=='custom')return {boss:v,look:null};return {boss:$('raBase').value,look:{col:$('raCol').value,col2:$('raCol2').value,eye:$('raEye').value,crown:$('raCrown').value,horns:+$('raHorn').value,mask:'#14121a'}}}
+function bossPreview(){try{const c=$('raPrevCv'),g=c.getContext('2d');g.clearRect(0,0,320,320);const L=adminLook();drawBoss(g,320,320,performance.now()/1000,{tpl:bossTpl(L)})}catch(e){}}
+async function postRandomBoss(){
+  if(!cloud.isOwner||!cloud.db)return;const k=BOSS_KEYS[Math.floor(Math.random()*BOSS_KEYS.length)],t=BOSS_T[k],n=Date.now();
+  const doc={id:'r'+n.toString(36),name:t.name,sub:t.sub,boss:k,hp:raidSuggest(),start:n,end:n+3*3600e3,tiers:[{coins:5000,tk:{coin2:1}},{coins:10000,tk:{heart:1}},{coins:15000,tk:{revive:1}}],kill:{coins:50000,tk:{speed:1,judge:1},items:t.items},t:n};
+  try{await cloud.db.doc('live/raid').set(doc);$('raNote').textContent=`🎲 「${t.name}」を出しました！（3時間）`}catch(e){$('raNote').textContent='出せませんでした。'}
+}
+function bossDocExtra(){try{const L=adminLook();const x={boss:L.boss};if(L.look)x.look=L.look;return x}catch(e){return {}}}
+function mvpFor(r,rank){const m=r&&r.boss&&r.boss!=='maou';const w=RAID_MVP[rank-1];return {coins:w.coins,items:[rank===1?(m?'tag:bossmvp':'tag:maoumvp'):(m?'tag:bosshero':'tag:maouhero')]}}
+{const rc=raidCheck;raidCheck=function(){try{RAID.tpl=bossTpl(raid())}catch(e){}return rc.apply(this,arguments)}}
+{const cr=cleanRaid;cleanRaid=function(d){const r=cr(d);if(!r)return r;r.boss=BOSS_T[d.boss]?d.boss:'maou';const L=d.look;if(L&&typeof L==='object'){const hx=v=>/^#[0-9a-f]{6}$/i.test(v)?v:undefined;r.look={col:hx(L.col),col2:hx(L.col2),eye:hx(L.eye),crown:['keys','pipes','ice','halo','flame'].includes(L.crown)?L.crown:undefined,horns:[0,1,2].includes(L.horns)?L.horns:undefined,mask:hx(L.mask)}}return r}}
+{const sa=setupRaidAdmin;setupRaidAdmin=function(){sa.apply(this,arguments);try{setupBossAdmin()}catch(e){console.warn(e)}}}
+{const ra=renderRaidAdmin;renderRaidAdmin=function(){ra.apply(this,arguments);try{if($('raAuto'))$('raAuto').checked=RCFG.auto;const g=gRaid();if(g&&!RAID.cur){$('raStatus').textContent+=` ・ 今はゲリラボス「${g.name}」の時間です`}}catch(e){}}}
+{const fr=fillRaidForm;fillRaidForm=function(){fr.apply(this,arguments);try{if($('raBoss')){const r=RAID.cur;$('raBoss').value=r&&r.look?'custom':(r&&r.boss)||'maou';$('raCustom').hidden=$('raBoss').value!=='custom';bossPreview()}}catch(e){}}}
+setInterval(()=>{if(!$('admin').hidden&&$('raPrevCv'))bossPreview()},120);
+setTimeout(()=>{subscribeRaidCfg();raidCheck()},1200);setInterval(()=>{if(cloud.db&&!RCFG.unsub)subscribeRaidCfg()},5000);
+
+/* ---------- 倒した・終わったボスの帯は、しばらくしたら消す / 軽くする ---------- */
+{const gr=gRaid;let c=null,ct=0,ca;gRaid=function(){const n=Date.now();if(n-ct<1000&&ca===RCFG.auto)return c;ct=n;ca=RCFG.auto;c=gr();return c}}
+{const rr=raid;let c=null,ct=0,cc,cp;raid=function(){const n=Date.now(),pv=raidPreviewOn();if(n-ct<500&&cc===RAID.cur&&cp===pv)return c;ct=n;cc=RAID.cur;cp=pv;c=rr();return c}}
+const RAID_DOWN_SHOW=10*6e4,RAID_END_SHOW=30*6e4;
+function raidBarGone(r,st,T){if(!r||r.prev)return false;const n=Date.now();
+  if(st==='after'&&n>r.end+RAID_END_SHOW)return true;
+  if(T&&T.down&&T.r&&T.r.id===r.id){let v=RAID.dAt;if(!v||v.id!==r.id){v=store.get('raidDownAt',null);if(!v||v.id!==r.id){v={id:r.id,t:n};store.set('raidDownAt',v)}RAID.dAt=v}return n-num(v.t)>RAID_DOWN_SHOW}
+  return false}
+{const rb=renderRaidBar;renderRaidBar=function(){rb();try{const r=raid(),st=raidState(r);if(st!=='none'&&raidBarGone(r,st,RAID.tot))$('raidBar').hidden=true}catch(e){}}}
+
+/* プレイ中はランキングの受信（全員分の記録）を止めて、カクつきを防ぐ。終わったらまた受け取る */
+const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].includes(G.phase)&&!G.battle);
+{const of=openRankFeed;openRankFeed=function(){if(gameBusy()&&cloud.rows){cloud.feedPaused=true;return}cloud.feedPaused=false;return of.apply(this,arguments)}}
+setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
+  else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 })();
 </script>
 
