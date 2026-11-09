@@ -1323,6 +1323,10 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .chips button[aria-pressed="true"]{outline:3px solid #fff;outline-offset:1px;box-shadow:0 0 14px rgba(255,215,106,.8)}
 .chips button:disabled{opacity:.35}
 .csAmt{display:flex;flex-direction:column;gap:8px}
+.vsBet{display:flex;flex-direction:column;gap:8px;padding:12px;background:linear-gradient(160deg,#2a0a0e,#10121a);border:1px solid #6b4f0c;color:#fff3c4}
+.vsBet b{font-size:15px;color:#f3d27a}
+.vsBet small{font-size:12px;line-height:1.6;color:#e8c98a}
+.vsBet input[type=number]{width:100%;box-sizing:border-box;min-height:40px;padding:6px 10px;font:inherit;font-size:16px;background:#0c0d13;color:#eef0f6;border:1px solid #3a3f55;border-radius:0}
 .csBig{min-height:54px;font-weight:800;font-size:16px;color:#1a1200;background:linear-gradient(180deg,#ffe7a3,#f3d27a 45%,#c99a2e);box-shadow:0 0 18px -4px rgba(243,210,122,.7)}
 .csBig:disabled{opacity:.4;box-shadow:none}
 .csBig.red{color:#fff;background:linear-gradient(180deg,#ff5a6a,#e0213a 50%,#8a0f1f);box-shadow:0 0 18px -4px rgba(224,33,58,.8)}
@@ -8975,7 +8979,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='92';
+const APP_VER='93';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -9053,7 +9057,7 @@ const csLeft=()=>Infinity;
 const csCan=n=>n>0&&coins()>=n;
 function csTake(n){spend(n);csAddNet(-n);renderCoins();CS.dirty=true}
 function csGive(n){n=Math.round(n);if(n<=0)return;const w=loadWallet();w.e+=n;store.set('wallet',w);csAddNet(n);renderCoins();CS.dirty=true}
-try{store.set('sbet',null)}catch(e){}
+try{store.set('sbet',null);store.set('vsbet',0)}catch(e){}
 const yen=n=>Math.round(n).toLocaleString();
 const CS={tab:'hl',dirty:false,hlBet:1000,sbBet:1000,sbT:'best',vsBet:1000,bkBet:1000,bkSel:{}};
 const NOTE_JA=['ド','ド♯','レ','レ♯','ミ','ファ','ファ♯','ソ','ソ♯','ラ','ラ♯','シ'];
@@ -9154,7 +9158,7 @@ function renderSB(body){
   go.addEventListener('click',()=>{if(!csCan(CS.sbBet))return;store.set('sbet',{t:CS.sbT,n:CS.sbBet,at:Date.now()});closeCasino();if(mode!=='song'){mode='song';store.set('mode','song');renderModes();renderSongs()}moveToast('🎯 賭けました！ 楽曲モードで曲を選んで勝負');try{$('songs').scrollIntoView({block:'start',behavior:'smooth'})}catch(e){}});
   box.appendChild(go);
 }
-function renderCsPend(){const e=$('csPend');if(!e)return;const p=null,v=vsPend();if(!p&&!v){e.hidden=true;return}e.hidden=false;e.textContent='';
+function renderCsPend(){const e=$('csPend');if(!e)return;const p=null,v=0;if(!p&&!v){e.hidden=true;return}e.hidden=false;e.textContent='';
   e.appendChild(el('span','',[p&&`🎯 スコア賭け中: ${SB_T[p.t].name} ${yen(p.n)}`,v&&`⚔ 次の対戦に ${yen(v)} 賭け中`].filter(Boolean).join(' ／ ')));
   const c=el('button','','取り消す');c.addEventListener('click',()=>{store.set('sbet',null);store.set('vsbet',0);renderCsPend()});e.appendChild(c)}
 
@@ -9163,20 +9167,13 @@ const VS_MAX=30000;
 const vsPend=()=>{const v=num(store.get('vsbet',0));return v>0?v:0};
 function renderVSB(body){
   const box=el('div','csBox');body.appendChild(box);
-  box.append(el('h2','','⚔ 賭け対戦'),el('p','','次のリアルタイム対戦かゴースト対戦にコインを賭けます。勝てば ×1.9、引き分けや相手がいないときは返金、負けたら没収。ゴースト対戦は、自分の自己ベストより強いゴーストのときだけ賭けられます。'));
-  const v=vsPend();
-  if(v){box.appendChild(el('div','csMsg',`次の対戦に ${yen(v)} コイン賭け中`));const c=el('button','sound','賭けを取り消す');c.addEventListener('click',()=>{store.set('vsbet',0);renderCasino();renderCsPend()});const g=el('button','csBig','⚔ 対戦へ行く');g.addEventListener('click',()=>{closeCasino();$('battleBtn').click()});box.append(g,c);return}
-  box.appendChild(chipsEl([1000,5000,10000,50000,100000],CS.vsBet,coins(),x=>{CS.vsBet=x;renderCasino()}));
-  const go=el('button','csBig red',`⚔ ${yen(CS.vsBet)} コイン賭けて対戦へ`);go.disabled=!csCan(CS.vsBet);
-  go.addEventListener('click',()=>{if(!csCan(CS.vsBet))return;store.set('vsbet',CS.vsBet);closeCasino();$('battleBtn').click();moveToast('⚔ 次の対戦に賭けました！')});box.appendChild(go);
+  box.append(el('h2','','⚔ 賭け対戦'),el('p','','リアルタイム対戦の部屋で、部屋主が賭け金を決めます。乗った人どうしで同じ額を出し合い、いちばん高いスコアの人が全部もらいます（場代5%）。同点や相手がいないときは返金。'),el('p','','例: 3人が1万コインずつ乗って勝つと、28,500 コインもらえます。'));
+  const g=el('button','csBig','⚔ 対戦へ行く');g.addEventListener('click',()=>{closeCasino();$('battleBtn').click()});box.appendChild(g);
 }
 
 /* ---------- ゲームとのつなぎ: 賭けの開始と精算 ---------- */
 {const ng=newGame;newGame=function(){const r=ng.apply(this,arguments);try{
-  if(G&&(G.battle||G.ghost)){const v=vsPend();if(v){
-    const myb=G.ghost?num(store.get('best:song:'+G.song.id,0)):0;
-    if(G.ghost&&(!myb||num(G.ghost.score)<myb)){moveToast('⚔ 賭けられるのは、自分の自己ベストより強いゴーストだけです（賭けはそのまま）')}
-    else{store.set('vsbet',0);if(csCan(v)){csTake(v);G.vsBet=v}}}}
+  if(false){}
   else if(false){const p=sbPend();if(p){store.set('sbet',null);if(csCan(p.n)&&sbToday()<SB_DAY){store.set('sbDay',{k:jstDay(),n:sbToday()+1});csTake(p.n);G.sbet={...p,prev:store.get(bestKey(G),null),song:G.song.id}}}}
   renderCsPend()}catch(e){}return r}}
 function betLine(win,text){let e=$('rBet');if(!e){e=document.createElement('div');e.id='rBet';$('rCoin').after(e)}e.hidden=false;e.className=win?'win':'lose';e.textContent=text}
@@ -9195,13 +9192,41 @@ function betLine(win,text){let e=$('rBet');if(!e){e=document.createElement('div'
 }catch(e){}return r}}
 /* クリアの倍率は、賭けた時点（曲を始めた時点）でのクリア記録で決める */
 {const ng2=newGame;newGame=function(){const r=ng2.apply(this,arguments);try{if(G&&G.sbet&&G.sbet.t==='clear')G.sbet.m0=store.get('lap:'+G.song.id,0)>=1?1.1:1.5}catch(e){}return r}}
+/* 賭け対戦: 部屋主が決めた同じ額を、乗った人どうしで出し合う。いちばん高いスコアの人が全部もらう（場代5%）。同点は返金 */
+const VSB={stake:0,ok:0};
+const vsTok=(()=>{let t=null;return()=>t||(t=Math.random().toString(36).slice(2,10))})();
+{const vj=vsJoin;vsJoin=async function(){VSB.stake=0;VSB.ok=0;const r=await vj.apply(this,arguments);try{if(VS.named)await vsPresence({tok:vsTok(),bet:0,bok:0,betIn:0})}catch(e){}return r}}
+function vsRoomStake(){const h=VS.role==='host'?null:vsHost();return VS.role==='host'?VSB.stake:h?Math.max(0,Math.floor(num(h.presence.bet))):0}
+{const vs0=vsStart;vsStart=function(id,seed){const B=vsRoomStake();const r=vs0.apply(this,arguments);try{
+  if(G&&G.battle&&B>0){const inBet=VS.role==='host'||VSB.ok===B;
+    if(inBet&&csCan(B)){csTake(B);G.vsBet=B;vsPresence({betIn:B})}else{vsPresence({betIn:0});if(inBet)moveToast('コインが足りないので、今回は賭けに参加できません')}}
+  else vsPresence({betIn:0})}catch(e){}return r}}
 {const rv=renderVsResult;renderVsResult=function(){const r=rv.apply(this,arguments);try{
-  if(G&&G.vsBet&&!G.vsBetDone){const h=($('rBattle').querySelector('b')||{}).textContent||'';let st=null;
-    if(/^勝ち|ゴーストに勝ち/.test(h))st='win';else if(/^負け|ゴーストに負け/.test(h))st='lose';else if(/引き分け|いません/.test(h))st='draw';
-    if(st){G.vsBetDone=true;const v=G.vsBet;
-      if(st==='win'){const pay=Math.floor(v*1.9);csGive(pay);betLine(true,`⚔ 賭け対戦に勝利！ +${yen(pay)} コイン`)}
-      else if(st==='draw'){csGive(v);betLine(false,`⚔ 賭け対戦: ${yen(v)} コインを返金`)}
-      else betLine(false,`⚔ 賭け対戦に負け… ${yen(v)} コインは没収`);pushCloud()}}
+  if(G&&G.battle&&G.vsBet&&!G.vsBetDone){const B=G.vsBet;const ps=vsOthers().filter(p=>num(p.presence.betIn)===B);
+    if(ps.some(p=>p.presence.st==='play'))return r;
+    G.vsBetDone=true;const n=ps.length+1;
+    if(n<2){csGive(B);betLine(false,`💰 賭け対戦: 賭けた相手がいなかったので ${yen(B)} コインを返金`)}
+    else{const top=Math.max(...ps.map(p=>num(p.presence.sc)));
+      if(G.score>top){const pay=Math.floor(B*n*.95);csGive(pay);betLine(true,`💰 賭け対戦に勝利！ ${n}人分 +${yen(pay)} コイン`)}
+      else if(G.score===top){csGive(B);betLine(false,`💰 賭け対戦は同点… ${yen(B)} コインを返金`)}
+      else betLine(false,`💰 賭け対戦に負け… ${yen(B)} コインは勝った人へ`)}
+    pushCloud()}
+}catch(e){}return r}}
+{const rb=renderBattle;renderBattle=function(){const r=rb.apply(this,arguments);try{if(!VS.named)return r;const box=$('vsLobby');if(!box)return r;
+  const B=vsRoomStake(),wrap=el('div','vsBet');wrap.appendChild(el('b','','💰 賭け対戦'));
+  if(VS.role==='host'){
+    wrap.appendChild(el('small','','賭け金を決めると、乗った人どうしで同じ額を出し合い、いちばん高いスコアの人が全部もらいます（場代5%）。'));
+    const c=chipsEl([0,1000,5000,10000,50000,100000],VSB.stake,coins(),v=>{VSB.stake=Math.max(0,Math.floor(v));vsPresence({bet:VSB.stake});renderBattle()});
+    c.querySelector('.chips').firstChild.textContent='なし';wrap.appendChild(c);
+    if(B>0){const inn=vsOthers().filter(p=>num(p.presence.bok)===B).map(p=>String(p.presence.nick||'プレイヤー').slice(0,16));wrap.appendChild(el('div','csMsg',`賭け金 ${yen(B)} コイン ・ 乗った人: ${inn.length?inn.join('、'):'まだいません'}`))}
+  }else{
+    if(B>0){wrap.appendChild(el('small','',`部屋主が賭け金を ${yen(B)} コインにしました。乗ると、乗った人どうしで同じ額を出し合い、いちばん高いスコアの人が全部もらいます（場代5%）。乗らなければ、賭けなしで対戦します。`));
+      const on=VSB.ok===B;const bt=el('button',on?'sound':'csBig red',on?`✅ 乗っています（${yen(B)}）・ やめる`:`💰 ${yen(B)} コインの賭けに乗る`);
+      bt.disabled=!on&&!csCan(B);bt.addEventListener('click',()=>{VSB.ok=on?0:B;vsPresence({bok:VSB.ok});renderBattle()});wrap.appendChild(bt);
+      if(!on&&!csCan(B))wrap.appendChild(el('div','csMsg bad','コインが足りません'));}
+    else wrap.appendChild(el('small','','部屋主が賭け金を決めると、ここで賭けに乗れます。'));
+  }
+  const lv=[...box.querySelectorAll('button')].find(x=>x.textContent==='部屋を出る');if(lv)box.insertBefore(wrap,lv);else box.appendChild(wrap);
 }catch(e){}return r}}
 
 /* ---------- 4. みんなの予想（ブックメーカー） ----------
