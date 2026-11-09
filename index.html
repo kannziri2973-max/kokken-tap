@@ -98,6 +98,19 @@ window.KOKKEN_WEB=1;
       if(u){hideGate();if(!done){done=true;res(u)}else if(F&&F.user&&F.user.uid!==u.uid)location.reload()}
       else showGate(auth,au);
     })});
+    /* この端末の記録は、アカウントごとに分けてしまう（管理者のアカウントと、遊ぶ用のアカウントがまざらないように） */
+    try{const LK='kokken:__uid',prevRaw=localStorage.getItem(LK);let prev=null;try{prev=prevRaw?JSON.parse(prevRaw):null}catch(e){}
+      if(prev&&prev!==user.uid){
+        const keys=Object.keys(localStorage).filter(k=>k.startsWith('kokken:')),blob={};keys.forEach(k=>{blob[k]=localStorage.getItem(k)});
+        try{localStorage.setItem('kokkenAcct:'+prev,JSON.stringify(blob))}catch(e){console.warn('stash',e)}
+        keys.forEach(k=>localStorage.removeItem(k));
+        const saved=localStorage.getItem('kokkenAcct:'+user.uid);
+        if(saved){try{Object.entries(JSON.parse(saved)).forEach(([k,v])=>{if(k.startsWith('kokken:'))localStorage.setItem(k,v)})}catch(e){}localStorage.removeItem('kokkenAcct:'+user.uid)}
+        localStorage.setItem(LK,JSON.stringify(user.uid));
+        location.replace(location.pathname+location.search+location.hash);await new Promise(()=>{});
+      }else if(!prev)localStorage.setItem(LK,JSON.stringify(user.uid));
+    }catch(e){console.warn('acct',e)}
+    window.KOKKEN_SIGNOUT=()=>auth.signOut(au);
     F={app,auth,fs,rtdb,a,au,db,rd,user};
     /* 管理者がログインしたら、Claude版のガチャ・アイテム・お知らせ・プレゼントコードのうち、まだ無いものを自動で入れる */
     if(user&&user.uid===OWNER_UID&&window.KOKKEN_MIGRATE)window.__migP=(async()=>{let n=0;for(const [p,d] of Object.entries(window.KOKKEN_MIGRATE)){try{const ref=fs.doc(db,p);if(!(await fs.getDoc(ref)).exists()){await fs.setDoc(ref,d);n++}}catch(e){console.warn('migrate',p,e)}}
@@ -169,16 +182,15 @@ window.KOKKEN_WEB=1;
     info.innerHTML='';
     const line=t=>{const d=document.createElement('div');d.textContent=t;info.appendChild(d);return d};
     const btn=(t,f)=>{const b=document.createElement('button');b.textContent=t;b.style.cssText='display:block;width:100%;margin-top:8px;min-height:40px;font:700 14px sans-serif;background:#ffd76a;color:#1a1200;border:0;cursor:pointer';b.onclick=f;info.appendChild(b);return b};
+    if(!own){line('この画面は管理者だけが使えます。');setTimeout(()=>box.remove(),4000);return}
     {
       line('ログイン中: '+(user.email||''));
-      const u=line('あなたのUID: '+user.uid);u.style.wordBreak='break-all';
-      btn('UIDをコピー',()=>{navigator.clipboard&&navigator.clipboard.writeText(user.uid)});
-      line(own?'✅ 管理者として認識されています。':'⚠ このUIDを index.html の OWNER_UID と、ルールの OWNER_UID_HERE に貼ってください。');
-      if(own&&window.KOKKEN_MIGRATE)btn('旧データ（Claude版のアイテム・ガチャ・お知らせ・プレゼントコード）を入れる',async e=>{
+      line('✅ 管理者として認識されています。ゲームの「曲の管理」は、管理者PINで開きます。');
+      if(window.KOKKEN_MIGRATE)btn('旧データ（Claude版のアイテム・ガチャ・お知らせ・プレゼントコード）を入れる',async e=>{
         const b=e.target;b.disabled=true;b.textContent='入れています…';let n=0;
-        try{for(const [p,d] of Object.entries(window.KOKKEN_MIGRATE)){const ref=F.fs.doc(F.db,p);const s=await F.fs.getDoc(ref);if(!s.exists()){await F.fs.setDoc(ref,d);n++}}b.textContent=`入れました（${n}件。すでにあったものはそのまま）。ページを開き直してください。`}
+        try{for(const [p,d] of Object.entries(window.KOKKEN_MIGRATE)){const ref=F.fs.doc(F.db,p);const s=await F.fs.getDoc(ref);if(!s.exists()){await F.fs.setDoc(ref,d);n++}}b.textContent=`入れました（${n}件。すでにあったものはそのまま）。ページを開き直してください`}
         catch(x){b.textContent='できませんでした: '+(x.code||x.message)}});
-      btn('ログアウト（この端末の記録も消して、ログイン画面に戻ります。記録はアカウントに残っています）',async()=>{try{await new Promise(r=>setTimeout(r,800))}catch(e){}await auth.signOut(au);try{Object.keys(localStorage).filter(k=>k.startsWith('kokken:')).forEach(k=>localStorage.removeItem(k))}catch(e){}location.hash='';location.reload()});
+      btn('ログアウト（この端末の記録はアカウントごとに分けて残ります）',async()=>{await auth.signOut(au)});
     }
   });
 })();
@@ -1323,6 +1335,12 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .chips button[aria-pressed="true"]{outline:3px solid #fff;outline-offset:1px;box-shadow:0 0 14px rgba(255,215,106,.8)}
 .chips button:disabled{opacity:.35}
 .csAmt{display:flex;flex-direction:column;gap:8px}
+.admLock{display:flex;flex-direction:column;gap:10px;border:2px solid var(--ink);padding:14px}
+.admLock h2{margin:0;font-size:17px}
+.admPin{min-height:48px;padding:0 12px;font:inherit;font-size:20px;letter-spacing:.3em;border:1px solid var(--ink);border-radius:0;background:#fff;color:var(--ink)}
+.admMsg{margin:0;color:var(--red);font-weight:700;font-size:13px;min-height:1.4em}
+.admTools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.acctSw{display:flex;flex-direction:column;gap:8px;margin-top:8px}
 .vsBet{display:flex;flex-direction:column;gap:8px;padding:12px;background:linear-gradient(160deg,#2a0a0e,#10121a);border:1px solid #6b4f0c;color:#fff3c4}
 .vsBet b{font-size:15px;color:#f3d27a}
 .vsBet small{font-size:12px;line-height:1.6;color:#e8c98a}
@@ -5178,7 +5196,7 @@ function renderRank(){
     row.tabIndex=0;row.setAttribute('role','button');row.setAttribute('aria-label',`${r.nick}のプロフィールを見る`);
     row.addEventListener('click',e=>{if(!e.target.closest('button'))openPView(r.id)});
     row.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target===row){e.preventDefault();openPView(r.id)}});
-    if(cloud.isOwner&&r.id!==cloud.uid){
+    if(admOk()&&r.id!==cloud.uid){
       const del=document.createElement('button');del.textContent='消す';
       del.addEventListener('click',()=>{
         if(del.dataset.armed){cloud.db.doc('scores/'+r.id).delete().catch(()=>{});return}
@@ -8706,7 +8724,7 @@ function renderTour(){
   const box=$('tourBody');if(!box)return;box.textContent='';const I=tnInfo(),now=Date.now(),me=tnMine(),songs=tnSongs(I.wk);
   const head=el('div','tnHead');head.append(el('small',null,I.test?'（管理者のテスト開催）':`${+I.wk.slice(5,7)}月${+I.wk.slice(8)}日（土）〜日曜`),el('b',null,'🏆 週末トーナメント'),
     el('span',null,!I.open?`開催まで ${fmtLeft(I.start-now)}`:now<I.entryEnd?`エントリー受付中（あと ${fmtLeft(I.entryEnd-now)}）`:now<I.end?`試合中 ・ 終了まで ${fmtLeft(I.end-now)}`:'終了'));box.appendChild(head);
-  if(cloud.isOwner){const tb=el('button','sound',TN.test?'管理者: テスト開催をやめる':'管理者: 今すぐテスト開催（自分の画面だけ・20分ごとに進む）');tb.addEventListener('click',()=>{TN.test=!TN.test;TN.t0=Date.now();renderTour()});box.appendChild(tb)}
+  if(admOk()){const tb=el('button','sound',TN.test?'管理者: テスト開催をやめる':'管理者: 今すぐテスト開催（自分の画面だけ・20分ごとに進む）');tb.addEventListener('click',()=>{TN.test=!TN.test;TN.t0=Date.now();renderTour()});box.appendChild(tb)}
   box.appendChild(el('p','hint','8人ずつの勝ち抜き戦。1回戦→準決勝→決勝、それぞれ決まった曲を1回だけ弾いて、相手より高いスコアなら勝ち。相手が時間内に弾かなければ不戦勝。優勝で称号「週末王者」＋20,000コイン、準優勝5,000、参加賞1,000。'));
   const rs=el('div','tnSongs');['1回戦（土曜まで）','準決勝（日曜15時まで）','決勝（日曜まで）'].forEach((t,i)=>{const d=el('div');d.append(el('small',null,t),el('b',null,songs[i]?songs[i].name:'-'));rs.appendChild(d)});box.appendChild(rs);
   if(!me){const b=el('button','btn pri','エントリーする');b.disabled=!I.open||now>I.entryEnd||!canSync();b.addEventListener('click',tnEnter);box.appendChild(b);
@@ -8979,7 +8997,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='93';
+const APP_VER='95';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -9286,11 +9304,11 @@ function renderBK(body){
       os.appendChild(b)});
     c.appendChild(os);
     if(mine&&mine.paid)c.appendChild(el('div','csMsg'+(mine.pay?'':' bad'),mine.pay?`当たり！ +${yen(mine.pay)} コイン`:m.res==='void'?'返金されました':'はずれ…'));
-    if(cloud.isOwner&&m.raw&&m.res==null){const ow=el('div','bkOwn');ow.appendChild(el('span','bkMeta','管理者: 結果を決める →'));
+    if(admOk()&&m.raw&&m.res==null){const ow=el('div','bkOwn');ow.appendChild(el('span','bkMeta','管理者: 結果を決める →'));
       m.opts.forEach((o,i)=>{const b=el('button','sound',o);b.addEventListener('click',()=>bkSetRes(m.raw.id,i,b));ow.appendChild(b)});
       const v=el('button','sound danger','中止して返金');v.addEventListener('click',()=>bkSetRes(m.raw.id,'void',v));ow.appendChild(v);c.appendChild(ow)}
     box.appendChild(c)});
-  if(cloud.isOwner){const f=el('div','bkCard');f.appendChild(el('h3','','🛠 管理者: 予想の問題を出す'));
+  if(admOk()){const f=el('div','bkCard');f.appendChild(el('h3','','🛠 管理者: 予想の問題を出す'));
     const q=document.createElement('input');q.type='text';q.placeholder='例: 今週末トーナメントで優勝するのは？';q.maxLength=80;
     const o=document.createElement('input');o.type='text';o.placeholder='答えの候補を「、」で区切る（2〜6個） 例: しゅうや、たろう、それ以外';
     const h=document.createElement('input');h.type='number';h.min='1';h.max='336';h.value='24';
@@ -9309,6 +9327,74 @@ async function bkSetRes(id,res,btn){if(btn.dataset.armed!=='1'){btn.dataset.arme
 {const bv=boardValue;boardValue=function(d,key){if(key==='coins'){const w=d&&d.wallet;return w?Math.max(0,num(w.e)-num(w.s)):0}return bv.apply(this,arguments)}}
 
 renderCsPend();
+
+/* ---------- 管理者ロック: 管理者でも、PINを入れないと管理の画面は開かない（15分さわらないと自動でロック） ---------- */
+var ADM={unlocked:false,at:0,hash:null,key:null,loaded:false,busy:false};
+/* 10分キー: 「黒鍵 管理者キー」のページと同じ計算（HMAC-SHA256・10分ごと・6けた） */
+const ADM_B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+function admB32(s){s=String(s).toUpperCase().replace(/[^A-Z2-7]/g,'');let bits=0,val=0;const out=[];for(const ch of s){val=(val<<5)|ADM_B32.indexOf(ch);bits+=5;if(bits>=8){out.push((val>>>(bits-8))&255);bits-=8}}return new Uint8Array(out)}
+async function admCode(secret,counter){const key=await crypto.subtle.importKey('raw',admB32(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const msg=new Uint8Array(8);let c=counter;for(let i=7;i>=0;i--){msg[i]=c&255;c=Math.floor(c/256)}
+  const h=new Uint8Array(await crypto.subtle.sign('HMAC',key,msg));const o=h[h.length-1]&15;return String((((h[o]&127)<<24)|(h[o+1]<<16)|(h[o+2]<<8)|h[o+3])%1000000).padStart(6,'0')}
+async function admKeyOk(secret,code){code=String(code).replace(/\D/g,'');if(code.length!==6)return false;const n=Math.floor(Date.now()/600000);for(const k of [n,n-1]){if(await admCode(secret,k)===code)return true}return false}
+const ADM_IDLE=15*6e4;
+function admOk(){return !!(cloud.isOwner&&ADM.unlocked&&Date.now()-ADM.at<ADM_IDLE)}
+async function admHash(pin){const d=new TextEncoder().encode('kokken-admin:'+(cloud.uid||'')+':'+pin);const h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function admLoad(){if(!cloud.db||!cloud.isOwner)return;try{const s=await cloud.db.doc('mail/_adminpin').get();const d=s.exists?s.data():null;ADM.hash=d&&typeof d.h==='string'?d.h:null;ADM.key=d&&typeof d.s==='string'&&d.s.length>=16?d.s:null;ADM.loaded=true}catch(e){ADM.loaded='err'}}
+function admFails(){const f=store.get('admFail',null);return f&&Date.now()-num(f.t)<10*6e4?f:{n:0,t:0}}
+function renderAdmLock(){let box=$('admLock');const ob=$('ownerBlock');if(!ob)return;
+  if(!box){box=document.createElement('div');box.id='admLock';box.className='block admLock';ob.before(box)}
+  box.hidden=!cloud.isOwner||admOk();if(box.hidden)return;box.textContent='';
+  box.appendChild(el('h2','','🔒 管理者ロック'));
+  if(!ADM.loaded){box.appendChild(el('p','hint','読み込んでいます…'));admLoad().then(renderAdmLock);return}
+  if(ADM.loaded==='err'){box.appendChild(el('p','hint','管理者の設定を読めませんでした。電波を確かめて、開き直してください。'));const r=el('button','sound','もう一度読む');r.addEventListener('click',()=>{ADM.loaded=false;renderAdmLock()});box.appendChild(r);return}
+  const mk=(ph)=>{const i=document.createElement('input');i.type='password';i.inputMode='numeric';i.autocomplete='off';i.maxLength=8;i.placeholder=ph;i.className='admPin';return i};
+  const msg=el('p','admMsg');
+  if(!ADM.hash&&!ADM.key){
+    box.appendChild(el('p','hint','管理者の画面を守るPIN（4〜8けたの数字）を決めてください。これから管理の画面を開くたびに必要になります。ほかの人には教えないでください。'));
+    const a=mk('新しいPIN'),b=mk('もう一度');const go=el('button','btn','PINを決める');
+    go.addEventListener('click',async()=>{const x=a.value.replace(/\D/g,''),y=b.value.replace(/\D/g,'');if(x.length<4){msg.textContent='4けた以上の数字にしてください';return}if(x!==y){msg.textContent='2回の入力がちがいます';return}
+      if(/^(\d)\1+$/.test(x)||'0123456789'.includes(x)||'9876543210'.includes(x)){msg.textContent='同じ数字や、続いた数字（1234など）はやめてください';return}
+      go.disabled=true;try{const h=await admHash(x);await cloud.db.doc('mail/_adminpin').set({h,s:ADM.key||null,t:Date.now()});ADM.hash=h;ADM.unlocked=true;ADM.at=Date.now();moveToast('🔓 PINを決めました');renderOwner()}catch(e){msg.textContent='保存できませんでした';go.disabled=false}});
+    box.append(a,b,go,msg);return}
+  const f=admFails();
+  if(f.n>=5){box.appendChild(el('p','admMsg',`5回まちがえたので、${Math.ceil((10*6e4-(Date.now()-f.t))/6e4)}分ロックしています。`));return}
+  const keyMode=!!ADM.key;
+  box.appendChild(el('p','hint',keyMode?'「黒鍵 管理者キー」のページに出ている、いまの6けたを入れてください（10分ごとに変わります）。':'管理の画面を開くには、管理者PINを入れてください。'));
+  const a=mk(keyMode?'いまの6けた':'管理者PIN'),go=el('button','btn','ロックを解除');if(keyMode)a.maxLength=6;
+  const tryIt=async()=>{if(ADM.busy)return;const x=a.value.replace(/\D/g,'');if(x.length<(keyMode?6:4))return;ADM.busy=true;const ok=keyMode?await admKeyOk(ADM.key,x):(await admHash(x))===ADM.hash;ADM.busy=false;
+    if(ok){store.set('admFail',null);ADM.unlocked=true;ADM.at=Date.now();moveToast('🔓 管理者ロックを解除しました（15分さわらないと自動でロック）');renderOwner()}
+    else{const g=admFails();store.set('admFail',{n:g.n+1,t:Date.now()});a.value='';msg.textContent=`${keyMode?'キー':'PIN'}がちがいます（あと${Math.max(0,4-g.n)}回でしばらくロック）`;if(g.n+1>=5)renderAdmLock()}};
+  go.addEventListener('click',tryIt);a.addEventListener('keydown',e=>{if(e.key==='Enter')tryIt()});
+  box.append(a,go,msg);setTimeout(()=>{try{a.focus()}catch(e){}},50)}
+{const ro=renderOwner;renderOwner=function(){const r=ro.apply(this,arguments);try{$('ownerBlock').hidden=!admOk();renderAdmLock();
+  if(admOk()&&!$('admTools')){const t=el('div','admTools');t.id='admTools';const lk=el('button','sound','🔒 今すぐロックする');lk.addEventListener('click',()=>{ADM.unlocked=false;renderOwner()});
+    const ch=el('button','sound','PINを変える');ch.addEventListener('click',async()=>{if(ch.dataset.armed!=='1'){ch.dataset.armed='1';ch.textContent='もう一度押すとPINを決め直します';return}try{await cloud.db.doc('mail/_adminpin').set({h:null,s:ADM.key||null,t:Date.now()})}catch(e){}ADM.hash=null;ADM.unlocked=false;renderOwner()});
+    const kb=el('button','sound',ADM.key?'🔑 10分キーの連携を外す（PINに戻す）':'🔑 10分キーと連携');
+    kb.addEventListener('click',async()=>{
+      if(ADM.key){if(kb.dataset.armed!=='1'){kb.dataset.armed='1';kb.textContent='もう一度押すと連携を外します';return}
+        try{await cloud.db.doc('mail/_adminpin').set({h:ADM.hash,s:null,t:Date.now()});ADM.key=null;moveToast('10分キーの連携を外しました。これからはPINで開きます');t.remove();renderOwner()}catch(e){moveToast('保存できませんでした')}return}
+      if($('admLink')){$('admLink').remove();return}
+      const f=el('div','admLock');f.id='admLink';f.append(el('h2','','🔑 10分キーと連携'),el('p','hint','「黒鍵 管理者キー」のページで「連携コードを表示」を押してコピーし、ここに貼ります。そのページに出ている、いまの6けたも入れてください。連携すると、これからはPINではなく10分ごとに変わる6けたで開きます。'));
+      const sc=document.createElement('input');sc.type='text';sc.autocomplete='off';sc.placeholder='連携コード（英字と数字）';sc.className='admPin';sc.style.letterSpacing='.05em';sc.style.fontSize='16px';
+      const cd=document.createElement('input');cd.type='text';cd.inputMode='numeric';cd.maxLength=6;cd.autocomplete='off';cd.placeholder='いまの6けた';cd.className='admPin';
+      const m=el('p','admMsg'),go=el('button','btn','連携する');
+      go.addEventListener('click',async()=>{const sec=sc.value.toUpperCase().replace(/[^A-Z2-7]/g,'');if(sec.length<16){m.textContent='連携コードを、ぜんぶ貼ってください';return}
+        go.disabled=true;let ok=false;try{ok=await admKeyOk(sec,cd.value)}catch(e){}
+        if(!ok){m.textContent='6けたが合いません。いまの数字か確かめてください';go.disabled=false;return}
+        try{await cloud.db.doc('mail/_adminpin').set({h:ADM.hash,s:sec,t:Date.now()});ADM.key=sec;moveToast('🔑 10分キーと連携しました。次からは6けたで開きます');f.remove();t.remove();renderOwner()}catch(e){m.textContent='保存できませんでした';go.disabled=false}});
+      f.append(sc,cd,go,m);t.after(f)});
+    t.append(lk,ch,kb);$('ownerBlock').prepend(t)}}catch(e){}return r}}
+$('adminBtn').addEventListener('click',()=>{try{renderOwner()}catch(e){}});
+/* さわっている間は延長。15分さわらなければロックして、管理の画面を閉じる */
+['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(ADM.unlocked&&Date.now()-ADM.at<ADM_IDLE)ADM.at=Date.now()},true));
+setInterval(()=>{if(ADM.unlocked&&!admOk()){ADM.unlocked=false;try{renderOwner()}catch(e){}if(!$('admin').hidden)moveToast('🔒 しばらくさわらなかったので、管理者ロックをかけました')}},20000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ADM.unlocked)ADM.hideAt=Date.now();else if(!document.hidden&&ADM.hideAt&&Date.now()-ADM.hideAt>2*6e4){ADM.unlocked=false;ADM.hideAt=0;try{renderOwner()}catch(e){}}});
+
+/* ---------- Web版: アカウントの切りかえ（記録はアカウントごとに分けて、この端末にしまう） ---------- */
+if(window.KOKKEN_WEB){const pr=$('prof');if(pr){const w=el('div','acctSw');
+  w.append(el('p','hint','別のアカウントで遊ぶときはここから。この端末の記録はアカウントごとに分けてしまうので、まざりません。'));
+  const b=el('button','sound','🔁 アカウントを切りかえる（ログアウト）');b.addEventListener('click',async()=>{if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='もう一度押すとログアウトします';return}
+    try{await pushCloud()}catch(e){}try{await window.KOKKEN_SIGNOUT()}catch(e){}});w.appendChild(b);pr.appendChild(w)}}
 })();
 </script>
 
