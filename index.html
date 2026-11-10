@@ -1449,6 +1449,25 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .ava.f-shusseki::before{content:'';inset:calc(var(--s)*-.1);border-radius:50%;z-index:0;background:repeating-conic-gradient(#1d3a2f 0 10deg,#16302a 10deg 20deg);box-shadow:0 0 0 calc(var(--s)*.03) #dfe4e1,0 0 calc(var(--s)*.25) rgba(169,196,189,.6)}
 .ava.f-shusseki::after{content:'';right:-2%;top:-2%;width:22%;height:22%;border-radius:50%;background:#e0352b;box-shadow:0 0 calc(var(--s)*.15) #ff2a1a;border:calc(var(--s)*.02) solid #000}
 
+/* ===== メニューの下のタブ ===== */
+#menu{padding-bottom:0}
+.mPane{display:flex;flex-direction:column;gap:inherit;flex:none}
+.mPane[hidden]{display:none}
+.mHead{margin-bottom:-8px}
+.mPane[data-tab="play"] .hero{grid-auto-rows:clamp(38px,6vh,48px)}
+.mNav{grid-template-columns:repeat(2,1fr)}
+.mNav button{grid-column:auto;min-height:58px;font-size:15px}
+.mTabs{position:sticky;bottom:0;z-index:6;flex:none;margin-top:auto;
+  margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)));
+  display:grid;grid-template-columns:repeat(5,1fr);padding:4px max(4px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px));
+  background:rgba(9,10,15,.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-top:1px solid rgba(243,210,122,.3);box-shadow:0 -8px 24px rgba(0,0,0,.35)}
+.mTabs button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px;padding:4px 2px;background:none;border:0;color:#9aa0b4;font-size:11px;font-weight:700;letter-spacing:.02em}
+.mTabs .ic{font-size:21px;line-height:1.1;filter:grayscale(.7);opacity:.75}
+.mTabs button[aria-current="page"]{color:#ffd76a}
+.mTabs button[aria-current="page"] .ic{filter:none;opacity:1}
+.mTabs button[aria-current="page"]::before{content:'';position:absolute;top:-4px;left:24%;right:24%;height:3px;background:#ffd76a}
+.mTabs .dot{position:absolute;top:5px;left:calc(50% + 10px);width:9px;height:9px;border-radius:50%;background:#ff4d5e;box-shadow:0 0 0 2px rgba(9,10,15,.97);display:none}
+.mTabs button.has .dot{display:block}
 /* カジノチップを買うボタン */
 .chipBuy{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chipBuy button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border:1px solid #c9a227;background:rgba(255,215,106,.1);color:inherit;font-weight:700}
@@ -1827,7 +1846,7 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
         <textarea id="gfMsg" rows="3" maxlength="300" placeholder="本文（300文字まで）"></textarea>
       </div>
       <div class="gfSec"><b>コイン</b>
-        <div class="bgrow"><input id="gfCoins" type="number" inputmode="numeric" min="0" max="10000000" step="1" value="0" aria-label="コイン"></div>
+        <div class="bgrow"><input id="gfCoins" type="number" inputmode="numeric" min="0" step="1" value="0" aria-label="コイン"></div>
         <div class="bgrow" id="gfAllCoins"><button class="sound" data-c="100">+100</button><button class="sound" data-c="1000">+1,000</button><button class="sound" data-c="10000">+1万</button><button class="sound" data-c="100000">+10万</button><button class="sound" data-c="1000000">+100万</button></div>
       </div>
       <div class="gfSec"><b>チケット（種類ごとに枚数）</b><div class="gfTks" id="gfTks"></div></div>
@@ -6580,7 +6599,7 @@ function cleanGift(d){
   const ach=Array.isArray(d.ach)?[...new Set(d.ach.filter(x=>typeof x==='string'&&ACH.some(a=>a.id===x)))]:[];
   const doors=Array.isArray(d.doors)?[...new Set(d.doors.filter(x=>DOORS[x]))]:[];
   const fr=d.from&&typeof d.from==='object'?d.from:{};
-  return {title:String(d.title||'').slice(0,30),msg:String(d.msg||'').slice(0,300),coins:Math.max(0,Math.min(1e7,Math.floor(num(d.coins)))),tk,items,ach,doors,exp:num(d.exp)||0,made:num(d.made)||0,
+  return {title:String(d.title||'').slice(0,30),msg:String(d.msg||'').slice(0,300),coins:Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(num(d.coins)))),tk,items,ach,doors,exp:num(d.exp)||0,made:num(d.made)||0,
     from:{kind:fr.kind==='staff'?'staff':'owner',name:String(fr.name||'').slice(0,16)},theme:GIFT_THEMES[d.theme]?d.theme:(fr.kind==='staff'?'staff':'pink'),
     to:d.to&&typeof d.to==='object'?{name:String(d.to.name||'').slice(0,16)}:null};
 }
@@ -6732,7 +6751,7 @@ function fillGiftOwner(){
   $('gfAchQ').addEventListener('input',renderGiftAch);
   Object.entries(DOORS).forEach(([k,n])=>{const l=document.createElement('label');l.className='gfItem';const cb=document.createElement('input');cb.type='checkbox';cb.addEventListener('change',()=>{cb.checked?GF.doors.add(k):GF.doors.delete(k);l.classList.toggle('on',cb.checked);renderGiftPreview()});const t=document.createElement('span');t.textContent='🚪 '+n;l.append(cb,t);$('gfDoors').appendChild(l)});
   renderGiftAch();
-  $('gfAllCoins').querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{$('gfCoins').value=Math.min(1e7,(+$('gfCoins').value||0)+(+b.dataset.c));renderGiftPreview()}));
+  $('gfAllCoins').querySelectorAll('[data-c]').forEach(b=>b.addEventListener('click',()=>{$('gfCoins').value=Math.min(Number.MAX_SAFE_INTEGER,(+$('gfCoins').value||0)+(+b.dataset.c));renderGiftPreview()}));
   $('gfClear').addEventListener('click',()=>{GF.items.clear();GF.ach.clear();GF.doors.clear();document.querySelectorAll('#gfDoors input').forEach(i=>{i.checked=false;i.parentNode.classList.remove('on')});renderGiftAch();['gfTitle','gfMsg','gfToName','gfToId'].forEach(id=>$(id).value='');$('gfCoins').value=0;document.querySelectorAll('#gfTks input').forEach(i=>i.value=0);renderGiftItems();renderGiftPreview()});
   renderGiftItems();
 }
@@ -6797,7 +6816,7 @@ function giftTarget(){
 function giftFromForm(withTo){
   const tk={};document.querySelectorAll('#gfTks input').forEach(i=>{const n=Math.floor(+i.value||0);if(n>0)tk[i.dataset.tk]=Math.min(99,n)});
   const n=+$('gfExpN').value||0,u=+$('gfExpU').value;
-  const kind=fromKind(),g={title:$('gfTitle').value.trim().slice(0,30),msg:$('gfMsg').value.trim().slice(0,300),coins:Math.max(0,Math.min(1e7,Math.floor(+$('gfCoins').value||0))),tk,items:[...GF.items].slice(0,60),ach:[...GF.ach],doors:[...GF.doors],
+  const kind=fromKind(),g={title:$('gfTitle').value.trim().slice(0,30),msg:$('gfMsg').value.trim().slice(0,300),coins:Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(+$('gfCoins').value||0))),tk,items:[...GF.items].slice(0,60),ach:[...GF.ach],doors:[...GF.doors],
     exp:n>0&&u?Date.now()+n*u:0,made:Date.now(),from:{kind,name:kind==='staff'?'運営':myNick()},theme:$('gfTheme').value||'pink'};
   if(withTo){const t=giftTarget();if(t.name)g.to={name:t.name}}
   return g;
@@ -7832,7 +7851,7 @@ const hexA=(h,a)=>{const n=parseInt(h.slice(1),16);return `rgba(${n>>16&255},${n
 function rwClean(x){
   x=x&&typeof x==='object'?x:{};const tk={};
   if(x.tk&&typeof x.tk==='object')Object.keys(TICKETS).forEach(k=>{const n=Math.floor(num(x.tk[k]));if(n>0)tk[k]=Math.min(99,n)});
-  return {coins:Math.min(1e7,Math.floor(num(x.coins))),tk,items:Array.isArray(x.items)?x.items.filter(i=>validItem(i)).slice(0,6):[]};
+  return {coins:Math.min(Number.MAX_SAFE_INTEGER,Math.floor(num(x.coins))),tk,items:Array.isArray(x.items)?x.items.filter(i=>validItem(i)).slice(0,6):[]};
 }
 function cleanRaid(d){
   if(!d||typeof d!=='object')return null;
@@ -8290,7 +8309,7 @@ async function postRaid(){
   const start=new Date($('raStart').value).getTime(),end=new Date($('raEnd').value).getTime(),hp=Math.floor(+$('raHp').value||0);
   if(!(hp>=100)){note.textContent='HPは100以上にしてください。';return}
   if(!start||!end||end<=start){note.textContent='期間を確かめてください（おわりは、はじまりより後に）。';return}
-  const rw=i=>{const tk={},k=$('raT'+i).value,n=Math.max(1,Math.min(99,Math.floor(+$('raN'+i).value||1)));if(k)tk[k]=n;return {coins:Math.max(0,Math.min(1e7,Math.floor(+$('raC'+i).value||0))),tk,items:i===3?RAID_LOOT.map(([x],j)=>$('raL'+j).checked?(bossTpl(adminLook()).items[j]||x):null).filter(Boolean):[]}};
+  const rw=i=>{const tk={},k=$('raT'+i).value,n=Math.max(1,Math.min(99,Math.floor(+$('raN'+i).value||1)));if(k)tk[k]=n;return {coins:Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,Math.floor(+$('raC'+i).value||0))),tk,items:i===3?RAID_LOOT.map(([x],j)=>$('raL'+j).checked?(bossTpl(adminLook()).items[j]||x):null).filter(Boolean):[]}};
   const keep=RAID.cur&&(raidState(RAID.cur)==='live'||raidState(RAID.cur)==='soon');
   const doc={...bossDocExtra(),song:($('raSong')&&$('raSong').value)||'maouth',id:keep?RAID.cur.id:'r'+Date.now().toString(36),name:$('raName').value.trim().slice(0,20)||RAID_DEF.name,sub:$('raSub').value.trim().slice(0,30),hp,start,end,tiers:[0,1,2].map(rw),kill:rw(3),t:Date.now()};
   $('raPost').disabled=true;
@@ -9156,7 +9175,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='101';
+const APP_VER='102';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -10295,6 +10314,53 @@ function usEdCh(s,k){
 }
 const song0=c=>!!c.song;
 renderUsCard();
+
+/* ==================== メニューを下のタブで分ける（見やすく） ====================
+   もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
+   どのタブにも入れていない部品は、上のお知らせの場所に残る */
+(function(){
+  const M=$('menu');if(!M||M.querySelector('.mTabs'))return;
+  const top=id=>{const e=$(id);if(!e)return null;let x=e;while(x.parentElement&&x.parentElement!==M)x=x.parentElement;return x.parentElement===M?x:null};
+  const navRow=ids=>{const r=el('div','navrow mNav');ids.map(id=>$(id)).filter(Boolean).forEach(b=>r.appendChild(b));return r.children.length?r:null};
+  const keysHint=[...M.children].find(c=>c.matches('p.hint')&&c.querySelector('kbd'));
+  const oldNav=M.querySelector(':scope > .navrow');
+  const head=t=>el('div','label mHead',t);
+  const TABS=[
+    ['play','🎹','あそぶ',()=>[top('hero'),top('dailyCard'),top('ticketChip'),top('modes'),top('songs'),keysHint]],
+    ['story','📖','ストーリー',()=>[head('ストーリー'),top('ustoryCard'),top('storyCard'),head('ひみつの部屋'),top('exGate'),top('gate')]],
+    ['event','🎉','イベント',()=>[head('きょうのおたのしみ'),top('xD1'),top('surpriseBar'),top('eventBar'),top('wedBar'),head('カジノ'),top('casinoCard'),top('csPend')]],
+    ['social','👥','みんな',()=>[head('みんなと遊ぶ'),top('plazaCard'),navRow(['battleBtn','rankBtn'])]],
+    ['more','☰','その他',()=>[head('ショップ・記録・設定'),navRow(['shopBtn','achBtn','profBtn','adminBtn']),top('bgFile'),top('appVer')]]
+  ];
+  const panes={};
+  TABS.forEach(([k,,,list])=>{const p=el('div','mPane');p.dataset.tab=k;list().filter(Boolean).forEach(x=>p.appendChild(x));panes[k]=p});
+  if(oldNav&&!oldNav.children.length)oldNav.remove();
+  Object.values(panes).forEach(p=>M.appendChild(p));
+  const bar=el('nav','mTabs');bar.setAttribute('aria-label','メニューの切りかえ');
+  const btns={};
+  TABS.forEach(([k,ic,t])=>{const b=el('button','');b.type='button';b.dataset.tab=k;b.append(el('span','ic',ic),el('span','tx',t),el('i','dot'));
+    b.addEventListener('click',()=>menuTab(k,true));btns[k]=b;bar.appendChild(b)});
+  M.appendChild(bar);
+  function menuTab(k,user){
+    if(!panes[k])k='play';
+    Object.entries(panes).forEach(([x,p])=>{p.hidden=x!==k});
+    Object.entries(btns).forEach(([x,b])=>{if(x===k)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+    try{store.set('menuTab',k)}catch(e){}
+    if(user){M.scrollTop=0;play(72,0,.08)}
+    dots();
+  }
+  window.__menuTab=menuTab;
+  /* 曲の一覧へ飛ぶボタン（イベント・休日フェスなど）は、先に「あそぶ」を開く */
+  const sg=$('songs');if(sg){const si=sg.scrollIntoView;sg.scrollIntoView=function(o){menuTab('play');return si.call(this,o)}}
+  function dots(){try{
+    const on=id=>{const e=$(id);return !!(e&&!e.hidden&&e.classList.contains('on'))};
+    const cur=store.get('menuTab','play');
+    const has={play:typeof loginCanClaim==='function'&&loginCanClaim(),event:on('eventBar')||on('wedBar')||on('festBar')||!!($('surpriseBar')&&!$('surpriseBar').hidden)||!!($('csPend')&&!$('csPend').hidden)};
+    Object.entries(btns).forEach(([k,b])=>b.classList.toggle('has',!!has[k]&&k!==cur));
+  }catch(e){}}
+  setInterval(dots,4000);
+  menuTab(store.get('menuTab','play'));
+})();
 
 })();
 </script>
