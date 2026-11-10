@@ -12461,6 +12461,22 @@ setTimeout(()=>sfScan(),300);
 }catch(e){}}}
 {const sx=$('songSearch');if(sx){sx.placeholder='🔍 曲名・作曲者・ジャンル・部屋の名前で探す';sx.enterKeyHint='search';sx.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();sx.blur()}})}}
 
+
+/* ======== ゲリラボスが一瞬出てすぐ消える問題 ========
+   開いた直後は「ゲリラボスを出すかどうか」の設定がまだ届いていないのに「出す」とみなしていたため、
+   設定でゲリラを止めていても、一瞬だけ魔王が出てから消えていた。
+   → 設定が届くまではゲリラボスを出さない（前回の設定をこの端末に覚えておく）。
+     万一出たあとに消えたら、出現の演出もすぐ閉じる */
+RCFG.auto=store.get('rcfgAuto',true)!==false;RCFG.loaded=false;
+{const g0=gRaid;gRaid=function(){if(!RCFG.loaded)return null;return g0.apply(this,arguments)}}
+{const sc=subscribeRaidCfg;subscribeRaidCfg=function(){const had=!!RCFG.unsub;sc.apply(this,arguments);if(had||!RCFG.unsub)return;
+  /* onSnapshot の中身を、届いた印をつける形に付けかえる */
+  try{RCFG.unsub();RCFG.unsub=cloud.db.doc('live/raidcfg').onSnapshot(s=>{const d=s.exists?s.data():null;RCFG.auto=!(d&&d.auto===false);RCFG.song=d&&typeof d.song==='string'?d.song:'rand';RCFG.loaded=true;store.set('rcfgAuto',RCFG.auto);raidCheck();setTimeout(raidCheck,600);if(!$('admin').hidden)try{renderRaidAdmin()}catch(e){}},()=>{RCFG.unsub=null;RCFG.loaded=true;raidCheck()})}catch(e){RCFG.loaded=true}}}
+/* ネットにつながらない開き方（Firebaseなし）のときは、前回の設定のまま出す */
+setTimeout(()=>{if(!RCFG.loaded&&!cloud.db){RCFG.loaded=true;setTimeout(()=>{try{raidCheck()}catch(e){}},600)}},4000);
+setTimeout(()=>{if(!RCFG.loaded){RCFG.loaded=true;try{raidCheck()}catch(e){}}},15000);
+{const rc=raidCheck;raidCheck=function(){const x=rc.apply(this,arguments);try{if(raidState(raid())==='none'){RAID.q=[];const ov=$('raidFx');if(ov&&!ov.hidden&&ov.className==='a'){ov.hidden=true;ov.onclick=null;ov.classList.remove('shake');RAID.busy=false}}}catch(e){}return x}}
+
 /* ==================== メニューを下のタブで分ける（見やすく） ====================
    もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
    どのタブにも入れていない部品は、上のお知らせの場所に残る */
