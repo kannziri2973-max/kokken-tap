@@ -153,7 +153,9 @@ window.KOKKEN_WEB=1;
   /* ---- user（匿名ログイン。管理者だけ Google でログイン） ---- */
   function makeUser(){
     const u=F.user;if(!u)return null;
-    return {id:async()=>u.uid,isOwner:async()=>!!OWNER_UID&&u.uid===OWNER_UID,can:async()=>true,name:async()=>u.displayName||''};
+    return {id:async()=>u.uid,isOwner:async()=>!!OWNER_UID&&u.uid===OWNER_UID,can:async()=>true,name:async()=>u.displayName||'',
+      authInfo:async()=>({google:!!(u.providerData&&u.providerData.some(p=>p.providerId==='google.com')),signedAt:Date.parse((u.metadata&&u.metadata.lastSignInTime)||'')||0}),
+      signOut:async()=>{await F.auth.signOut(F.au)}};
   }
   /* ---- room（オンライン対戦の部屋。Realtime Database で作る） ---- */
   function makeRoom(){
@@ -1683,6 +1685,43 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .bgRow.lose em{color:#5eb0ff}
 .bgSep{margin-top:8px;font-size:13px;font-weight:700;color:#ffd76a}
 .bgEmpty{margin:0;padding:14px;background:#160f08;border:1px solid #3a2c12;font-size:13px;color:#c9b48a}
+/* ===== アンケート・大会 ===== */
+.pollCard,.trnCard{flex:none;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center;text-align:left;padding:12px 14px;color:#f0f4ff;border:1px solid #2c3d6b;background:radial-gradient(120% 140% at 0% 0%,#1c2e5c 0%,#0e1530 60%,#080a14 100%);position:relative}
+.trnCard{border-color:#6b4a2c;background:radial-gradient(120% 140% at 100% 0%,#5c3a1c 0%,#2a1a0c 60%,#0c0805 100%)}
+.pollCard .pI,.trnCard .tI{grid-row:1/3;font-size:26px}
+.pollCard b,.trnCard b{font-family:var(--display);font-weight:400;font-size:18px;letter-spacing:.08em}
+.pollCard small,.trnCard small{font-size:12px;opacity:.85}
+.pollCard.new::after,.trnCard.new::after{content:'NEW';position:absolute;top:8px;right:10px;font-size:10px;font-weight:700;padding:2px 6px;background:#ff4d5e;color:#fff}
+.plEmpty{margin:0;padding:16px;background:#fff;border:1px solid var(--line);font-size:14px;line-height:1.7}
+.plCard{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid var(--line);border-left:4px solid #2c6bd6;padding:12px;flex:none}
+.plCard.ans{border-left-color:#2e9a5a}.plCard.done{border-left-color:#9aa0b4}
+.plHd{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center}
+.plHd .st{font-size:11px;font-weight:700;padding:2px 8px;background:#2c6bd6;color:#fff}
+.plCard.ans .plHd .st{background:#2e9a5a}.plCard.done .plHd .st{background:#9aa0b4}
+.plHd small{font-size:12px;color:var(--mute)}.plHd small.rw{color:#b07a00;font-weight:700}
+.plCard .q{font-size:16px;line-height:1.5}
+.plCard .d{margin:0;font-size:13px;line-height:1.7;color:var(--mute);white-space:pre-wrap}
+.plCard .how{font-size:12px;color:var(--mute)}
+.plOps{display:flex;flex-direction:column;gap:6px}
+.plOps button{min-height:46px;text-align:left;padding:8px 12px;background:#f6f7f9;border:1px solid var(--line);font-size:15px;color:var(--ink)}
+.plOps button.on{background:#e6efff;border-color:#2c6bd6;font-weight:700}
+.plTa{width:100%;box-sizing:border-box;padding:8px 12px;font:inherit;font-size:16px;border:1px solid var(--ink);border-radius:0;resize:vertical}
+.plBar{position:relative;display:flex;justify-content:space-between;gap:10px;align-items:center;min-height:36px;padding:6px 10px;border:1px solid var(--line);background:#f6f7f9;overflow:hidden}
+.plBar i{position:absolute;left:0;top:0;bottom:0;background:rgba(44,107,214,.18)}
+.plBar.me i{background:rgba(46,154,90,.25)}
+.plBar span,.plBar b{position:relative;font-size:14px}
+.plBar b{font-variant-numeric:tabular-nums;white-space:nowrap}
+.plCard .mine{margin:0;font-size:13.5px;background:#f6f7f9;padding:8px 10px}
+.plMsg{margin:0;color:var(--red);font-weight:700;font-size:13px}
+.plRes{display:flex;flex-direction:column;gap:4px}
+.plTexts{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;background:#f6f7f9;padding:8px}
+.plTexts p{margin:0;font-size:13px;line-height:1.6}
+.trnRow{display:flex;flex-direction:column;gap:3px;text-align:left;background:#fff;border:1px solid var(--line);border-left:4px solid #b07a00;padding:12px;color:var(--ink);flex:none}
+.trnRow b{font-size:16px}.trnRow small{font-size:12px;color:var(--mute)}
+.trnRow.entry{border-left-color:#e0213a}.trnRow.play{border-left-color:#2c6bd6}.trnRow.done{border-left-color:#9aa0b4}
+.trnTreeWrap{overflow-x:auto;flex:none;-webkit-overflow-scrolling:touch}
+.trnTree{display:grid;min-width:max-content}
+.admLog{font-size:12.5px}.admLog summary{cursor:pointer;font-weight:700;min-height:32px}.admLog p{margin:2px 0}.admLog p.bad{color:var(--red)}
 /* カジノチップを買うボタン */
 .chipBuy{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chipBuy button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border:1px solid #c9a227;background:rgba(255,215,106,.1);color:inherit;font-weight:700}
@@ -9543,7 +9582,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='107';
+const APP_VER='108';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -9882,59 +9921,122 @@ function admB32(s){s=String(s).toUpperCase().replace(/[^A-Z2-7]/g,'');let bits=0
 async function admCode(secret,counter){const key=await crypto.subtle.importKey('raw',admB32(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);const msg=new Uint8Array(8);let c=counter;for(let i=7;i>=0;i--){msg[i]=c&255;c=Math.floor(c/256)}
   const h=new Uint8Array(await crypto.subtle.sign('HMAC',key,msg));const o=h[h.length-1]&15;return String((((h[o]&127)<<24)|(h[o+1]<<16)|(h[o+2]<<8)|h[o+3])%1000000).padStart(6,'0')}
 async function admKeyOk(secret,code){code=String(code).replace(/\D/g,'');if(code.length!==6)return false;const n=Math.floor(Date.now()/600000);for(const k of [n,n-1]){if(await admCode(secret,k)===code)return true}return false}
-const ADM_IDLE=15*6e4;
-function admOk(){return !!(cloud.isOwner&&ADM.unlocked&&Date.now()-ADM.at<ADM_IDLE)}
-async function admHash(pin){const d=new TextEncoder().encode('kokken-admin:'+(cloud.uid||'')+':'+pin);const h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
-async function admLoad(){if(!cloud.db||!cloud.isOwner)return;try{const s=await cloud.db.doc('mail/_adminpin').get();const d=s.exists?s.data():null;ADM.hash=d&&typeof d.h==='string'?d.h:null;ADM.key=d&&typeof d.s==='string'&&d.s.length>=16?d.s:null;ADM.loaded=true}catch(e){ADM.loaded='err'}}
-function admFails(){const f=store.get('admFail',null);return f&&Date.now()-num(f.t)<10*6e4?f:{n:0,t:0}}
+/* ===== 管理者ロック（とても厳しく） =====
+   ・管理者コードを入れられるのは「URLの最後に #admin を付けて開いたページ」だけ。とちゅうで #admin を外すと、すぐロック
+   ・管理者のアカウントで、Googleでログインしていて、そのログインが24時間以内のときだけ
+   ・PINは8〜12けた。かんたんな並び（同じ数字・連番・くり返し・日付など）は使えない。PBKDF2（20万回）でハッシュにして保存
+   ・10分キーと連携しているときは、PIN と 10分キーの6けたの「両方」が必要
+   ・まちがえた回数はサーバー（mail/_adminpin）に記録。3回で30分・5回で6時間・8回で24時間、入力できなくなる（端末を変えても、消しても同じ）
+   ・1回ためすごとに3秒待つ
+   ・5分さわらない／解除から60分たつ／画面を30秒以上はなれる → ロック
+   ・解除と失敗の記録（最近20件）を残し、解除したときに「前回から何回失敗があったか」を知らせる
+   ※ これは画面の守り。本当に守るのは Firestore のルール（管理者のIDだけが live/・mail/ に書ける）です */
+const ADM_PAGE=location.hash==='#admin';
+const ADM_IDLE=5*6e4,ADM_MAX=60*6e4,ADM_V=2;
+function admOk(){return !!(cloud.isOwner&&ADM_PAGE&&location.hash==='#admin'&&ADM.unlocked&&Date.now()-ADM.at<ADM_IDLE&&Date.now()-(ADM.since||0)<ADM_MAX)}
+async function admHash1(pin){const d=new TextEncoder().encode('kokken-admin:'+(cloud.uid||'')+':'+pin);const h=await crypto.subtle.digest('SHA-256',d);return [...new Uint8Array(h)].map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function admHash(pin){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveBits']);
+  const b=await crypto.subtle.deriveBits({name:'PBKDF2',hash:'SHA-256',salt:new TextEncoder().encode('kokken-admin-v2:'+(cloud.uid||'')),iterations:200000},k,256);
+  return 'p2:'+[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+async function admCheck(pin){if(!ADM.hash)return false;return ADM.hash.startsWith('p2:')?(await admHash(pin))===ADM.hash:(await admHash1(pin))===ADM.hash}
+function admWeak(x){
+  if(!/^\d{8,12}$/.test(x))return '8〜12けたの数字にしてください';
+  if(/^(\d)\1+$/.test(x))return '同じ数字だけのPINは使えません';
+  if('01234567890123'.includes(x)||'98765432109876'.includes(x))return '続いた数字（12345678など）は使えません';
+  if(new Set(x).size<4)return '4種類以上の数字をまぜてください';
+  for(const n of [2,3,4,6])if(x.length%n===0&&x===x.slice(0,n).repeat(x.length/n))return 'くり返しの並び（12121212など）は使えません';
+  if(/^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])$/.test(x)||/^(0[1-9]|1[0-2])(0[1-9]|[12]\d|3[01])(19|20)\d{2}$/.test(x))return '日付（誕生日など）は使えません';
+  return '';
+}
+async function admLoad(){if(!cloud.db||!cloud.isOwner)return;try{const s=await cloud.db.doc('mail/_adminpin').get();const d=s.exists?s.data():null;ADM.raw=d||{};ADM.hash=d&&typeof d.h==='string'?d.h:null;ADM.key=d&&typeof d.s==='string'&&d.s.length>=16?d.s:null;ADM.loaded=true}catch(e){ADM.loaded='err'}}
+async function admSave(patch){const d={...(ADM.raw||{}),...patch,t:Date.now()};await cloud.db.doc('mail/_adminpin').set(d);ADM.raw=d;return d}
+const admDev=()=>{try{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'その他'}catch(e){return '?'}};
+function admLogPush(ok){const L=Array.isArray(ADM.raw&&ADM.raw.log)?ADM.raw.log.slice(-19):[];L.push({t:Date.now(),ok:!!ok,d:admDev()});return L}
+function admLockLeft(){const u=num(ADM.raw&&ADM.raw.lock);return u>Date.now()?u-Date.now():0}
+function admFails(){return {n:num(ADM.raw&&ADM.raw.fail)}}
+let admGate=null;
+async function admGateCheck(){
+  if(!cloud.user)return 'ログインしていません';
+  let g=null;try{g=cloud.user.authInfo?await cloud.user.authInfo():null}catch(e){}
+  if(!g)return '';
+  if(!g.google)return 'Googleでログインしているときだけ、管理者ロックを解除できます（メールアドレスのログインでは解除できません）';
+  if(!(Date.now()-g.signedAt<24*36e5))return '最後にログインしてから24時間以上たっています。安全のため、いったんログアウトして、Googleでログインし直してください';
+  return '';
+}
 function renderAdmLock(){let box=$('admLock');const ob=$('ownerBlock');if(!ob)return;
   if(!box){box=document.createElement('div');box.id='admLock';box.className='block admLock';ob.before(box)}
   box.hidden=!cloud.isOwner||admOk();if(box.hidden)return;box.textContent='';
   box.appendChild(el('h2','','🔒 管理者ロック'));
+  if(!ADM_PAGE||location.hash!=='#admin'){
+    box.appendChild(el('p','hint','管理者コードは、URLの最後に #admin を付けて開いたページでしか入れられません。このページでは入力できません。'));
+    const b=el('button','btn','#admin のページで開き直す');b.addEventListener('click',()=>{location.href=location.pathname+location.search+'#admin';location.reload()});box.appendChild(b);return}
+  if(admGate===null){box.appendChild(el('p','hint','確かめています…'));admGateCheck().then(m=>{admGate=m;renderAdmLock()});return}
+  if(admGate){box.appendChild(el('p','admMsg',admGate));
+    if(/ログインし直/.test(admGate)&&cloud.user&&cloud.user.signOut){const b=el('button','btn','ログアウトして、ログインし直す');b.addEventListener('click',async()=>{try{await cloud.user.signOut()}catch(e){}location.reload()});box.appendChild(b)}
+    return}
   if(!ADM.loaded){box.appendChild(el('p','hint','読み込んでいます…'));admLoad().then(renderAdmLock);return}
   if(ADM.loaded==='err'){box.appendChild(el('p','hint','管理者の設定を読めませんでした。電波を確かめて、開き直してください。'));const r=el('button','sound','もう一度読む');r.addEventListener('click',()=>{ADM.loaded=false;renderAdmLock()});box.appendChild(r);return}
-  const mk=(ph)=>{const i=document.createElement('input');i.type='password';i.inputMode='numeric';i.autocomplete='off';i.maxLength=8;i.placeholder=ph;i.className='admPin';return i};
+  const mk=(ph,len)=>{const i=document.createElement('input');i.type='password';i.inputMode='numeric';i.autocomplete='off';i.maxLength=len||12;i.placeholder=ph;i.className='admPin';return i};
   const msg=el('p','admMsg');
-  if(!ADM.hash&&!ADM.key){
-    box.appendChild(el('p','hint','管理者の画面を守るPIN（4〜8けたの数字）を決めてください。これから管理の画面を開くたびに必要になります。ほかの人には教えないでください。'));
-    const a=mk('新しいPIN'),b=mk('もう一度');const go=el('button','btn','PINを決める');
-    go.addEventListener('click',async()=>{const x=a.value.replace(/\D/g,''),y=b.value.replace(/\D/g,'');if(x.length<4){msg.textContent='4けた以上の数字にしてください';return}if(x!==y){msg.textContent='2回の入力がちがいます';return}
-      if(/^(\d)\1+$/.test(x)||'0123456789'.includes(x)||'9876543210'.includes(x)){msg.textContent='同じ数字や、続いた数字（1234など）はやめてください';return}
-      go.disabled=true;try{const h=await admHash(x);await cloud.db.doc('mail/_adminpin').set({h,s:ADM.key||null,t:Date.now()});ADM.hash=h;ADM.unlocked=true;ADM.at=Date.now();moveToast('🔓 PINを決めました');renderOwner()}catch(e){msg.textContent='保存できませんでした';go.disabled=false}});
-    box.append(a,b,go,msg);return}
-  const f=admFails();
-  if(f.n>=5){box.appendChild(el('p','admMsg',`5回まちがえたので、${Math.ceil((10*6e4-(Date.now()-f.t))/6e4)}分ロックしています。`));return}
+  /* PINを新しく決める（はじめて／弱いPINの決め直し） */
+  if(!ADM.hash||ADM.mustNew){
+    box.appendChild(el('p','hint',ADM.mustNew?'安全のため、PINを決め直してください。新しいルール: 8〜12けたの数字。同じ数字・連番・くり返し・日付は使えません。':'管理の画面を守るPIN（8〜12けたの数字）を決めてください。同じ数字・連番・くり返し・日付は使えません。ほかの人には絶対に教えないでください。'));
+    const a=mk('新しいPIN（8〜12けた）'),b=mk('もう一度'),kk=ADM.key&&!ADM.mustNew?mk('いまの6けた（10分キー）',6):null;const go=el('button','btn','PINを決める');
+    go.addEventListener('click',async()=>{const x=a.value.replace(/\D/g,''),y=b.value.replace(/\D/g,'');const w=admWeak(x);if(w){msg.textContent=w;return}if(x!==y){msg.textContent='2回の入力がちがいます';return}
+      if(kk&&!(await admKeyOk(ADM.key,kk.value))){msg.textContent='10分キーの6けたが合いません';return}
+      if(ADM.mustNew&&ADM.oldPin===x){msg.textContent='前と同じPINは使えません';return}
+      go.disabled=true;try{const h=await admHash(x);await admSave({h,v:ADM_V,fail:0,lock:0,log:admLogPush(true)});ADM.hash=h;ADM.mustNew=false;ADM.oldPin=null;ADM.unlocked=true;ADM.at=ADM.since=Date.now();moveToast('🔓 新しいPINにしました');renderOwner()}catch(e){msg.textContent='保存できませんでした';go.disabled=false}});
+    box.append(...[a,b,kk,go,msg].filter(Boolean));return}
+  const left=admLockLeft();
+  if(left){box.appendChild(el('p','admMsg',`まちがいが続いたので、あと ${fmtLeft(left)} は入力できません（ほかの端末でも同じです）。`));setTimeout(()=>{if(!box.hidden)renderAdmLock()},Math.min(left+500,30000));return}
   const keyMode=!!ADM.key;
-  box.appendChild(el('p','hint',keyMode?'「黒鍵 管理者キー」のページに出ている、いまの6けたを入れてください（10分ごとに変わります）。':'管理の画面を開くには、管理者PINを入れてください。'));
-  const a=mk(keyMode?'いまの6けた':'管理者PIN'),go=el('button','btn','ロックを解除');if(keyMode)a.maxLength=6;
-  const tryIt=async()=>{if(ADM.busy)return;const x=a.value.replace(/\D/g,'');if(x.length<(keyMode?6:4))return;ADM.busy=true;const ok=keyMode?await admKeyOk(ADM.key,x):(await admHash(x))===ADM.hash;ADM.busy=false;
-    if(ok){store.set('admFail',null);ADM.unlocked=true;ADM.at=Date.now();moveToast('🔓 管理者ロックを解除しました（15分さわらないと自動でロック）');renderOwner()}
-    else{const g=admFails();store.set('admFail',{n:g.n+1,t:Date.now()});a.value='';msg.textContent=`${keyMode?'キー':'PIN'}がちがいます（あと${Math.max(0,4-g.n)}回でしばらくロック）`;if(g.n+1>=5)renderAdmLock()}};
-  go.addEventListener('click',tryIt);a.addEventListener('keydown',e=>{if(e.key==='Enter')tryIt()});
-  box.append(a,go,msg);setTimeout(()=>{try{a.focus()}catch(e){}},50)}
+  box.appendChild(el('p','hint',keyMode?'管理者PIN と、「黒鍵 管理者キー」のページに出ている、いまの6けた（10分ごとに変わる）の両方を入れてください。':'管理の画面を開くには、管理者PIN（8〜12けた）を入れてください。'));
+  const a=mk('管理者PIN'),k=keyMode?mk('いまの6けた（10分キー）',6):null,go=el('button','btn','ロックを解除');
+  const tryIt=async()=>{if(ADM.busy)return;if(Date.now()-(ADM.lastTry||0)<3000){msg.textContent='3秒待ってから、もう一度ためしてください';return}
+    const x=a.value.replace(/\D/g,''),c=k?k.value.replace(/\D/g,''):'';if(x.length<4||(k&&c.length!==6)){msg.textContent=k?'PINと6けたの両方を入れてください':'PINを入れてください';return}
+    ADM.busy=true;ADM.lastTry=Date.now();go.disabled=true;msg.textContent='確かめています…';
+    try{await admLoad()}catch(e){}
+    if(admLockLeft()){ADM.busy=false;renderAdmLock();return}
+    let ok=false;try{ok=(await admCheck(x))&&(!k||await admKeyOk(ADM.key,c))}catch(e){ok=false}
+    ADM.busy=false;go.disabled=false;
+    if(ok){const prevFail=num(ADM.raw.fail);
+      const weak=!(ADM.hash.startsWith('p2:')&&num(ADM.raw.v)>=ADM_V)||!!admWeak(x);
+      try{await admSave({fail:0,lock:0,log:admLogPush(true)})}catch(e){}
+      if(weak){ADM.mustNew=true;ADM.oldPin=x;renderAdmLock();return}
+      ADM.unlocked=true;ADM.at=ADM.since=Date.now();
+      moveToast(prevFail?`🔓 解除しました。⚠ 前回から ${prevFail} 回、まちがったコードが入力されています`:'🔓 管理者ロックを解除しました（5分さわらないか、60分たつと自動でロック）');renderOwner()}
+    else{const n=num(ADM.raw.fail)+1,lock=n>=8?Date.now()+24*36e5:n>=5?Date.now()+6*36e5:n>=3?Date.now()+30*6e4:0;
+      try{await admSave({fail:n,lock:lock||num(ADM.raw.lock),log:admLogPush(false)})}catch(e){}
+      a.value='';if(k)k.value='';msg.textContent=`コードがちがいます（まちがい ${n} 回目。3回で30分・5回で6時間・8回で24時間、入力できなくなります）`;if(lock)renderAdmLock()}};
+  go.addEventListener('click',tryIt);[a,k].filter(Boolean).forEach(i=>i.addEventListener('keydown',e=>{if(e.key==='Enter')tryIt()}));
+  box.append(...[a,k,go,msg].filter(Boolean));setTimeout(()=>{try{a.focus()}catch(e){}},50)}
+/* #admin を外したら、すぐロック */
+window.addEventListener('hashchange',()=>{if(location.hash!=='#admin'&&ADM.unlocked){ADM.unlocked=false;try{renderOwner()}catch(e){}moveToast('🔒 #admin のページをはなれたので、ロックしました')}});
+
 {const ro=renderOwner;renderOwner=function(){const r=ro.apply(this,arguments);try{$('ownerBlock').hidden=!admOk();renderAdmLock();
   if(admOk()&&!$('admTools')){const t=el('div','admTools');t.id='admTools';const lk=el('button','sound','🔒 今すぐロックする');lk.addEventListener('click',()=>{ADM.unlocked=false;renderOwner()});
-    const ch=el('button','sound','PINを変える');ch.addEventListener('click',async()=>{if(ch.dataset.armed!=='1'){ch.dataset.armed='1';ch.textContent='もう一度押すとPINを決め直します';return}try{await cloud.db.doc('mail/_adminpin').set({h:null,s:ADM.key||null,t:Date.now()})}catch(e){}ADM.hash=null;ADM.unlocked=false;renderOwner()});
-    const kb=el('button','sound',ADM.key?'🔑 10分キーの連携を外す（PINに戻す）':'🔑 10分キーと連携');
+    const ch=el('button','sound','PINを変える');ch.addEventListener('click',async()=>{if(ch.dataset.armed!=='1'){ch.dataset.armed='1';ch.textContent='もう一度押すとPINを決め直します';return}try{await admSave({h:null,v:ADM_V})}catch(e){}ADM.hash=null;ADM.unlocked=false;renderOwner()});
+    const kb=el('button','sound',ADM.key?'🔑 10分キーの連携を外す（PINだけに戻す）':'🔑 10分キーと連携');
     kb.addEventListener('click',async()=>{
       if(ADM.key){if(kb.dataset.armed!=='1'){kb.dataset.armed='1';kb.textContent='もう一度押すと連携を外します';return}
-        try{await cloud.db.doc('mail/_adminpin').set({h:ADM.hash,s:null,t:Date.now()});ADM.key=null;moveToast('10分キーの連携を外しました。これからはPINで開きます');t.remove();renderOwner()}catch(e){moveToast('保存できませんでした')}return}
+        try{await admSave({s:null});ADM.key=null;moveToast('10分キーの連携を外しました。これからはPINだけで開きます');t.remove();renderOwner()}catch(e){moveToast('保存できませんでした')}return}
       if($('admLink')){$('admLink').remove();return}
-      const f=el('div','admLock');f.id='admLink';f.append(el('h2','','🔑 10分キーと連携'),el('p','hint','「黒鍵 管理者キー」のページで「連携コードを表示」を押してコピーし、ここに貼ります。そのページに出ている、いまの6けたも入れてください。連携すると、これからはPINではなく10分ごとに変わる6けたで開きます。'));
+      const f=el('div','admLock');f.id='admLink';f.append(el('h2','','🔑 10分キーと連携'),el('p','hint','「黒鍵 管理者キー」のページで「連携コードを表示」を押してコピーし、ここに貼ります。そのページに出ている、いまの6けたも入れてください。連携すると、これからは PIN と、10分ごとに変わる6けたの「両方」で開きます。'));
       const sc=document.createElement('input');sc.type='text';sc.autocomplete='off';sc.placeholder='連携コード（英字と数字）';sc.className='admPin';sc.style.letterSpacing='.05em';sc.style.fontSize='16px';
       const cd=document.createElement('input');cd.type='text';cd.inputMode='numeric';cd.maxLength=6;cd.autocomplete='off';cd.placeholder='いまの6けた';cd.className='admPin';
       const m=el('p','admMsg'),go=el('button','btn','連携する');
       go.addEventListener('click',async()=>{const sec=sc.value.toUpperCase().replace(/[^A-Z2-7]/g,'');if(sec.length<16){m.textContent='連携コードを、ぜんぶ貼ってください';return}
         go.disabled=true;let ok=false;try{ok=await admKeyOk(sec,cd.value)}catch(e){}
         if(!ok){m.textContent='6けたが合いません。いまの数字か確かめてください';go.disabled=false;return}
-        try{await cloud.db.doc('mail/_adminpin').set({h:ADM.hash,s:sec,t:Date.now()});ADM.key=sec;moveToast('🔑 10分キーと連携しました。次からは6けたで開きます');f.remove();t.remove();renderOwner()}catch(e){m.textContent='保存できませんでした';go.disabled=false}});
+        try{await admSave({s:sec});ADM.key=sec;moveToast('🔑 10分キーと連携しました。次からは PIN と6けたの両方で開きます');f.remove();t.remove();renderOwner()}catch(e){m.textContent='保存できませんでした';go.disabled=false}});
       f.append(sc,cd,go,m);t.after(f)});
-    t.append(lk,ch,kb);$('ownerBlock').prepend(t)}}catch(e){}return r}}
+    const lg=el('details','admLog');lg.appendChild(el('summary','','🕒 最近のロック解除の記録'));(Array.isArray(ADM.raw&&ADM.raw.log)?ADM.raw.log:[]).slice().reverse().forEach(x=>lg.appendChild(el('p',x.ok?'':'bad',`${fmtTime(num(x.t))} ${x.ok?'✅ 解除':'❌ まちがい'} （${x.d||'?'}）`)));
+    t.append(lk,ch,kb,lg);$('ownerBlock').prepend(t)}}catch(e){}return r}}
 $('adminBtn').addEventListener('click',()=>{try{renderOwner()}catch(e){}});
 /* さわっている間は延長。15分さわらなければロックして、管理の画面を閉じる */
 ['pointerdown','keydown'].forEach(ev=>document.addEventListener(ev,()=>{if(ADM.unlocked&&Date.now()-ADM.at<ADM_IDLE)ADM.at=Date.now()},true));
-setInterval(()=>{if(ADM.unlocked&&!admOk()){ADM.unlocked=false;try{renderOwner()}catch(e){}if(!$('admin').hidden)moveToast('🔒 しばらくさわらなかったので、管理者ロックをかけました')}},20000);
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&ADM.unlocked)ADM.hideAt=Date.now();else if(!document.hidden&&ADM.hideAt&&Date.now()-ADM.hideAt>2*6e4){ADM.unlocked=false;ADM.hideAt=0;try{renderOwner()}catch(e){}}});
+setInterval(()=>{if(ADM.unlocked&&!admOk()){ADM.unlocked=false;try{renderOwner()}catch(e){}moveToast('🔒 管理者ロックをかけました（5分さわらないか、解除から60分たつとロックします）')}},5000);
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ADM.unlocked)ADM.hideAt=Date.now();else if(!document.hidden&&ADM.hideAt&&Date.now()-ADM.hideAt>30000){ADM.unlocked=false;ADM.hideAt=0;try{renderOwner()}catch(e){}}});
 
 /* ---------- Web版: アカウントの切りかえ（記録はアカウントごとに分けて、この端末にしまう） ---------- */
 if(window.KOKKEN_WEB){const pr=$('prof');if(pr){const w=el('div','acctSw');
@@ -11734,7 +11836,7 @@ const BG={tab:'new'};
   c.innerHTML='<span class="bI" aria-hidden="true">🏆</span><b>武勇伝</b><small id="bragInfo">だれが、いくら賭けて、どうなったか</small>';
   c.addEventListener('click',openBrag);($('casinoCard')||$('plazaCard')).after(c);
 })();
-function openBrag(){initAudio();const P=$('brag');P.hidden=false;P.scrollTop=0;renderBrag()}
+function openBrag(){initAudio();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}const P=$('brag');P.hidden=false;P.scrollTop=0;renderBrag()}
 function renderBragCard(){try{const i=$('bragInfo');if(!i)return;const all=bragAll().filter(e=>!e.rec).sort((a,b)=>b.t-a.t);const e=all[0];
   i.textContent=e?`${e.who.name}: ${bragText(e).replace(/^\S+ /,'')}`:'だれが、いくら賭けて、どうなったか'}catch(e){}}
 function renderBrag(){
@@ -11782,6 +11884,310 @@ setInterval(()=>{try{if(gameBusy())return;renderBragCard();
 {try{const ro=raidOnRows;raidOnRows=function(){const r=ro.apply(this,arguments);try{renderBragCard()}catch(e){}return r}}catch(e){}}
 renderBragCard();
 
+
+/* ==================== アンケート（管理者が作って、みんなが答える） ====================
+   質問の保存: live/polls = {items:[…]}（管理者だけが書く）
+   答えの保存: 自分の記録（scores/<自分のID>）の poll に {アンケートID:{a:[選んだ番号], x:自由記述, t}}
+   集計: ランキングと同じ記録を読んで数える（新しい Firestore のルールはいらない）
+   種類: ひとつ選ぶ / いくつでも選ぶ / 自由に書く。締め切り・結果の見せかた・答えたごほうび（コイン）を決められる */
+const PL={list:[],loaded:false,unsub:null,ed:null,edOpen:false,msg:''};
+const plStr=(v,n)=>String(v==null?'':v).slice(0,n);
+function plClean(p){if(!p||typeof p!=='object')return null;const id=plStr(p.id,24).replace(/[^\w-]/g,'');if(!id)return null;
+  const type=['one','multi','text'].includes(p.type)?p.type:'one';
+  const opts=type==='text'?[]:(Array.isArray(p.opts)?p.opts:[]).map(x=>plStr(x,40).trim()).filter(Boolean).slice(0,8);
+  if(type!=='text'&&opts.length<2)return null;
+  return {id,q:plStr(p.q,80),desc:plStr(p.desc,300),type,opts,end:num(p.end),start:num(p.start),show:['always','answered','end'].includes(p.show)?p.show:'answered',reward:Math.min(100000,Math.floor(num(p.reward))),t:num(p.t),draft:p.draft===true}}
+const plOpen=p=>!p.draft&&Date.now()>=p.start&&(!p.end||Date.now()<p.end);
+const plDone=p=>!!p.end&&Date.now()>=p.end;
+function plMine(){const d=store.get('poll',null);return d&&typeof d==='object'&&!Array.isArray(d)?d:{}}
+{const bc=buildCloud;buildCloud=function(){const d=bc.apply(this,arguments);try{const m=plMine(),ids=new Set(PL.list.map(p=>p.id));const o={};Object.entries(m).filter(([k])=>!PL.loaded||ids.has(k)).slice(-30).forEach(([k,v])=>o[k]=v);d.poll=o}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){const r=mc.apply(this,arguments);try{if(d&&d.poll&&typeof d.poll==='object'){const m=plMine();Object.entries(d.poll).forEach(([k,v])=>{if(/^[\w-]{1,24}$/.test(k)&&v&&typeof v==='object'&&(!m[k]||num(v.t)>num(m[k].t)))m[k]=v});store.set('poll',m)}}catch(e){}return r}}
+function plSub(){if(!cloud.db||PL.unsub)return;try{PL.unsub=cloud.db.doc('live/polls').onSnapshot(s=>{const d=s.exists?s.data():null;PL.list=(d&&Array.isArray(d.items)?d.items:[]).map(plClean).filter(Boolean).slice(0,40);PL.loaded=true;
+  const mine=plMine();PL.list.filter(p=>plOpen(p)&&!mine[p.id]&&Date.now()-p.t<7*864e5).forEach(p=>addNote('event',`📮 新しいアンケート「${p.q}」${p.reward?`（答えると ${p.reward.toLocaleString()}コイン）`:''}`,'poll:'+p.id));
+  renderPollCard();if(!$('polls').hidden&&!gameBusy())renderPolls();if(!$('plEdit').hidden&&!PL.ed)renderPlEdit()},()=>{PL.unsub=null})}catch(e){}}
+{const a=subscribeGachas;subscribeGachas=function(){const r=a.apply(this,arguments);try{plSub()}catch(e){}return r}}
+/* 集計 */
+function plCount(p){
+  const c=p.opts.map(()=>0),texts=[];let n=0;const me=cloud.uid||'me';
+  const add=(v,who)=>{if(!v||typeof v!=='object')return;n++;if(p.type==='text'){const x=plStr(v.x,100).trim();if(x)texts.push({x,who,t:num(v.t)})}else(Array.isArray(v.a)?v.a:[]).forEach(i=>{if(Number.isInteger(i)&&i>=0&&i<c.length)c[i]++})};
+  (cloud.rows||[]).forEach(r=>{if(r.id===me||!r.poll||typeof r.poll!=='object')return;add(r.poll[p.id],String(r.nick||'プレイヤー').slice(0,16))});
+  add(plMine()[p.id],myNick());return {c,n,texts};
+}
+function plAnswer(p,a,x){
+  if(!plOpen(p))return 'このアンケートは締め切られています';
+  if(p.type==='text'){x=plStr(x,100).trim();if(!x)return 'ひとこと書いてください'}else{a=[...new Set(a)].filter(i=>Number.isInteger(i)&&i>=0&&i<p.opts.length);if(!a.length)return 'えらんでください';if(p.type==='one')a=a.slice(0,1)}
+  const m=plMine(),first=!m[p.id];m[p.id]=p.type==='text'?{x,t:Date.now()}:{a,t:Date.now()};store.set('poll',m);pushCloud();
+  if(first&&p.reward)applyGift('poll:'+p.id,{coins:p.reward,tk:{},items:[],from:{kind:'u',name:'アンケートのお礼'}});
+  play(72,0,.2);play(79,.06,.2);return '';
+}
+/* 画面 */
+(function(){
+  const P=document.createElement('section');P.id='polls';P.className='screen panel';P.hidden=true;
+  P.innerHTML='<div class="toprow"><h1>📮 アンケート</h1><button class="sound" id="plBack">メニューに戻る</button></div><div id="plBody"></div>';
+  const E=document.createElement('section');E.id='plEdit';E.className='screen panel';E.hidden=true;
+  $('stage').append(P,E);$('plBack').addEventListener('click',()=>{P.hidden=true;renderPollCard()});
+  const c=document.createElement('button');c.id='pollCard';c.className='pollCard';
+  c.innerHTML='<span class="pI" aria-hidden="true">📮</span><b>アンケート</b><small id="pollInfo">みんなの声を集めています</small>';
+  c.addEventListener('click',openPolls);
+  const x=$('xD1');const row=x?x.closest('#menu > *'):null;(row||$('casinoCard')).after(c);
+  const ob=$('ownerBlock');if(ob){const b=el('div','gfBox');b.append(el('div','label','📮 アンケート'),el('p','hint','質問を作って、みんなに答えてもらえます。結果はその場で集計されます。'));
+    const go=el('button','btn pri','アンケートを作る・結果を見る');go.addEventListener('click',openPlEdit);b.appendChild(go);ob.appendChild(b)}
+})();
+function renderPollCard(){try{const i=$('pollInfo');if(!i)return;const m=plMine(),open=PL.list.filter(plOpen),un=open.filter(p=>!m[p.id]);
+  i.textContent=!open.length?'いまは受付中のアンケートはありません':un.length?`受付中 ${open.length}件 ・ まだ答えていないもの ${un.length}件`:`受付中 ${open.length}件 ・ ぜんぶ答えました`;
+  $('pollCard').classList.toggle('new',un.length>0)}catch(e){}}
+function openPolls(){initAudio();plSub();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}const P=$('polls');P.hidden=false;P.scrollTop=0;renderPolls()}
+const plLeft=t=>{const ms=t-Date.now();if(ms<=0)return '締め切り';const d=Math.floor(ms/864e5),h=Math.floor(ms%864e5/36e5),m=Math.floor(ms%36e5/6e4);return 'のこり '+(d?d+'日':h?h+'時間':m+'分')};
+function plBars(box,p,cnt,mineA){
+  const tot=p.type==='multi'?cnt.n:cnt.c.reduce((a,b)=>a+b,0);
+  p.opts.forEach((o,i)=>{const v=cnt.c[i],pct=tot?Math.round(v/tot*100):0,r=el('div','plBar'+(mineA&&mineA.includes(i)?' me':''));
+    const f=el('i');f.style.width=pct+'%';r.append(f,el('span','',(mineA&&mineA.includes(i)?'✔ ':'')+o),el('b','',`${pct}%（${v}）`));box.appendChild(r)});
+}
+function renderPolls(){
+  const B=$('plBody');if(!B)return;B.textContent='';const m=plMine();
+  if(!cloud.db){B.appendChild(el('p','hint','アンケートに答えるには、ログインが必要です。'));return}
+  if(!PL.loaded){B.appendChild(el('p','hint','読み込んでいます…'));return}
+  const vis=PL.list.filter(p=>!p.draft&&Date.now()>=p.start);
+  if(!vis.length){B.appendChild(el('p','plEmpty','いまはアンケートがありません。新しいアンケートが出たら、お知らせ（🔔）で知らせます。'));return}
+  vis.sort((a,b)=>(plOpen(b)-plOpen(a))||(!m[a.id]-!m[b.id])*-1||b.t-a.t);
+  vis.forEach(p=>{
+    const mine=m[p.id],open=plOpen(p),cnt=plCount(p),card=el('div','plCard'+(open?'':' done')+(mine?' ans':''));
+    const hd=el('div','plHd');hd.append(el('span','st',open?(mine?'回答ずみ':'受付中'):'締め切り'),el('small','',p.end?(open?plLeft(p.end):'結果発表'):'締め切りなし'),el('small','',`${cnt.n}人が回答`));
+    if(p.reward&&open)hd.appendChild(el('small','rw',mine?`🎁 ${p.reward.toLocaleString()}コイン受け取りずみ`:`🎁 答えると ${p.reward.toLocaleString()}コイン`));
+    card.append(hd,el('b','q',p.q));if(p.desc)card.appendChild(el('p','d',p.desc));
+    const showRes=p.type!=='text'&&(p.show==='always'||(p.show==='answered'&&(mine||!open))||(p.show==='end'&&!open));
+    const editing=PL.edit===p.id;
+    if(open&&(!mine||editing)){
+      if(p.type==='text'){const t=document.createElement('textarea');t.rows=3;t.maxLength=100;t.placeholder='ここに書いてください（100文字まで）';t.value=mine&&mine.x||'';t.className='plTa';
+        const go=el('button','btn pri',mine?'答えを書きかえる':'答える');go.addEventListener('click',()=>{const er=plAnswer(p,null,t.value);PL.msg=er;PL.edit=null;renderPolls();renderPollCard();if(!er)moveToast('📮 回答しました。ありがとう！')});card.append(t,go)}
+      else{const sel=new Set(mine&&mine.a||[]);const ops=el('div','plOps');
+        p.opts.forEach((o,i)=>{const b=el('button',sel.has(i)?'on':'',(p.type==='multi'?(sel.has(i)?'☑ ':'☐ '):(sel.has(i)?'◉ ':'○ '))+o);b.addEventListener('click',()=>{if(p.type==='one'){sel.clear();sel.add(i)}else sel.has(i)?sel.delete(i):sel.add(i);
+          ops.querySelectorAll('button').forEach((x,j)=>{x.className=sel.has(j)?'on':'';x.textContent=(p.type==='multi'?(sel.has(j)?'☑ ':'☐ '):(sel.has(j)?'◉ ':'○ '))+p.opts[j]})});ops.appendChild(b)});
+        const go=el('button','btn pri',mine?'答えを変える':'答える');go.addEventListener('click',()=>{const er=plAnswer(p,[...sel]);PL.msg=er;PL.edit=null;renderPolls();renderPollCard();if(!er)moveToast('📮 回答しました。ありがとう！')});
+        card.append(el('small','how',p.type==='multi'?'いくつでもえらべます':'ひとつえらんでください'),ops,go)}
+      if(editing){const cx=el('button','sxLink','やめる');cx.addEventListener('click',()=>{PL.edit=null;renderPolls()});card.appendChild(cx)}
+    }else{
+      if(showRes)plBars(card,p,cnt,mine&&mine.a);
+      else if(p.type!=='text')card.appendChild(el('p','hint',p.show==='end'?'結果は締め切りのあとに発表されます。':'答えると、みんなの結果が見られます。'));
+      if(p.type==='text'&&mine)card.appendChild(el('p','mine',`あなたの答え: ${mine.x}`));
+      if(p.type==='text'&&!open)card.appendChild(el('p','hint','自由記述の答えは、運営だけが読みます。'));
+      if(mine&&open){const ch=el('button','sxLink','答えを変える');ch.addEventListener('click',()=>{PL.edit=p.id;renderPolls()});card.appendChild(ch)}
+    }
+    B.appendChild(card);
+  });
+  if(PL.msg){B.prepend(el('p','plMsg',PL.msg));PL.msg=''}
+  B.appendChild(el('p','hint','答えは、あなたの記録といっしょに保存されます。締め切りまでは何回でも答えを変えられます。'));
+}
+/* ---------- アンケートを作る（管理者） ---------- */
+function openPlEdit(){if(!cloud.isOwner)return;if(!admOk()){moveToast('🔒 管理者ロックを解除してください');return}plSub();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}PL.ed=null;const E=$('plEdit');E.hidden=false;E.scrollTop=0;renderPlEdit()}
+setInterval(()=>{try{if(!$('plEdit').hidden&&!admOk()){$('plEdit').hidden=true;moveToast('🔒 管理者ロックがかかったので、アンケートの編集を閉じました')}}catch(e){}},3000);
+async function plWrite(items){if(!admOk())throw Object.assign(new Error('lock'),{code:'lock'});await cloud.db.doc('live/polls').set({items:items.slice(0,40),t:Date.now()});PL.list=items.map(plClean).filter(Boolean)}
+const plErr=e=>e&&e.code==='permission_denied'?'保存する権限がありません（Firestore のルールで live/polls への書き込みを許可してください）':e&&e.code==='lock'?'管理者ロックがかかっています':'保存できませんでした';
+const plDT=t=>{if(!t)return '';const d=new Date(t-new Date().getTimezoneOffset()*6e4);return d.toISOString().slice(0,16)};
+function renderPlEdit(){
+  const E=$('plEdit');E.textContent='';
+  const top=el('div','toprow');top.appendChild(el('h1','',PL.ed?'アンケートを作る':'📮 アンケートの管理'));
+  const bk=el('button','sound',PL.ed?'← 一覧へ':'閉じる');bk.addEventListener('click',()=>{if(PL.ed){PL.ed=null;renderPlEdit()}else E.hidden=true});top.appendChild(bk);E.appendChild(top);
+  const st=el('p','status');
+  if(!PL.ed){
+    const nw=el('button','btn pri','＋ 新しいアンケート');nw.addEventListener('click',()=>{PL.ed={id:'p'+Date.now().toString(36),q:'',desc:'',type:'one',opts:['',''],end:Date.now()+7*864e5,start:0,show:'answered',reward:500,draft:false};renderPlEdit()});E.appendChild(nw);
+    if(!PL.list.length)E.appendChild(el('p','hint','まだアンケートはありません。'));
+    PL.list.slice().reverse().forEach(p=>{const c=plCount(p),box=el('div','usSec');
+      box.append(el('b','',p.q||'（質問なし）'),el('small','',`${{one:'ひとつ選ぶ',multi:'いくつでも',text:'自由記述'}[p.type]} ・ ${p.draft?'下書き':plOpen(p)?'受付中':plDone(p)?'締め切り':'開始前'} ・ ${p.end?'締め切り '+fmtTime(p.end):'締め切りなし'} ・ 回答 ${c.n}人 ・ ごほうび ${p.reward}`));
+      if(p.type!=='text'){const bb=el('div','plRes');plBars(bb,p,c,null);box.appendChild(bb)}
+      else{const tl=el('div','plTexts');if(!c.texts.length)tl.appendChild(el('small','','まだ答えはありません'));c.texts.sort((a,b)=>b.t-a.t).forEach(x=>tl.appendChild(el('p','',`${x.who}: ${x.x}`)));box.appendChild(tl)}
+      const r=el('div','usRow');
+      const ed=el('button','sound','直す');ed.addEventListener('click',()=>{PL.ed=JSON.parse(JSON.stringify(p));renderPlEdit()});
+      const cl=el('button','sound',plOpen(p)?'いま締め切る':'締め切りを7日のばす');cl.addEventListener('click',async()=>{try{await plWrite(PL.list.map(x=>x.id===p.id?{...x,end:plOpen(p)?Date.now():Date.now()+7*864e5}:x));renderPlEdit()}catch(e){st.textContent=plErr(e)}});
+      const dl=el('button','sound danger','消す');dl.addEventListener('click',async()=>{if(dl.dataset.armed!=='1'){dl.dataset.armed='1';dl.textContent='もう一度押すと消します';return}try{await plWrite(PL.list.filter(x=>x.id!==p.id));renderPlEdit()}catch(e){st.textContent=plErr(e)}});
+      r.append(ed,cl,dl);box.appendChild(r);E.appendChild(box)});
+    E.appendChild(st);E.appendChild(el('p','hint','集計は、ランキングにのっている人（上位500人）の答えから数えます。自由記述の答えは、この画面でだけ読めます。'));return}
+  const p=PL.ed,f=el('div','usSec');
+  const inp=(v,max,ph,on)=>{const i=document.createElement('input');i.type='text';i.maxLength=max;i.value=v||'';i.placeholder=ph;i.addEventListener('input',()=>on(i.value));return i};
+  f.append(el('label','','質問（80文字まで）'),inp(p.q,80,'例: いちばん好きな部屋は？',v=>p.q=v));
+  const ds=document.createElement('textarea');ds.rows=2;ds.maxLength=300;ds.value=p.desc;ds.placeholder='説明（なくてもOK）';ds.addEventListener('input',()=>p.desc=ds.value);f.append(el('label','','説明'),ds);
+  const ty=document.createElement('select');[['one','ひとつ選ぶ'],['multi','いくつでも選べる'],['text','自由に書く（100文字まで）']].forEach(([k,n])=>{const o=document.createElement('option');o.value=k;o.textContent=n;ty.appendChild(o)});ty.value=p.type;ty.addEventListener('change',()=>{p.type=ty.value;renderPlEdit()});f.append(el('label','','答えかた'),ty);
+  if(p.type!=='text'){f.appendChild(el('label','','選択肢（2〜8こ・40文字まで）'));p.opts.forEach((o,i)=>{const r=el('div','usRow');const x=inp(o,40,`選択肢${i+1}`,v=>p.opts[i]=v);const d=el('button','sound','✕');d.disabled=p.opts.length<=2;d.addEventListener('click',()=>{p.opts.splice(i,1);renderPlEdit()});r.append(x,d);f.appendChild(r)});
+    const ad=el('button','sound','＋ 選択肢を足す');ad.disabled=p.opts.length>=8;ad.addEventListener('click',()=>{p.opts.push('');renderPlEdit()});f.appendChild(ad)}
+  const en=document.createElement('input');en.type='datetime-local';en.value=plDT(p.end);en.addEventListener('input',()=>{p.end=en.value?new Date(en.value).getTime():0});f.append(el('label','','締め切り（空にすると締め切りなし）'),en);
+  const sh=document.createElement('select');[['answered','答えた人に結果を見せる'],['always','答える前から結果を見せる'],['end','締め切りまで結果をかくす']].forEach(([k,n])=>{const o=document.createElement('option');o.value=k;o.textContent=n;sh.appendChild(o)});sh.value=p.show;sh.addEventListener('change',()=>p.show=sh.value);
+  if(p.type!=='text')f.append(el('label','','結果の見せかた'),sh);
+  const rw=document.createElement('input');rw.type='number';rw.min=0;rw.max=100000;rw.step=100;rw.value=p.reward;rw.addEventListener('input',()=>p.reward=Math.max(0,Math.min(100000,Math.floor(+rw.value||0))));f.append(el('label','','答えてくれた人へのお礼（コイン・はじめて答えたときだけ）'),rw);
+  const dr=el('label','check'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!p.draft;cb.addEventListener('change',()=>p.draft=cb.checked);dr.append(cb,document.createTextNode('下書き（みんなには見せない）'));f.appendChild(dr);
+  const go=el('button','btn pri','💾 保存して公開');go.addEventListener('click',async()=>{
+    p.opts=p.opts.map(x=>x.trim()).filter(Boolean);
+    if(!p.q.trim()){st.textContent='質問を入れてください';return}if(p.type!=='text'&&p.opts.length<2){st.textContent='選択肢を2こ以上入れてください';renderPlEdit();return}
+    if(p.end&&p.end<Date.now()){st.textContent='締め切りが過去になっています';return}
+    const c=plClean({...p,t:p.t||Date.now(),start:p.start||Date.now()});
+    go.disabled=true;try{const L=PL.list.filter(x=>x.id!==c.id).concat([c]);await plWrite(L);PL.ed=null;moveToast(c.draft?'下書きを保存しました':'📮 アンケートを公開しました');renderPlEdit()}catch(e){st.textContent=plErr(e);go.disabled=false}});
+  f.append(go,st);E.appendChild(f);
+}
+
+/* ==================== 大会（管理者が開くトーナメント戦） ====================
+   大会の保存: live/tours = {items:[…]}（管理者だけが書く）
+   エントリーとスコア: 自分の記録の trn に {大会ID:{e:エントリー時刻, s:[各回戦のスコア]}}
+   組み合わせ: エントリーした順に 8／16／32人ずつのブロック。各回戦は決まった曲を1回だけ弾き、相手より高ければ勝ち。
+   締め切りまでに弾かなかった人は不戦敗（両方弾かなければ、先にエントリーした人が進む）。
+   ごほうび: 優勝・準優勝・ベスト4・参加賞（コイン）。優勝者には称号「大会王者」。結果が出たあと、自分の画面で受け取る。 */
+const TR={list:[],loaded:false,unsub:null,sel:null,ed:null};
+TAGS.trnchamp={name:'大会王者',style:'cu',c1:'#2a0a3a',c2:'#ffd76a',tc:'#fff6dc',gift:1};
+const trS=(v,n)=>String(v==null?'':v).slice(0,n);
+function trClean(t){if(!t||typeof t!=='object')return null;const id=trS(t.id,24).replace(/[^\w-]/g,'');if(!id)return null;
+  const size=[4,8,16,32].includes(+t.size)?+t.size:8,R=Math.log2(size);
+  const songs=(Array.isArray(t.songs)?t.songs:[]).slice(0,R).map(x=>typeof x==='string'&&/^[\w-]{1,40}$/.test(x)?x:'');while(songs.length<R)songs.push('');
+  const pz=t.prize&&typeof t.prize==='object'?t.prize:{};const P=k=>Math.max(0,Math.min(1e7,Math.floor(num(pz[k]))));
+  return {id,name:trS(t.name,30)||'大会',desc:trS(t.desc,300),size,R,songs,start:num(t.start),entryEnd:num(t.entryEnd),roundH:Math.max(.25,Math.min(72,+t.roundH||24)),prize:{c1:P('c1'),c2:P('c2'),c4:P('c4'),cp:P('cp')},tag:t.tag!==false,draft:t.draft===true,t:num(t.t)}}
+const trDl=(t,r)=>t.entryEnd+(r+1)*t.roundH*36e5;
+const trEnd=t=>trDl(t,t.R-1);
+const trPhase=t=>{const n=Date.now();return n<t.start?'soon':n<t.entryEnd?'entry':n<trEnd(t)?'play':'done'};
+const trRoundName=(t,r)=>{const k=t.R-r;return k===1?'決勝':k===2?'準決勝':k===3?'準々決勝':`${r+1}回戦`};
+function trMineAll(){const d=store.get('trn',null);return d&&typeof d==='object'&&!Array.isArray(d)?d:{}}
+const trMine=id=>trMineAll()[id]||null;
+function trSave(id,v){const m=trMineAll();m[id]=v;const keys=Object.keys(m);if(keys.length>12)keys.sort((a,b)=>num(m[a].e)-num(m[b].e)).slice(0,keys.length-12).forEach(k=>delete m[k]);store.set('trn',m);pushCloud()}
+{const bc=buildCloud;buildCloud=function(){const d=bc.apply(this,arguments);try{d.trn=trMineAll()}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){const r=mc.apply(this,arguments);try{if(d&&d.trn&&typeof d.trn==='object'){const m=trMineAll();Object.entries(d.trn).forEach(([k,v])=>{if(!/^[\w-]{1,24}$/.test(k)||!v||!Array.isArray(v.s))return;const cur=m[k];if(!cur)m[k]=v;else{cur.s=cur.s.map((x,i)=>x==null?(v.s[i]==null?null:num(v.s[i])):(v.s[i]==null?x:Math.max(num(x),num(v.s[i]))))}});store.set('trn',m)}}catch(e){}return r}}
+function trSub(){if(!cloud.db||TR.unsub)return;try{TR.unsub=cloud.db.doc('live/tours').onSnapshot(s=>{const d=s.exists?s.data():null;TR.list=(d&&Array.isArray(d.items)?d.items:[]).map(trClean).filter(Boolean).slice(0,20);TR.loaded=true;
+  TR.list.filter(t=>!t.draft&&trPhase(t)==='entry'&&Date.now()-t.t<7*864e5).forEach(t=>addNote('event',`🏆 大会「${t.name}」のエントリー受付が始まりました（${fmtTime(t.entryEnd)} まで）`,'trn:'+t.id));
+  renderTrnCard();if(!$('trn').hidden&&!gameBusy())renderTrn();if(!$('trnEdit').hidden&&!TR.ed)renderTrnEdit()},()=>{TR.unsub=null})}catch(e){}}
+{const a=subscribeGachas;subscribeGachas=function(){const r=a.apply(this,arguments);try{trSub()}catch(e){}return r}}
+const trSong=(t,r)=>t.songs[r]&&SONGS.find(x=>x.id===t.songs[r])||pickSeeded(playableSongs(4+r*.8,6.2+r*.9),'kk-trn-'+t.id+'-'+r,1)[0];
+/* 組み合わせと勝ち上がり */
+function trBracket(t){
+  const me=trMine(t.id),ents=[],uid=cloud.uid||'me';
+  (cloud.rows||[]).forEach(r=>{if(r.id===uid)return;const x=r.trn&&r.trn[t.id];if(x&&num(x.e)&&num(x.e)<=t.entryEnd)ents.push({id:r.id,nick:String(r.nick||'プレイヤー').slice(0,16),e:num(x.e),s:Array.isArray(x.s)?x.s:[]})});
+  if(me)ents.push({id:uid,nick:myNick(),e:me.e,s:me.s,me:1});
+  ents.sort((a,b)=>a.e-b.e||String(a.id).localeCompare(String(b.id)));
+  const i=ents.findIndex(x=>x.me),bi=i<0?0:Math.floor(i/t.size);
+  return {ents,seats:Array.from({length:t.size},(_,k)=>ents[bi*t.size+k]||null),block:bi,blocks:Math.max(1,Math.ceil(ents.length/t.size)),joined:i>=0};
+}
+function trWin(t,seats){
+  const now=Date.now(),R=[seats];
+  if(now<t.entryEnd){for(let r=0;r<t.R;r++)R.push(Array(t.size>>(r+1)).fill(undefined));return R}
+  for(let r=0;r<t.R;r++){const prev=R[r],next=[];
+    for(let k=0;k<prev.length;k+=2){const a=prev[k],c=prev[k+1];
+      if(a===undefined||c===undefined){next.push(undefined);continue}
+      if(!a||!c){next.push(a||c||null);continue}
+      const sa=a.s[r],sc=c.s[r],done=(sa!=null&&sc!=null)||now>trDl(t,r);
+      if(!done){next.push(undefined);continue}
+      const va=sa==null?-1:num(sa),vc=sc==null?-1:num(sc);next.push(va>vc||(va===vc&&a.e<=c.e)?a:c)}
+    R.push(next)}
+  return R;
+}
+function trStatus(t){const B=trBracket(t),Rr=trWin(t,B.seats);let round=-1,opp=null,out=null;
+  for(let r=0;r<t.R;r++){const idx=Rr[r].findIndex(x=>x&&x.me);if(idx<0)break;round=r;opp=Rr[r][idx^1]||null;const nx=Rr[r+1][idx>>1];if(nx===undefined)break;if(!(nx&&nx.me)){out={r,by:nx};break}}
+  return {B,Rr,round,opp,out,champ:Rr[t.R][0]};
+}
+function trEnter(t){if(trPhase(t)!=='entry'||trMine(t.id)||!canSync())return;trSave(t.id,{e:Date.now(),s:Array(t.R).fill(null)});moveToast(`🏆 「${t.name}」にエントリーしました！`);play(72,0,.2);play(79,.08,.2);renderTrn();renderTrnCard()}
+let TRN_NEXT=null;
+function trPlay(t,r){const me=trMine(t.id);if(!me||me.s[r]!=null||Date.now()>trDl(t,r)||Date.now()<t.entryEnd)return;const song=trSong(t,r);if(!song)return;TRN_NEXT={id:t.id,r};FORCE_SONG=true;initAudio();$('trn').hidden=true;startSong(song.id)}
+{const ng=newGame;newGame=function(){const n=TRN_NEXT;TRN_NEXT=null;const r=ng.apply(this,arguments);try{if(n&&G){G.trn=n;const m=trMine(n.id);if(m&&m.s[n.r]==null){m.s[n.r]=0;trSave(n.id,m)}}}catch(e){}return r}}
+{const sr=showResult;showResult=function(){const first=G&&!G.resultShown;const r=sr.apply(this,arguments);try{if(first&&G&&G.trn){const n=G.trn,m=trMine(n.id);if(m){m.s[n.r]=Math.max(num(m.s[n.r]),Math.floor(num(G.score)));trSave(n.id,m);betLine(true,`🏆 大会のスコア ${m.s[n.r].toLocaleString()} を記録しました（1回だけ）`)}}}catch(e){}return r}}
+{const tm=toMenu;toMenu=function(){const n=G&&G.trn;const r=tm.apply(this,arguments);try{if(n){TR.sel=n.id;openTrn()}}catch(e){}return r}}
+document.addEventListener('click',e=>{try{if(e.target&&e.target.closest&&e.target.closest('#menuBtn,#pauseMenu')&&G&&G.trn){const n=G.trn;setTimeout(()=>{if(!G){TR.sel=n.id;openTrn()}},0)}
+  if(e.target&&e.target.closest&&e.target.closest('#retryBtn')&&G&&G.trn){e.stopImmediatePropagation();e.preventDefault();moveToast('大会の曲は1回だけです')}}catch(x){}},true);
+function trReward(t){
+  if(trPhase(t)!=='done')return;const me=trMine(t.id);if(!me)return;
+  const S=trStatus(t);if(!S.B.joined)return;const real=S.B.seats.filter(Boolean).length;if(real<2)return;
+  const champ=S.champ&&S.champ.me,second=!champ&&S.Rr[t.R-1].some(x=>x&&x.me),best4=!champ&&!second&&t.R>=2&&S.Rr[t.R-2].some(x=>x&&x.me);
+  const c=champ?t.prize.c1:second?t.prize.c2:best4?t.prize.c4:t.prize.cp;const items=champ&&t.tag?['tag:trnchamp']:[];
+  if(!c&&!items.length)return;
+  applyGift('trn:'+t.id,{coins:c,tk:{},items,from:{kind:'u',name:`大会「${t.name}」`}});
+  if(champ)moveToast(`👑 大会「${t.name}」優勝！`);
+}
+/* 画面 */
+(function(){
+  const P=document.createElement('section');P.id='trn';P.className='screen panel';P.hidden=true;
+  P.innerHTML='<div class="toprow"><h1>🏆 大会</h1><button class="sound" id="trnBack">メニューに戻る</button></div><div id="trnBody"></div>';
+  const E=document.createElement('section');E.id='trnEdit';E.className='screen panel';E.hidden=true;
+  $('stage').append(P,E);$('trnBack').addEventListener('click',()=>{if(TR.sel){TR.sel=null;renderTrn()}else{P.hidden=true;renderTrnCard()}});
+  const c=document.createElement('button');c.id='trnCard';c.className='trnCard';
+  c.innerHTML='<span class="tI" aria-hidden="true">🏆</span><b>大会</b><small id="trnInfo">運営が開くトーナメント戦</small>';
+  c.addEventListener('click',()=>{TR.sel=null;openTrn()});($('pollCard')||$('casinoCard')).after(c);
+  const ob=$('ownerBlock');if(ob){const b=el('div','gfBox');b.append(el('div','label','🏆 大会（トーナメント戦）'),el('p','hint','人数・曲・日程・ごほうびを決めて、トーナメント戦を開けます。'));
+    const go=el('button','btn pri','大会を開く・管理する');go.addEventListener('click',openTrnEdit);b.appendChild(go);ob.appendChild(b)}
+})();
+function renderTrnCard(){try{const i=$('trnInfo');if(!i)return;const v=TR.list.filter(t=>!t.draft);const e=v.find(t=>trPhase(t)==='entry'),p=v.find(t=>trPhase(t)==='play'&&trMine(t.id));
+  i.textContent=p?`「${p.name}」試合中 ・ 自分の試合を確かめよう`:e?`「${e.name}」エントリー受付中（あと ${fmtLeft(e.entryEnd-Date.now()).replace(/:\d\d$/,'')}）`:'運営が開くトーナメント戦';$('trnCard').classList.toggle('new',!!(e&&!trMine(e.id))||!!p)}catch(x){}}
+function openTrn(){initAudio();trSub();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}const P=$('trn');P.hidden=false;P.scrollTop=0;renderTrn()}
+function renderTrn(){
+  const B=$('trnBody');if(!B)return;B.textContent='';
+  if(!TR.loaded){B.appendChild(el('p','hint',cloud.db?'読み込んでいます…':'大会に出るにはログインが必要です。'));return}
+  const vis=TR.list.filter(t=>!t.draft&&(trPhase(t)!=='done'||Date.now()-trEnd(t)<14*864e5));
+  const t=TR.sel&&vis.find(x=>x.id===TR.sel);
+  if(!t){
+    if(!vis.length){B.appendChild(el('p','plEmpty','いまは開かれている大会はありません。大会が始まると、お知らせ（🔔）で知らせます。'));return}
+    vis.sort((a,b)=>({entry:0,play:1,soon:2,done:3}[trPhase(a)]-{entry:0,play:1,soon:2,done:3}[trPhase(b)])||a.entryEnd-b.entryEnd).forEach(x=>{
+      const ph=trPhase(x),b=el('button','trnRow '+ph);b.append(el('b','',x.name),el('small','',`${x.size}人トーナメント ・ ${{soon:'開始前',entry:'エントリー受付中',play:'試合中',done:'終了'}[ph]} ・ ${ph==='entry'?'締め切り '+fmtTime(x.entryEnd):ph==='play'?'終了 '+fmtTime(trEnd(x)):ph==='soon'?'開始 '+fmtTime(x.start):'結果発表'}${trMine(x.id)?' ・ エントリーずみ':''}`));
+      b.addEventListener('click',()=>{TR.sel=x.id;renderTrn();$('trn').scrollTop=0});B.appendChild(b)});return}
+  trReward(t);
+  const ph=trPhase(t),me=trMine(t.id),now=Date.now();
+  const hd=el('div','tnHead');hd.append(el('small','',`${t.size}人トーナメント ・ ${t.R}回戦`),el('b','',`🏆 ${t.name}`),el('span','',ph==='soon'?`エントリー開始まで ${fmtLeft(t.start-now)}`:ph==='entry'?`エントリー受付中（あと ${fmtLeft(t.entryEnd-now)}）`:ph==='play'?`試合中 ・ 終了まで ${fmtLeft(trEnd(t)-now)}`:'終了'));B.appendChild(hd);
+  if(t.desc)B.appendChild(el('p','hint',t.desc));
+  const sc=el('div','tnSongs');for(let r=0;r<t.R;r++){const d=el('div');const s=trSong(t,r);d.append(el('small','',`${trRoundName(t,r)}（${fmtTime(trDl(t,r))} まで）`),el('b','',s?s.name:'-'));sc.appendChild(d)}B.appendChild(sc);
+  B.appendChild(el('p','hint',`ごほうび: 優勝 ${t.prize.c1.toLocaleString()}コイン${t.tag?'＋称号「大会王者」':''} ・ 準優勝 ${t.prize.c2.toLocaleString()} ・ ${t.R>=2?`ベスト4 ${t.prize.c4.toLocaleString()} ・ `:''}参加賞 ${t.prize.cp.toLocaleString()}。各回戦は決まった曲を1回だけ弾き、相手より高いスコアなら勝ち。締め切りまでに弾かないと不戦敗。`));
+  if(!me){const b=el('button','btn pri','エントリーする');b.disabled=ph!=='entry'||!canSync();b.addEventListener('click',()=>trEnter(t));B.appendChild(b);
+    if(!canSync())B.appendChild(el('p','pzNote','エントリーにはログインが必要です。'));else if(ph==='soon')B.appendChild(el('p','hint',`${fmtTime(t.start)} からエントリーできます。`));else if(ph!=='entry')B.appendChild(el('p','hint','エントリーの受付は終わりました。'))}
+  const S=trStatus(t);
+  if(me){const m=el('div','tnMatch'),r=S.round;
+    if(now<t.entryEnd)m.append(el('b','','エントリー完了！'),el('span','',`組み合わせは ${fmtTime(t.entryEnd)} のエントリー締め切りのあとに決まります。いまの参加者 ${S.B.ents.length}人。`));
+    else if(S.champ&&S.champ.me)m.append(el('b','','👑 優勝おめでとう！'));
+    else if(S.out)m.append(el('b','',`敗退… ${trRoundName(t,S.out.r)}で ${S.out.by?S.out.by.nick:'—'} に負けました`));
+    else if(r>=0){const rn=trRoundName(t,r);m.append(el('b','',`あなたの次の試合: ${rn}`),el('span','',`相手: ${S.opp?S.opp.nick:'不戦勝（相手なし）'}`));
+      if(me.s[r]==null&&now<trDl(t,r)){const b=el('button','btn pri',`🎹 ${rn}を戦う（${trSong(t,r).name}・1回だけ）`);b.addEventListener('click',()=>trPlay(t,r));m.appendChild(b);m.appendChild(el('small','',`締め切り ${fmtTime(trDl(t,r))}`))}
+      else if(me.s[r]!=null)m.appendChild(el('span','',`あなたのスコア ${num(me.s[r]).toLocaleString()} ・ 相手の結果を待っています`))}
+    if(ph==='done'&&giftUsed().includes('trn:'+t.id))m.appendChild(el('span','','🎁 ごほうびを受け取りました'));
+    B.appendChild(m)}
+  if(S.B.ents.length){
+    B.appendChild(el('p','hint',`参加者 ${S.B.ents.length}人${S.B.blocks>1?` ・ ${t.size}人ずつ ${S.B.blocks}ブロック（あなたは第${S.B.block+1}ブロック）`:''}`));
+    const wrap=el('div','trnTreeWrap'),tb=el('div','tnTree trnTree');tb.style.gridTemplateColumns=`repeat(${t.R+1},minmax(96px,1fr))`;
+    for(let k=0;k<=t.R;k++){const col=el('div','tnCol');col.appendChild(el('small','',k<t.R?trRoundName(t,k):'優勝'));
+      S.Rr[k].forEach((p,i)=>{const c=el('div','tnSlot'+(p&&p.me?' me':'')+(p===undefined?' wait':''));const scv=k<t.R&&p&&p.s[k]!=null&&(S.Rr[k+1][i>>1]!==undefined)?' '+num(p.s[k]).toLocaleString():'';c.textContent=p===undefined?'…':p?p.nick+scv:'—';col.appendChild(c)});tb.appendChild(col)}
+    wrap.appendChild(tb);B.appendChild(wrap)}
+}
+setInterval(()=>{try{if(gameBusy())return;renderTrnCard();TR.list.forEach(trReward);if(!$('trn').hidden&&TR.sel)renderTrn()}catch(e){}},15000);
+/* ---------- 大会を開く（管理者） ---------- */
+function openTrnEdit(){if(!cloud.isOwner)return;if(!admOk()){moveToast('🔒 管理者ロックを解除してください');return}trSub();try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}TR.ed=null;const E=$('trnEdit');E.hidden=false;E.scrollTop=0;renderTrnEdit()}
+setInterval(()=>{try{if(!$('trnEdit').hidden&&!admOk()){$('trnEdit').hidden=true;moveToast('🔒 管理者ロックがかかったので、大会の編集を閉じました')}}catch(e){}},3000);
+async function trWrite(items){if(!admOk())throw Object.assign(new Error('lock'),{code:'lock'});await cloud.db.doc('live/tours').set({items:items.slice(0,20),t:Date.now()});TR.list=items.map(trClean).filter(Boolean)}
+function renderTrnEdit(){
+  const E=$('trnEdit');E.textContent='';const st=el('p','status');
+  const top=el('div','toprow');top.appendChild(el('h1','',TR.ed?'大会を開く':'🏆 大会の管理'));const bk=el('button','sound',TR.ed?'← 一覧へ':'閉じる');bk.addEventListener('click',()=>{if(TR.ed){TR.ed=null;renderTrnEdit()}else E.hidden=true});top.appendChild(bk);E.appendChild(top);
+  if(!TR.ed){
+    const nw=el('button','btn pri','＋ 新しい大会を開く');nw.addEventListener('click',()=>{const n=Date.now();TR.ed={id:'t'+n.toString(36),name:'',desc:'',size:8,songs:['','',''],start:n,entryEnd:n+24*36e5,roundH:24,prize:{c1:30000,c2:10000,c4:5000,cp:1000},tag:true,draft:false};renderTrnEdit()});E.appendChild(nw);
+    if(!TR.list.length)E.appendChild(el('p','hint','まだ大会はありません。'));
+    TR.list.slice().reverse().forEach(t=>{const B=trBracket(t),box=el('div','usSec');
+      box.append(el('b','',t.name),el('small','',`${t.size}人 ・ ${{soon:'開始前',entry:'エントリー受付中',play:'試合中',done:'終了'}[trPhase(t)]}${t.draft?'（下書き）':''} ・ エントリー ${B.ents.length}人 ・ 締め切り ${fmtTime(t.entryEnd)} ・ 終了 ${fmtTime(trEnd(t))}`));
+      const r=el('div','usRow');const ed=el('button','sound','直す');ed.addEventListener('click',()=>{TR.ed=JSON.parse(JSON.stringify(t));renderTrnEdit()});
+      const dl=el('button','sound danger','消す');dl.addEventListener('click',async()=>{if(dl.dataset.armed!=='1'){dl.dataset.armed='1';dl.textContent='もう一度押すと消します（参加者の画面からも消えます）';return}try{await trWrite(TR.list.filter(x=>x.id!==t.id));renderTrnEdit()}catch(e){st.textContent=plErr(e)}});
+      r.append(ed,dl);box.appendChild(r);E.appendChild(box)});
+    E.append(st,el('p','hint','組み合わせは、ランキングにのっている人（上位500人）のエントリーから作ります。'));return}
+  const t=TR.ed,f=el('div','usSec');
+  const inp=(v,max,ph,on)=>{const i=document.createElement('input');i.type='text';i.maxLength=max;i.value=v||'';i.placeholder=ph;i.addEventListener('input',()=>on(i.value));return i};
+  f.append(el('label','','大会の名前'),inp(t.name,30,'例: 第1回 黒鍵杯',v=>t.name=v));
+  const ds=document.createElement('textarea');ds.rows=2;ds.maxLength=300;ds.value=t.desc;ds.placeholder='説明（なくてもOK）';ds.addEventListener('input',()=>t.desc=ds.value);f.append(el('label','','説明'),ds);
+  const sz=document.createElement('select');[4,8,16,32].forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=`${n}人（${Math.log2(n)}回戦）`;sz.appendChild(o)});sz.value=t.size;sz.addEventListener('change',()=>{t.size=+sz.value;const R=Math.log2(t.size);t.songs=t.songs.slice(0,R);while(t.songs.length<R)t.songs.push('');renderTrnEdit()});
+  f.append(el('label','','人数（1ブロックの人数。多く集まったらブロックが増えます）'),sz);
+  const dt=(v,on)=>{const i=document.createElement('input');i.type='datetime-local';i.value=plDT(v);i.addEventListener('input',()=>on(i.value?new Date(i.value).getTime():0));return i};
+  f.append(el('label','','エントリー開始'),dt(t.start,v=>t.start=v),el('label','','エントリー締め切り（ここから試合が始まります）'),dt(t.entryEnd,v=>{t.entryEnd=v;rh.textContent=sched()}));
+  const rh=el('small','');const sched=()=>Array.from({length:Math.log2(t.size)},(_,r)=>`${trRoundName({R:Math.log2(t.size)},r)} 〜${fmtTime(t.entryEnd+(r+1)*t.roundH*36e5)}`).join(' ／ ');
+  const rl=document.createElement('select');[[1,'1時間'],[3,'3時間'],[6,'6時間'],[12,'12時間'],[24,'1日'],[48,'2日']].forEach(([v,n])=>{const o=document.createElement('option');o.value=v;o.textContent=n;rl.appendChild(o)});rl.value=t.roundH;rl.addEventListener('change',()=>{t.roundH=+rl.value;rh.textContent=sched()});
+  rh.textContent=sched();f.append(el('label','','1回戦ごとの時間'),rl,rh);
+  const pool=SONGS.filter(x=>!x.audio&&!['mine','ugc'].includes(x.cat));
+  t.songs.forEach((sid,r)=>{const s=document.createElement('select');const o0=document.createElement('option');o0.value='';o0.textContent='おまかせ（だんだん難しく）';s.appendChild(o0);
+    pool.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=`${x.name}（${x.by||''}）`;s.appendChild(o)});s.value=sid;s.addEventListener('change',()=>t.songs[r]=s.value);
+    f.append(el('label','',`${trRoundName({R:t.songs.length},r)}の曲`),s)});
+  const num2=(v,on)=>{const i=document.createElement('input');i.type='number';i.min=0;i.step=100;i.value=v;i.addEventListener('input',()=>on(Math.max(0,Math.floor(+i.value||0))));return i};
+  f.appendChild(el('label','','ごほうび（コイン）'));const pr=el('div','usRow');
+  [['c1','優勝'],['c2','準優勝'],['c4','ベスト4'],['cp','参加賞']].forEach(([k,n])=>{const w=el('div','usF');w.append(el('small','',n),num2(t.prize[k],v=>t.prize[k]=v));pr.appendChild(w)});f.appendChild(pr);
+  const tg=el('label','check'),cb=document.createElement('input');cb.type='checkbox';cb.checked=t.tag!==false;cb.addEventListener('change',()=>t.tag=cb.checked);tg.append(cb,document.createTextNode('優勝した人に称号「大会王者」をあげる'));f.appendChild(tg);
+  const dr=el('label','check'),cd=document.createElement('input');cd.type='checkbox';cd.checked=!!t.draft;cd.addEventListener('change',()=>t.draft=cd.checked);dr.append(cd,document.createTextNode('下書き（みんなには見せない）'));f.appendChild(dr);
+  const go=el('button','btn pri','💾 保存して公開');go.addEventListener('click',async()=>{
+    if(!t.name.trim()){st.textContent='大会の名前を入れてください';return}if(!(t.entryEnd>t.start)){st.textContent='エントリー締め切りは、開始より後にしてください';return}
+    const c=trClean({...t,t:t.t||Date.now()});go.disabled=true;
+    try{await trWrite(TR.list.filter(x=>x.id!==c.id).concat([c]));TR.ed=null;moveToast(c.draft?'下書きを保存しました':'🏆 大会を公開しました');renderTrnEdit()}catch(e){st.textContent=plErr(e);go.disabled=false}});
+  f.append(go,st);E.appendChild(f);
+}
+
 /* ==================== メニューを下のタブで分ける（見やすく） ====================
    もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
    どのタブにも入れていない部品は、上のお知らせの場所に残る */
@@ -11795,7 +12201,7 @@ renderBragCard();
   const TABS=[
     ['play','🎹','あそぶ',()=>[top('hero'),top('dailyCard'),top('ticketChip'),top('modes'),top('songs'),keysHint]],
     ['story','📖','ストーリー',()=>[head('ストーリー'),top('ustoryCard'),top('storyCard'),head('ひみつの部屋'),top('exGate'),top('gate')]],
-    ['event','🎉','イベント',()=>[head('きょうのおたのしみ'),top('xD1'),top('surpriseBar'),top('eventBar'),top('wedBar'),head('お金をふやす'),top('stockCard'),top('casinoCard'),top('bragCard'),top('csPend')]],
+    ['event','🎉','イベント',()=>[head('きょうのおたのしみ'),top('xD1'),top('pollCard'),top('trnCard'),top('surpriseBar'),top('eventBar'),top('wedBar'),head('お金をふやす'),top('stockCard'),top('casinoCard'),top('bragCard'),top('csPend')]],
     ['social','👥','みんな',()=>[head('みんなと遊ぶ'),top('plazaCard'),navRow(['battleBtn','rankBtn'])]],
     ['more','☰','その他',()=>[head('ショップ・記録・設定'),navRow(['shopBtn','achBtn','profBtn','adminBtn']),top('bgFile'),top('appVer')]]
   ];
