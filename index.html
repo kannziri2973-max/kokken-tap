@@ -1736,6 +1736,30 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .rbGrade.gS{color:#ffd76a;text-shadow:0 0 14px rgba(255,200,60,.8)}.rbGrade.gA{color:#ff8a6a}.rbGrade.gB{color:#cbbcff}.rbGrade.gC{color:#aaa}
 #rbHow .rbRule{margin:6px 0;font-size:13px;line-height:1.65;color:#ffdcd6}
 #rbHow .rbRule b{display:block;color:#ffd76a;font-size:13.5px}
+/* 没収 */
+#penEdit select,#penEdit input[type=text],#penEdit input[type=number]{min-height:42px;font:inherit;font-size:16px;padding:6px 10px;border:1px solid var(--line,#ccd);border-radius:0;background:#fff;color:var(--ink,#0d0f14);width:100%;box-sizing:border-box}
+.penWho{display:flex;flex-direction:column;gap:2px;padding:8px 10px;background:#fff4f4;border-left:4px solid #e0213a}
+.penWho small{color:var(--mute,#667)}
+.penRow{display:grid;grid-template-columns:minmax(0,1fr) 110px auto;gap:6px 8px;align-items:center}
+.penRow .penLab{font-size:13.5px}
+.penRow input[type=number]{width:110px!important}
+.penRow .penHint{grid-column:1/-1;margin-top:-4px;color:var(--mute,#667);font-size:11.5px}
+.penAll{white-space:nowrap;font-size:13px}
+.penItems{display:flex;flex-direction:column;gap:2px;max-height:240px;overflow-y:auto;border:1px solid var(--line,#ccd);padding:6px 8px;background:#fafbfc}
+.penItems label{font-size:13px;min-height:30px;display:flex;align-items:center;gap:6px}
+.btn.danger{background:#b3001b;border-color:#b3001b;color:#fff}
+.penLog{display:flex;flex-direction:column;gap:3px;padding:8px 0;border-top:1px solid var(--line,#ccd)}
+.penLog small{font-size:12px;color:var(--mute,#667);line-height:1.6}
+.penLog .penSt{color:var(--ink,#0d0f14)}
+.penLog.back{opacity:.6}
+.penLog .sound{align-self:flex-start}
+.penFx{position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.penFx[hidden]{display:none}
+.penCard{background:#fff;color:#0d0f14;border:2px solid #e0213a;max-width:380px;width:100%;padding:18px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.penCard .penH{font-size:17px;color:#b3001b}
+.penCard .penT,.penCard .penR{margin:0;font-size:14px;line-height:1.6}
+.penCard .penR{color:#555}
+.penCard .penL{margin:0;padding-left:20px;font-size:14px;line-height:1.8}
 /* カジノチップを買うボタン */
 .chipBuy{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chipBuy button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border:1px solid #c9a227;background:rgba(255,215,106,.1);color:inherit;font-weight:700}
@@ -7309,7 +7333,7 @@ $('gfSend').addEventListener('click',async()=>{
   try{
     const ref=cloud.db.doc('mail/'+t.id),s=await ref.get(),d=s.exists?s.data():{},arr=Array.isArray(d.items)?d.items:[];
     const mid=Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);
-    await ref.set({items:arr.filter(x=>!x.exp||x.exp>Date.now()).concat({id:mid,...g}).slice(-30)});
+    await ref.set({...d,items:arr.filter(x=>!x.exp||x.exp>Date.now()).concat({id:mid,...g}).slice(-30)});
     note.textContent=`${t.name||t.id} さんに送りました。次に開いたとき、メニューに「プレゼントが届いています」と出ます。`;
     logGift({t:Date.now(),kind:'mail',to:t.id,toName:t.name,mid,from:g.from.kind,title:g.title,summary:giftSummary(cleanGift(g))});
   }catch(e){note.textContent='送れませんでした。IDが正しいか確かめて、もう一度押してください。'}
@@ -12482,6 +12506,166 @@ RCFG.auto=store.get('rcfgAuto',true)!==false;RCFG.loaded=false;
 setTimeout(()=>{if(!RCFG.loaded&&!cloud.db){RCFG.loaded=true;setTimeout(()=>{try{raidCheck()}catch(e){}},600)}},4000);
 setTimeout(()=>{if(!RCFG.loaded){RCFG.loaded=true;try{raidCheck()}catch(e){}}},15000);
 {const rc=raidCheck;raidCheck=function(){const x=rc.apply(this,arguments);try{if(raidState(raid())==='none'){RAID.q=[];const ov=$('raidFx');if(ov&&!ov.hidden&&ov.className==='a'){ov.hidden=true;ov.onclick=null;ov.classList.remove('shake');RAID.busy=false}}}catch(e){}return x}}
+
+
+/* ======== 没収（管理者だけ） ========
+   管理者が「この人から コイン・チケット・カジノチップ・アイテム を取り上げる」を決めると、
+   mail/<相手のID> の pen に記録 → 相手のゲームが開いたときに自動で取り上げ、お知らせを出す。
+   ・何をどれだけ実際に取り上げたかは、相手の記録（scores の penDone）に残る → 管理画面で確かめられ、「返す」でプレゼントとして戻せる
+   ・同じ没収は1回だけ（penUsed は記録といっしょに保存されるので、別の端末でも二重に取らない）
+   ・ほかの端末の古い記録で戻ってこないように、7日間は「取り上げたものがよみがえる」のをふせぐ
+   ・管理者の記録: mail/_penlog */
+const PEN={unsub:null,busy:false,log:[],sel:null,q:''};
+const penUsed=()=>{const v=store.get('penUsed',[]);return Array.isArray(v)?v.filter(x=>typeof x==='string'):[]};
+const penDoneAll=()=>{const v=store.get('penDone',{});return v&&typeof v==='object'?v:{}};
+function penClean(p){
+  if(!p||typeof p!=='object'||typeof p.id!=='string')return null;
+  const n=v=>v===-1?-1:Math.max(0,Math.floor(num(v)));
+  const tk={};if(p.tk&&typeof p.tk==='object')Object.keys(TICKETS).forEach(k=>{const v=n(p.tk[k]);if(v)tk[k]=v});
+  const items=p.items==='all'?'all':Array.isArray(p.items)?p.items.filter(x=>typeof x==='string'&&validItem(x)).slice(0,300):[];
+  return {id:p.id.replace(/[^\w-]/g,'').slice(0,40),coins:n(p.coins),tk,chips:n(p.chips),items,reason:String(p.reason||'').slice(0,80),t:num(p.t)};
+}
+/* 記録に「使った没収」と「実際に取ったもの」をのせる */
+{const bc=buildCloud;buildCloud=function(){const d=bc();try{const u=penUsed();if(u.length)d.penUsed=u.slice(-60);const pd=penDoneAll(),ks=Object.keys(pd).slice(-20);if(ks.length){d.penDone={};ks.forEach(k=>d.penDone[k]=pd[k])}}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){
+  const pre={owned:loadOwned(),tk:Object.fromEntries(Object.keys(TICKETS).map(k=>[k,tkN(k)]))};
+  mc.apply(this,arguments);
+  try{if(d&&Array.isArray(d.penUsed)){const u=penUsed();d.penUsed.forEach(x=>{if(typeof x==='string'&&x.length<60&&!u.includes(x))u.push(x)});store.set('penUsed',u.slice(-120))}
+    if(d&&d.penDone&&typeof d.penDone==='object'){const pd=penDoneAll();Object.keys(d.penDone).forEach(k=>{if(!pd[k])pd[k]=d.penDone[k]});store.set('penDone',pd)}
+    /* 7日間は、ほかの端末の古い記録で取り上げたものが戻らないようにする */
+    const g=store.get('penGuard',null);if(g&&g.until>Date.now()){
+      const o=loadOwned(),back=o.filter(x=>(g.items||[]).includes(x)&&!pre.owned.includes(x));if(back.length)store.set('owned',o.filter(x=>!back.includes(x)));
+      Object.keys(g.tk||{}).forEach(k=>{if(TICKETS[k]&&tkN(k)>pre.tk[k])tkSet(k,pre.tk[k])})}
+  }catch(e){}}}
+/* 管理者からの「返す」プレゼントで同じアイテムが届いたら、もう戻ってよい */
+{const ag=applyGift;applyGift=function(id,g){const r=ag.apply(this,arguments);try{if(r&&g){const gd=store.get('penGuard',null);if(gd){if(g.items&&g.items.length)gd.items=(gd.items||[]).filter(x=>!g.items.includes(x));if(g.tk)Object.keys(g.tk).forEach(k=>{if(gd.tk)delete gd.tk[k]});store.set('penGuard',gd)}}}catch(e){}return r}}
+/* 取り上げる */
+function penApply(p){
+  const u=penUsed();if(u.includes(p.id))return null;
+  const got={c:0,tk:{},ch:0,it:[],t:Date.now()};
+  if(p.coins){const have=coins(),take=p.coins===-1?have:Math.min(p.coins,have);if(take>0){const w=loadWallet();w.s+=take;store.set('wallet',w);got.c=take}}
+  Object.keys(p.tk).forEach(k=>{const have=tkN(k),take=p.tk[k]===-1?have:Math.min(p.tk[k],have);if(take>0){tkSet(k,have-take);got.tk[k]=take}});
+  if(p.chips){const have=chipN(),take=p.chips===-1?have:Math.min(p.chips,have);if(take>0){store.set('csChip',have-take);got.ch=take}}
+  const own=loadOwned(),rm=p.items==='all'?own.slice():own.filter(x=>p.items.includes(x));
+  if(rm.length){store.set('owned',own.filter(x=>!rm.includes(x)));got.it=rm;
+    const pr=loadProfile(),fix={};if(rm.includes('frame:'+pr.frame))fix.frame='none';if(rm.includes('tag:'+pr.tag))fix.tag='';if(rm.includes('skin:'+pr.skin))fix.skin='default';if(rm.includes('fx:'+pr.fx))fix.fx='none';
+    if(Object.keys(fix).length)store.set('prof',{...pr,...fix})}
+  const gd=store.get('penGuard',null)||{};store.set('penGuard',{until:Date.now()+7*864e5,items:[...new Set((gd.until>Date.now()?gd.items||[]:[]).concat(rm))],tk:{...(gd.until>Date.now()?gd.tk||{}:{}),...got.tk}});
+  store.set('penUsed',u.concat(p.id).slice(-120));
+  const pd=penDoneAll();pd[p.id]=got;const ks=Object.keys(pd);if(ks.length>40)ks.slice(0,ks.length-40).forEach(k=>delete pd[k]);store.set('penDone',pd);
+  return got;
+}
+const penLines=got=>{const a=[];if(got.c)a.push(`🪙 コイン ${got.c.toLocaleString()}`);Object.entries(got.tk||{}).forEach(([k,n])=>{if(TICKETS[k])a.push(`${TICKETS[k].icon} ${TICKETS[k].name} ×${n}`)});if(got.ch)a.push(`🎟 カジノチップ ${got.ch.toLocaleString()}枚`);(got.it||[]).forEach(x=>{try{a.push('🎀 '+itemName(x))}catch(e){}});return a};
+function penShow(list){
+  if(!list.length)return;let ov=$('penFx');if(!ov){ov=el('div','penFx');ov.id='penFx';document.body.appendChild(ov)}
+  ov.textContent='';const c=el('div','penCard');c.appendChild(el('b','penH','⚠ 運営からのお知らせ'));
+  list.forEach(({p,got})=>{c.appendChild(el('p','penT','次のものが運営により没収されました。'));const ul=el('ul','penL');const L=penLines(got);(L.length?L:['（取り上げるものはありませんでした）']).forEach(t=>ul.appendChild(el('li','',t)));c.appendChild(ul);
+    if(p.reason)c.appendChild(el('p','penR','理由: '+p.reason))});
+  const ok=el('button','btn','わかりました');ok.addEventListener('click',()=>{ov.hidden=true});c.appendChild(ok);ov.appendChild(c);ov.hidden=false;
+  try{play(45,0,.4);play(41,.12,.5)}catch(e){}
+}
+function penCheck(d){
+  if(!(cloud.loaded||cloud.synced))return false;
+  const arr=d&&Array.isArray(d.pen)?d.pen:[],done=[];
+  arr.map(penClean).filter(Boolean).forEach(p=>{const got=penApply(p);if(got){done.push({p,got});addNote('news',`⚠ 運営により没収されました: ${penLines(got).join(' ・ ')||'（なし）'}${p.reason?'（理由: '+p.reason+'）':''}`,'pen:'+p.id)}});
+  if(done.length){renderCoins();renderTicket();try{if(!$('shop').hidden)renderShop()}catch(e){}pushCloud();penShow(done)}
+  return true;
+}
+function penSub(){if(PEN.unsub||!cloud.db||!cloud.uid)return;
+  try{PEN.unsub=cloud.db.doc('mail/'+cloud.uid).onSnapshot(s=>{PEN.last=s.exists?s.data():null;if(!penCheck(PEN.last))PEN.wait=true},()=>{PEN.unsub=null})}catch(e){}}
+setInterval(()=>{try{penSub();if(PEN.wait&&penCheck(PEN.last))PEN.wait=false}catch(e){}},3000);setTimeout(()=>{try{penSub()}catch(e){}},1500);
+/* 直接プレゼントを送ったときに、没収の記録が消えないようにする */
+/* ---------- 管理画面 ---------- */
+(function(){
+  const E=document.createElement('section');E.id='penEdit';E.className='screen panel';E.hidden=true;$('stage').appendChild(E);
+  const ob=$('ownerBlock');if(ob){const b=el('div','gfBox');b.append(el('div','label','🚫 没収（コイン・チケット・アイテム）'),el('p','hint','ルールを破った人から、コインやアイテムを取り上げます。相手が次にゲームを開いたときに取り上げられ、お知らせが出ます。'));
+    const go=el('button','btn pri','没収する・記録を見る');go.addEventListener('click',openPenEdit);b.appendChild(go);ob.appendChild(b)}
+})();
+function openPenEdit(){if(!cloud.isOwner)return;if(!admOk()){moveToast('🔒 管理者ロックを解除してください');return}try{if(cloud.db&&!cloud.unsub)openRankFeed()}catch(e){}
+  PEN.form=PEN.form||{coins:'',coinAll:false,tk:{},tkAll:{},chips:'',chipAll:false,items:new Set(),itemAll:false,reason:''};
+  penLoadLog().then(()=>{if(!$('penEdit').hidden)renderPenEdit()});const E=$('penEdit');E.hidden=false;E.scrollTop=0;renderPenEdit()}
+setInterval(()=>{try{if(!$('penEdit').hidden&&!admOk()){$('penEdit').hidden=true;moveToast('🔒 管理者ロックがかかったので、没収の画面を閉じました')}}catch(e){}},3000);
+async function penLoadLog(){try{const s=await cloud.db.doc('mail/_penlog').get();PEN.log=s.exists&&Array.isArray(s.data().items)?s.data().items:[]}catch(e){}}
+const penRow=id=>(cloud.rows||[]).find(r=>r.id===id);
+const penCoinsOf=r=>r&&r.wallet?Math.max(0,Math.round(num(r.wallet.e)-num(r.wallet.s))):null;
+function renderPenEdit(){
+  const E=$('penEdit');E.textContent='';const F=PEN.form;
+  const top=el('div','toprow');top.appendChild(el('h1','','🚫 没収'));const bk=el('button','sound','閉じる');bk.addEventListener('click',()=>{E.hidden=true});top.appendChild(bk);E.appendChild(top);
+  const st=el('p','status');
+  /* 相手 */
+  const s1=el('div','usSec');s1.appendChild(el('b','','① 相手を選ぶ'));
+  const q=document.createElement('input');q.type='search';q.className='sfIn';q.placeholder='🔍 名前かIDで探す';q.value=PEN.q;q.dataset.sf='no';
+  const sel=document.createElement('select');sel.dataset.sf='no';const rows=(cloud.rows||[]).filter(r=>r.id!==cloud.uid&&!String(r.id).startsWith('c-'));
+  const fill=()=>{sel.textContent='';const o0=document.createElement('option');o0.value='';o0.textContent=rows.length?'ランキングから選ぶ':'ランキングを読み込んでいます…';sel.appendChild(o0);
+    const t=norm(q.value||'');rows.filter(r=>!t||norm(String(r.nick||'')+' '+r.id).includes(t)).slice(0,300).forEach(r=>{const o=document.createElement('option');o.value=r.id;const c=penCoinsOf(r);o.textContent=`${String(r.nick||'プレイヤー').slice(0,16)}${c!==null?' ・ '+c.toLocaleString()+'コイン':''}`;sel.appendChild(o)});sel.value=PEN.sel||''};
+  fill();q.addEventListener('input',()=>{PEN.q=q.value;fill()});
+  const idIn=document.createElement('input');idIn.type='text';idIn.placeholder='またはプレイヤーID';idIn.autocomplete='off';idIn.spellcheck=false;idIn.value=PEN.sel&&!rows.some(r=>r.id===PEN.sel)?PEN.sel:'';
+  sel.addEventListener('change',()=>{PEN.sel=sel.value||null;F.items=new Set();renderPenEdit()});
+  idIn.addEventListener('change',()=>{const v=idIn.value.trim().replace(/[^A-Za-z0-9_\-]/g,'');PEN.sel=v||null;F.items=new Set();renderPenEdit()});
+  s1.append(q,sel,idIn);
+  const R=PEN.sel?penRow(PEN.sel):null;
+  if(PEN.sel){const info=el('div','penWho');const c=penCoinsOf(R);
+    info.append(el('b','',R?String(R.nick||'プレイヤー').slice(0,16):'（ランキングにいない人）'),el('small','',`ID: ${PEN.sel}`));
+    if(R){info.appendChild(el('small','',`コイン ${c!==null?c.toLocaleString():'?'} ・ チケット ${Object.entries(R.tickets||{}).filter(([k,n])=>TICKETS[k]&&n>0).map(([k,n])=>TICKETS[k].icon+n).join(' ')||'なし'} ・ アイテム ${Array.isArray(R.owned)?R.owned.length:0}こ`))}
+    else info.appendChild(el('small','','持ち物がわからないので、数を入れるか「全部」を選んでください'));
+    s1.appendChild(info)}
+  E.appendChild(s1);
+  /* 何を */
+  const s2=el('div','usSec');s2.appendChild(el('b','','② 取り上げるもの'));
+  const numRow=(label,val,all,onV,onA,hint)=>{const r=el('div','penRow');const l=el('span','penLab',label);const i=document.createElement('input');i.type='number';i.inputMode='numeric';i.min=0;i.placeholder='0';i.value=val;i.disabled=all;i.addEventListener('input',()=>onV(i.value));
+    const cl=el('label','check penAll'),cb=document.createElement('input');cb.type='checkbox';cb.checked=all;cb.addEventListener('change',()=>{onA(cb.checked);i.disabled=cb.checked});cl.append(cb,document.createTextNode('全部'));r.append(l,i,cl);if(hint)r.appendChild(el('small','penHint',hint));return r};
+  s2.appendChild(numRow('🪙 コイン',F.coins,F.coinAll,v=>F.coins=v,a=>F.coinAll=a,R&&penCoinsOf(R)!==null?`いま ${penCoinsOf(R).toLocaleString()}コイン`:''));
+  Object.entries(TICKETS).forEach(([k,t])=>s2.appendChild(numRow(`${t.icon} ${t.name}`,F.tk[k]||'',!!F.tkAll[k],v=>F.tk[k]=v,a=>F.tkAll[k]=a,R&&R.tickets?`いま ${num(R.tickets[k])}枚`:'')));
+  s2.appendChild(numRow('🎟 カジノチップ',F.chips,F.chipAll,v=>F.chips=v,a=>F.chipAll=a,'（この人の枚数はわかりません）'));
+  /* アイテム */
+  const own=R&&Array.isArray(R.owned)?R.owned.filter(x=>validItem(x)):[];
+  const ia=el('label','check'),ic=document.createElement('input');ic.type='checkbox';ic.checked=F.itemAll;ic.addEventListener('change',()=>{F.itemAll=ic.checked;renderPenEdit()});ia.append(ic,document.createTextNode('🎀 アイテムを全部'));s2.appendChild(ia);
+  if(!F.itemAll){if(own.length){const box=el('div','penItems');own.forEach(x=>{const l=el('label','check'),c=document.createElement('input');c.type='checkbox';c.checked=F.items.has(x);c.addEventListener('change',()=>{c.checked?F.items.add(x):F.items.delete(x)});let nm=x;try{nm=itemName(x)}catch(e){}l.append(c,document.createTextNode(nm));box.appendChild(l)});s2.appendChild(el('small','',`この人のアイテム（${own.length}こ）から、取り上げるものを選んでください`));s2.appendChild(box)}
+    else if(PEN.sel)s2.appendChild(el('small','',R?'この人はアイテムを持っていません':'持ち物がわからないので、アイテムは「全部」だけ選べます'))}
+  E.appendChild(s2);
+  /* 理由と実行 */
+  const s3=el('div','usSec');s3.appendChild(el('b','','③ 理由（相手に表示されます）'));
+  const rs=document.createElement('input');rs.type='text';rs.maxLength=80;rs.placeholder='例: ふせいなツールを使ったため';rs.value=F.reason;rs.addEventListener('input',()=>F.reason=rs.value);s3.appendChild(rs);
+  const go=el('button','btn pri danger','🚫 没収する');go.addEventListener('click',async()=>{
+    const p=penBuild();if(typeof p==='string'){st.textContent=p;return}
+    if(go.dataset.armed!=='1'){go.dataset.armed='1';go.textContent='もう一度押すと没収します（取り消すときは「返す」）';st.textContent=`${R?String(R.nick||'プレイヤー'):PEN.sel} さんから: ${penSum(p)}`;return}
+    go.disabled=true;try{await penSend(PEN.sel,R?String(R.nick||'プレイヤー').slice(0,16):'',p);PEN.form=null;openPenEdit();moveToast('🚫 没収を送りました。相手が次に開いたときに取り上げられます')}catch(e){go.disabled=false;st.textContent=plErr(e)}});
+  s3.append(go,st);E.appendChild(s3);
+  /* 記録 */
+  const s4=el('div','usSec');s4.appendChild(el('b','','📜 没収の記録'));
+  if(!PEN.log.length)s4.appendChild(el('small','','まだ没収した記録はありません'));
+  PEN.log.slice().reverse().slice(0,40).forEach(x=>{const r=penRow(x.to),done=r&&r.penDone&&r.penDone[x.id],used=r&&Array.isArray(r.penUsed)&&r.penUsed.includes(x.id);
+    const b=el('div','penLog'+(x.back?' back':''));b.append(el('b','',`${fmtTime(num(x.t))} ・ ${x.toName||x.to}`),el('small','',`指示: ${x.sum||''}${x.reason?' ・ 理由: '+x.reason:''}`));
+    b.appendChild(el('small','penSt',done?`✅ 取り上げ済み: ${penLines(done).join(' ・ ')||'（取り上げるものがなかった）'}`:used?'✅ 取り上げ済み':'⏳ まだ（相手がゲームを開くと取り上げられます）'));
+    if(x.back)b.appendChild(el('small','penSt','↩ 返しました'));
+    else if(done&&(done.c||Object.keys(done.tk||{}).length||(done.it||[]).length)){const rb=el('button','sound','↩ 返す（プレゼントで戻す）');rb.addEventListener('click',async()=>{if(rb.dataset.armed!=='1'){rb.dataset.armed='1';rb.textContent='もう一度押すと返します';return}rb.disabled=true;try{await penReturn(x,done);renderPenEdit()}catch(e){rb.disabled=false;st.textContent=plErr(e)}});b.appendChild(rb);if(done.ch)b.appendChild(el('small','','※ カジノチップは返せません'))}
+    s4.appendChild(b)});
+  E.appendChild(s4);
+}
+function penBuild(){
+  const F=PEN.form;if(!PEN.sel)return '相手を選ぶか、プレイヤーIDを入れてください';if(PEN.sel===cloud.uid)return '自分からは没収できません';if(PEN.sel.startsWith('c-'))return 'この人は記録コードで登録した人なので、没収は届きません';
+  const n=v=>Math.max(0,Math.floor(+v||0));const tk={};Object.keys(TICKETS).forEach(k=>{if(F.tkAll[k])tk[k]=-1;else if(n(F.tk[k]))tk[k]=Math.min(99,n(F.tk[k]))});
+  const p={id:'p'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),coins:F.coinAll?-1:Math.min(Number.MAX_SAFE_INTEGER,n(F.coins)),tk,chips:F.chipAll?-1:n(F.chips),items:F.itemAll?'all':[...F.items],reason:F.reason.trim().slice(0,80),t:Date.now()};
+  if(!p.coins&&!Object.keys(tk).length&&!p.chips&&!(p.items==='all'||p.items.length))return '取り上げるものを選んでください';
+  return p;
+}
+function penSum(p){const a=[];if(p.coins)a.push(p.coins===-1?'コイン全部':`コイン ${p.coins.toLocaleString()}`);Object.entries(p.tk).forEach(([k,v])=>a.push(`${TICKETS[k].name}${v===-1?' 全部':' ×'+v}`));if(p.chips)a.push(p.chips===-1?'カジノチップ全部':`カジノチップ ${p.chips}枚`);if(p.items==='all')a.push('アイテム全部');else if(p.items.length)a.push(`アイテム ${p.items.length}こ`);return a.join(' ・ ')}
+async function penSend(to,name,p){
+  if(!admOk())throw Object.assign(new Error('lock'),{code:'lock'});
+  const ref=cloud.db.doc('mail/'+to),s=await ref.get(),d=s.exists?s.data():{};
+  await ref.set({...d,pen:(Array.isArray(d.pen)?d.pen:[]).concat(p).slice(-30)});
+  const lr=cloud.db.doc('mail/_penlog'),ls=await lr.get(),arr=ls.exists&&Array.isArray(ls.data().items)?ls.data().items:[];
+  PEN.log=arr.concat({id:p.id,to,toName:name,sum:penSum(p),reason:p.reason,t:p.t}).slice(-100);await lr.set({items:PEN.log});
+}
+async function penReturn(x,done){
+  if(!admOk())throw Object.assign(new Error('lock'),{code:'lock'});
+  const g={title:'没収したものを返します',msg:'運営から、前に没収したものをお返しします。',coins:done.c||0,tk:done.tk||{},items:done.it||[],ach:[],doors:[],exp:0,made:Date.now(),from:{kind:'staff',name:'運営'},theme:'staff'};
+  const ref=cloud.db.doc('mail/'+x.to),s=await ref.get(),d=s.exists?s.data():{},arr=Array.isArray(d.items)?d.items:[];
+  const mid=Date.now().toString(36)+Math.floor(Math.random()*1e6).toString(36);
+  await ref.set({...d,items:arr.filter(y=>!y.exp||y.exp>Date.now()).concat({id:mid,...g}).slice(-30)});
+  PEN.log=PEN.log.map(y=>y.id===x.id?{...y,back:Date.now()}:y);await cloud.db.doc('mail/_penlog').set({items:PEN.log});
+  moveToast('↩ プレゼントとして返しました');
+}
 
 /* ==================== メニューを下のタブで分ける（見やすく） ====================
    もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
