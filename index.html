@@ -1468,67 +1468,107 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .mTabs button[aria-current="page"]::before{content:'';position:absolute;top:-4px;left:24%;right:24%;height:3px;background:#ffd76a}
 .mTabs .dot{position:absolute;top:5px;left:calc(50% + 10px);width:9px;height:9px;border-radius:50%;background:#ff4d5e;box-shadow:0 0 0 2px rgba(9,10,15,.97);display:none}
 .mTabs button.has .dot{display:block}
-/* ===== 黒鍵株式市場 ===== */
+/* ===== 黒鍵証券取引所 ===== */
 .stockCard{flex:none;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center;text-align:left;padding:12px 14px;color:#e8fff2;border:1px solid #1f6b4a;background:linear-gradient(transparent 70%,rgba(0,0,0,.25)),repeating-linear-gradient(90deg,rgba(80,255,170,.06) 0 1px,transparent 1px 22px),radial-gradient(120% 140% at 0% 0%,#0d4a33 0%,#062016 55%,#07080b 100%);box-shadow:inset 0 1px 0 rgba(160,255,210,.12)}
 .stockCard .kI{grid-row:1/3;font-size:28px;filter:drop-shadow(0 0 8px rgba(80,255,170,.5))}
 .stockCard b{font-family:var(--display);font-weight:400;font-size:18px;letter-spacing:.08em;color:#bfffe0}
 .stockCard small{font-size:12px;color:#9fe0c0}
-#stock{background:radial-gradient(120% 420px at 50% -80px,#0d3a2a 0%,rgba(13,58,42,0) 70%),#06090b;color:#e9f2ee}
-#stock h1{color:#bfffe0;letter-spacing:.06em}
-#stock .sound{background:#0f1a17;color:#e9f2ee;border:1px solid #24443a}
-#stock .hint{color:#8fb0a4}
-#stock .up{color:#ff6b6b}
-#stock .dn{color:#5eb0ff}
-.skSum{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1d3a30;border:1px solid #1d3a30;flex:none}
-.skSum>div{background:#0b1512;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.skSum small{font-size:11px;color:#8fb0a4}
-.skSum b{font-size:18px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.skClock{margin:0;font-size:12px;color:#8fb0a4;flex:none}
-.skClock.bad{color:#ffb36a}
-.skNews{display:flex;flex-direction:column;gap:1px;background:#1d3a30;border:1px solid #1d3a30;flex:none}
-.skNews>b{background:#0b1512;padding:8px 12px;font-size:13px;color:#ffd76a}
-.skNewsRow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;text-align:left;background:#0b1512;color:inherit;padding:8px 12px;font-size:13px;line-height:1.5}
-.skNewsRow em{font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
-.skNewsRow small{grid-column:1/3;font-size:11px;color:#8fb0a4}
-.skList{display:flex;flex-direction:column;gap:1px;background:#1d3a30;border:1px solid #1d3a30;flex:none}
-.skRow{display:grid;grid-template-columns:minmax(0,1fr) 72px auto;gap:10px;align-items:center;text-align:left;background:#0b1512;color:inherit;padding:10px 12px;min-height:60px}
-.skRow .nm{display:flex;flex-direction:column;gap:2px;min-width:0}
-.skRow .nm b{font-size:14.5px;overflow-wrap:anywhere}
-.skRow .nm small{font-size:11px;color:#8fb0a4}
-.skRow .sp{width:72px;height:32px;display:block}
-.skRow .pr{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-variant-numeric:tabular-nums}
-.skRow .pr b{font-size:16px}
-.skRow .pr em{font-style:normal;font-size:12px;font-weight:700}
-.skHead{display:flex;gap:12px;align-items:center;flex:none}
-.skHead .ic{font-size:34px}
-.skHead div{display:flex;flex-direction:column;gap:2px;min-width:0}
-.skHead b{font-size:19px}
-.skHead small{font-size:12px;color:#8fb0a4}
-.skPrice{display:flex;flex-direction:column;gap:2px;flex:none}
-.skPrice b{font-size:28px;font-variant-numeric:tabular-nums}
-.skPrice em{font-style:normal;font-weight:700;font-size:14px}
-.skTabs{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1d3a30;border:1px solid #1d3a30;flex:none}
-.skTabs button{background:#0b1512;color:#8fb0a4;min-height:40px;font-weight:700;font-size:13px}
-.skTabs button.on{background:#123326;color:#bfffe0}
-.skChart{width:100%;height:190px;display:block;background:#081110;border:1px solid #1d3a30;flex:none}
-.skHold{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#1d3a30;border:1px solid #1d3a30;flex:none}
-.skHold>div{background:#0b1512;padding:8px 12px;display:flex;flex-direction:column;gap:2px}
-.skHold small{font-size:11px;color:#8fb0a4}
-.skHold b{font-size:16px;font-variant-numeric:tabular-nums}
-.skHold .hint{grid-column:1/3;background:#0b1512;margin:0;padding:10px 12px}
-.skTrade{display:flex;flex-direction:column;gap:8px;background:#0b1512;border:1px solid #1d3a30;padding:12px;flex:none}
-.skTrade label{font-size:12px;font-weight:700;color:#8fb0a4}
-.skTrade input{width:100%;box-sizing:border-box;min-height:46px;padding:8px 12px;font:inherit;font-size:18px;font-variant-numeric:tabular-nums;background:#06090b;color:#e9f2ee;border:1px solid #2c5446;border-radius:0}
-.skChips{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.skChips button{min-height:38px;background:#0f1f1a;color:#cfe8dd;border:1px solid #24443a;font-size:12.5px;font-weight:700}
-.skPrev{margin:0;font-size:12.5px;color:#cfe8dd;line-height:1.6}
-.skBtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.skBtns button{min-height:52px;font-size:17px;font-weight:700;color:#fff;border:0}
-.skBtns .buy{background:linear-gradient(#e0414a,#a8161f)}
-.skBtns .sell{background:linear-gradient(#2f7fe0,#1450a8)}
-.skBtns button:disabled{opacity:.35}
-.skMsg{margin:0;min-height:1.4em;font-size:13px;font-weight:700;color:#bfffe0}
-.skMsg.bad{color:#ffb36a}
+#stock{background:#070a0c;color:#e9f0ee;gap:12px}
+#stock h1{color:#e9f0ee;letter-spacing:.04em;font-size:20px}
+#stock .sound{background:#111a17;color:#e9f0ee;border:1px solid #26403a}
+#stock .hint{color:#8aa39b;font-size:12px;line-height:1.7}
+#stock .up{color:#ff6464}
+#stock .dn{color:#4fa8ff}
+#stock .bad{color:#ffb36a}
+#stock label{font-size:12px;font-weight:700;color:#8aa39b}
+#stock .check{font-size:13px;color:#cfe0da;font-weight:500}
+.sxBar{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 12px;font-size:12px;color:#8aa39b;flex:none}
+.sxBar b{font-variant-numeric:tabular-nums}
+.sxTabs{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:#1c302a;border:1px solid #1c302a;flex:none}
+.sxTabs.sm{grid-template-columns:repeat(3,1fr)}
+.sxTabs button{background:#0c1412;color:#8aa39b;min-height:42px;font-weight:700;font-size:13px}
+.sxTabs button.on{background:#143a2c;color:#e9fff6;box-shadow:inset 0 -2px 0 #3fe0a0}
+.sxIdx{width:100%;height:96px;display:block;background:#0a1110;border:1px solid #1c302a;flex:none}
+.sxRank{display:flex;gap:6px;overflow-x:auto;flex:none;scrollbar-width:none}
+.sxRank button{flex:none;min-height:34px;padding:4px 12px;background:#0c1412;color:#8aa39b;border:1px solid #1c302a;font-size:12px;font-weight:700}
+.sxRank button.on{color:#e9fff6;border-color:#3fe0a0}
+.sxList{display:flex;flex-direction:column;gap:1px;background:#1c302a;border:1px solid #1c302a;flex:none}
+.sxRow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;text-align:left;background:#0c1412;color:inherit;padding:10px 12px;min-height:58px}
+.sxRow .nm{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sxRow .nm b{font-size:14.5px;overflow-wrap:anywhere}
+.sxRow .nm small{font-size:11px;color:#8aa39b}
+.sxRow .pr{display:flex;flex-direction:column;align-items:flex-end;gap:1px;font-variant-numeric:tabular-nums}
+.sxRow .pr b{font-size:17px}
+.sxRow .pr em{font-style:normal;font-size:12px;font-weight:700}
+#stock i.sh,#stock i.sl,#stock i.ev{font-style:normal;font-size:10.5px;font-weight:700;padding:1px 6px;color:#fff;background:#d6283a}
+#stock i.sl{background:#1a6fd6}
+#stock i.ev{background:#7a5a10}
+.sxNews{display:flex;flex-direction:column;gap:6px;background:#0c1412;border:1px solid #1c302a;padding:10px 12px;flex:none}
+.sxNews>b{font-size:13px;color:#ffd76a}
+.sxNews p{margin:0;font-size:12.5px;line-height:1.6;color:#cfe0da}
+.sxNews p.up{color:#ff8a8a}.sxNews p.dn{color:#7cc0ff}
+.sxLink{align-self:flex-start;background:none;border:0;color:#3fe0a0;font-weight:700;font-size:13px;padding:4px 0;min-height:32px}
+.sxHead{display:flex;gap:12px;align-items:center;flex:none}
+.sxHead .ic{font-size:34px}
+.sxHead div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.sxHead b{font-size:19px}
+.sxHead small{font-size:11.5px;color:#8aa39b}
+.sxPrice{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;flex:none}
+.sxPrice b{font-size:32px;font-variant-numeric:tabular-nums}
+.sxPrice em{font-style:normal;font-weight:700;font-size:14px}
+.sxChart{width:100%;height:240px;display:block;background:#0a1110;border:1px solid #1c302a;flex:none}
+.sxStats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:#1c302a;border:1px solid #1c302a;flex:none}
+.sxStats.big{grid-template-columns:1fr 1fr}
+.sxStats>div{background:#0c1412;padding:7px 9px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.sxStats small{font-size:10.5px;color:#8aa39b}
+.sxStats b{font-size:13px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.sxStats.big b{font-size:17px}
+.sxBW{display:grid;grid-template-columns:1.15fr 1fr;gap:8px;flex:none}
+.sxBoard,.sxTape{background:#0c1412;border:1px solid #1c302a;font-size:11.5px;font-variant-numeric:tabular-nums;min-width:0}
+.sxBoard .bh,.sxTape .bh,.sxBoard .br,.sxTape .br{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:2px;padding:2px 6px;align-items:center}
+.sxBoard .bh,.sxTape .bh{color:#8aa39b;font-size:10px;border-bottom:1px solid #1c302a;padding:4px 6px}
+.sxBoard .br{min-height:19px}
+.sxBoard .sq{color:#7cc0ff;text-align:left}
+.sxBoard .bq{color:#ff8a8a;text-align:right}
+.sxBoard .px{text-align:center;font-weight:700}
+.sxBoard .br.cur .px{background:#173a2e;color:#fff}
+.sxTape .br span:nth-child(2){text-align:center;font-weight:700}
+.sxTape .br span:nth-child(3){text-align:right;color:#8aa39b}
+.sxTape .br span:first-child{color:#8aa39b}
+.sxMine,.sxSec{display:flex;flex-direction:column;gap:6px;background:#0c1412;border:1px solid #1c302a;padding:10px 12px;flex:none}
+.sxMine>b,.sxSec>b{font-size:13.5px;color:#e9fff6}
+.sxMine p,.sxSec>p{margin:0;font-size:12.5px;line-height:1.6;color:#cfe0da}
+.sxSec small{font-size:11px;color:#8aa39b;line-height:1.6}
+.sxOrdBtns{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;flex:none}
+.sxOrdBtns button{min-height:48px;font-weight:700;font-size:14px;color:#fff;border:0}
+.sxOrdBtns .buy,.go.buy{background:linear-gradient(#e0414a,#a8161f)}
+.sxOrdBtns .sell,.go.sell{background:linear-gradient(#2f7fe0,#1450a8)}
+.sxForm{display:flex;flex-direction:column;gap:8px;background:#0c1412;border:1px solid #2b5146;padding:12px;flex:none}
+.sxForm>b{font-size:15px}
+.sxForm small{font-size:11px;color:#8aa39b}
+.sxSeg{display:flex;gap:1px;background:#1c302a;border:1px solid #1c302a}
+.sxSeg button{flex:1;min-height:40px;background:#0a1110;color:#8aa39b;font-weight:700;font-size:13px}
+.sxSeg button.on{background:#143a2c;color:#e9fff6}
+.sxNum{display:grid;grid-template-columns:auto 1fr auto;gap:6px}
+.sxNum input{min-width:0;min-height:44px;padding:6px 10px;font:inherit;font-size:18px;font-variant-numeric:tabular-nums;background:#05080a;color:#e9f0ee;border:1px solid #2b5146;border-radius:0;text-align:center}
+.sxNum button{min-width:56px;min-height:44px;background:#111a17;color:#e9f0ee;border:1px solid #26403a;font-weight:700}
+.sxSec .sxNum{grid-template-columns:1fr auto auto}
+.sxSum{margin:0;font-size:12.5px;line-height:1.6;color:#cfe0da}
+.go{min-height:52px;font-size:16px;font-weight:700;color:#fff;border:0}
+.sxMsg{margin:0;font-size:13px;font-weight:700;color:#7dffcf;flex:none}
+.sxMsg.bad{color:#ffb36a}
+.sxHold{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;text-align:left;background:#0a1110;border:1px solid #1c302a;color:inherit;padding:8px 10px}
+.sxHold span{font-weight:700;font-size:13.5px}
+.sxHold small{grid-column:1;font-size:11px;color:#8aa39b}
+.sxHold em{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-weight:700;font-size:13px;font-variant-numeric:tabular-nums}
+.sxPos{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;background:#0a1110;border:1px solid #1c302a;padding:8px 10px}
+.sxPos b{font-size:13.5px}
+.sxPos small{grid-column:1;font-size:11px;color:#8aa39b;line-height:1.5}
+.sxPos em{grid-column:2;grid-row:1/3;align-self:center;font-style:normal;font-weight:700;font-variant-numeric:tabular-nums}
+.sxPos>button,.sxRowBtns{grid-column:1/3}
+.sxPos>button{min-height:38px;background:#111a17;color:#e9f0ee;border:1px solid #26403a;font-weight:700}
+.sxRowBtns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sxRowBtns button{min-height:38px;background:#111a17;color:#e9f0ee;border:1px solid #26403a;font-weight:700;font-size:12.5px}
 /* ===== 神の領域の先の部屋 ===== */
 .rz{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.15) 55%,rgba(0,0,0,.42)),var(--scene) center/cover no-repeat,#05050a}
 #rz_zero{background:linear-gradient(rgba(255,250,235,.25),rgba(255,250,235,0) 55%,rgba(20,17,10,.35)),var(--scene) center/cover no-repeat,#f6f2e6}
@@ -9399,7 +9439,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='104';
+const APP_VER='105';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -10540,29 +10580,99 @@ const song0=c=>!!c.song;
 renderUsCard();
 
 
-/* ==================== 黒鍵株式市場（コインで株を買って、値上がりしたら売る） ====================
-   株価はサーバーに置かず、時刻から計算で決める。だれが見ても同じ時刻なら同じ株価になる。
-   1分ごとに値が変わる。値動きは「なめらかな波」をいくつか重ねたもので、0 になる（つぶれる）ことはない。
-   端末の時計をずらして昔の安い値で買えないように、ページのサーバーの時刻（Date ヘッダー）に合わせる。
-   時刻を確かめられないあいだは売買できない。
-   保有株はこの端末に保存し、ログインしていればアカウントにも送る（新しいほうを使う）。 */
-const STK=[
- {id:'KKP',name:'黒鍵ピアノ製作所',icon:'🎹',base:1200,vol:.8,kind:'老舗のピアノメーカー。値動きはおだやか',up:['新作グランドピアノが大ヒット','海外の名門ホールが一括採用','職人の技が世界遺産に'],dn:['工場の湿気で木材がそる','鍵盤の部品が値上がり','ライバル社が格安ピアノを発売']},
- {id:'TNR',name:'調律ホールディングス',icon:'🔧',base:2400,vol:.6,kind:'全国の調律師をたばねる会社。いちばん安定',up:['調律の予約が半年先まで満杯','AI調律アシストが好評','学校との大型契約がまとまる'],dn:['調律師の引退があいつぐ','音叉の在庫が足りない','予約システムが一日止まる']},
- {id:'MTR',name:'メトロノーム工業',icon:'⏱',base:640,vol:1.0,kind:'メトロノームと時計の会社',up:['光るメトロノームが品切れ','時計塔の修理を受注','テンポ配信サービスを開始'],dn:['壊れたメトロノームが回収さわぎ','振り子の部品が不足','スマホのアプリに客を取られる']},
- {id:'88E',name:'88鍵エンタメ',icon:'🎤',base:880,vol:1.4,kind:'ライブやイベントを開く会社',up:['ドームツアーが即日完売','人気配信者と提携','フェスの観客が過去最高'],dn:['大型ライブが雨で中止','チケットの転売さわぎ','看板スターが休業']},
- {id:'STR',name:'星霧観光',icon:'✨',base:350,vol:1.6,kind:'星霧の間など、ひみつの部屋めぐりのツアー会社',up:['新しい扉が見つかりツアー予約殺到','雑誌で絶景特集','流れ星ツアーが大人気'],dn:['濃い霧でツアーが全便欠航','扉の封印が強まり立入禁止','ガイドが迷子になり炎上']},
- {id:'CSN',name:'黒鍵カジノ',icon:'🎰',base:500,vol:2.0,kind:'カジノの運営会社。上がり下がりが激しい',up:['大当たりが続き来場者が急増','新しいゲーム台を導入','VIPルームが満席'],dn:['ハイ＆ローで大負けが続く','監査が入り営業を一時停止','チップの偽物が出回る']},
- {id:'ZRO',name:'第零番レコード',icon:'💿',base:150,vol:2.3,kind:'小さなレコード会社。当たれば大きい',up:['幻の《第零番》の録音を発見','新人ピアニストがデビュー即1位','レコードが若者にブーム'],dn:['発売予定のアルバムが延期','倉庫のレコードが割れる','主力アーティストが移籍']},
- {id:'MAO',name:'魔王重工',icon:'👹',base:6600,vol:1.2,kind:'魔王の城を建てた建設会社。1株が高い',up:['魔王城の増築を受注','レイドの修繕需要で大もうけ','溶岩発電が成功'],dn:['勇者に城を壊される','雷霆の間で落雷事故','溶岩の流れが変わり工事が中止']},
+/* ==================== 黒鍵証券取引所（本物の株のしくみを再現） ====================
+   会社は架空。株価はサーバーに置かず、時刻から計算で決まる（だれが見ても同じ）。24時間いつでも取引できる。
+   再現しているもの:
+   ・呼値（値段の刻み）と値幅制限（ストップ高・ストップ安）… 東証の表どおり。基準値段は前日の終値（権利落ち日は配当ぶん引く）
+   ・日足: 前日終値から、ファンダメンタル（業績）へ引き寄せられながら動く。週1回の決算発表（15:00）で大きく動く
+   ・10秒ごとの値動きと出来高。1日は日本時間 0:00〜24:00
+   ・売買単位は100株（単元株）。単元未満株（1株から・成行のみ・スプレッド0.22%）もある
+   ・成行 / 指値 / 逆指値。有効期限は 当日中 / 今週中 / 30日。留守のあいだに条件を満たした注文も、正しい時刻と値段で約定する
+   ・成行は売り気配・買い気配で約定（買いは1呼値上）。ストップ高では買えず、ストップ安では売れない
+   ・現物（特定口座・源泉徴収あり 20.315%、年間で損益通算）と NISA（成長投資枠: 年240万・生涯1200万、非課税）
+   ・信用取引: 最低保証金30万、委託保証金率30%、買方金利2.8%、貸株料1.15%、ときどき逆日歩。
+     1日の終わりに維持率20%未満なら追証。次の日の終わりまでに30%に戻らなければ強制決済。返済期限は6か月
+   ・毎月末が権利確定日: 配当（現物は税引き、信用買いは配当落調整金を受け取り、空売りは払う）と株主優待（100株以上の現物）
+   手数料は0（今のネット証券と同じ）。 */
+const SX_TPD=8640,SX_D0=Math.floor(Date.UTC(2026,9,1)/864e5),SX_TAX=.20315;
+const SX=[
+ {code:'881K',id:'KKP',name:'黒鍵ピアノ製作所',icon:'🎹',sector:'その他製品',p0:1200,vol:.016,sh:5e7,eps:80,bps:900,dps:30,v0:2.4e6,ew:1,yu:{tk:{heart:1}},yuText:'100株以上: ハート+2チケット 1枚（毎月）',kind:'老舗のピアノメーカー'},
+ {code:'882K',id:'TNR',name:'調律ホールディングス',icon:'🔧',sector:'サービス業',p0:2400,vol:.011,sh:3e7,eps:150,bps:1600,dps:72,v0:9e5,ew:2,yu:{tk:{judge:1}},yuText:'100株以上: 判定ゆるめチケット 1枚（毎月）',kind:'全国の調律師をたばねる会社。値動きはおだやか'},
+ {code:'883K',id:'MTR',name:'メトロノーム工業',icon:'⏱',sector:'精密機器',p0:640,vol:.019,sh:8e7,eps:42,bps:520,dps:12,v0:3.5e6,ew:3,yu:{tk:{speed:1}},yuText:'100株以上: スピードチケット 1枚（毎月）',kind:'メトロノームと時計の会社'},
+ {code:'884K',id:'88E',name:'88鍵エンタメ',icon:'🎤',sector:'情報・通信業',p0:880,vol:.024,sh:1.2e8,eps:36,bps:310,dps:8,v0:6e6,ew:4,yu:{tk:{coin2:1}},yuText:'100株以上: コイン2倍チケット 1枚（毎月）',kind:'ライブやイベントを開く会社'},
+ {code:'885K',id:'STR',name:'星霧観光',icon:'✨',sector:'サービス業',p0:350,vol:.03,sh:2e8,eps:12,bps:190,dps:5,v0:9e6,ew:5,yu:{tk:{revive:1}},yuText:'100株以上: 復活チケット 1枚（毎月）',kind:'ひみつの部屋めぐりのツアー会社'},
+ {code:'886K',id:'CSN',name:'黒鍵カジノ',icon:'🎰',sector:'サービス業',p0:500,vol:.034,sh:1.5e8,eps:30,bps:240,dps:15,v0:8e6,ew:6,yu:{chips:10},yuText:'100株以上: カジノチップ 10枚（毎月）',kind:'カジノの運営会社。値動きが激しい'},
+ {code:'887K',id:'ZRO',name:'第零番レコード',icon:'💿',sector:'情報・通信業',p0:150,vol:.045,sh:3e8,eps:2.5,bps:60,dps:0,v0:2e7,ew:0,yu:null,yuText:'なし（無配）',kind:'小さなレコード会社。当たれば大きいが、赤字すれすれ'},
+ {code:'888K',id:'MAO',name:'魔王重工',icon:'👹',sector:'建設業',p0:6600,vol:.021,sh:2e7,eps:520,bps:7100,dps:180,v0:4e5,ew:5,yu:null,yuText:'なし',kind:'魔王の城を建てた建設会社。1株が高い'},
 ];
-STK.forEach((s,i)=>{let h=0;for(const ch of s.id)h=(h*31+ch.charCodeAt(0))|0;s.seed=(h>>>0)%100000+i*977});
-const STK_FEE=.01; /* 売り買いの手数料 1% */
-const STK_OCT=[[15,.025],[90,.06],[600,.11],[2880,.17],[14400,.22]]; /* 何分ごとの波か・大きさ */
-function stkHash(a,b){let h=Math.imul(a|0,374761393)+Math.imul(b|0,668265263)|0;h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return (h>>>0)/4294967296}
-function stkNoise(seed,x){const i=Math.floor(x),f=x-i,u=f*f*(3-2*f);return (stkHash(seed,i)*(1-u)+stkHash(seed,i+1)*u)*2-1}
-function stkPrice(s,m){let v=0;STK_OCT.forEach(([p,a],k)=>{v+=a*s.vol*stkNoise(s.seed*7+k*131,m/p)});v+=.004*s.vol*(stkHash(s.seed*13+5,m)*2-1);return Math.max(1,Math.round(s.base*Math.exp(v)))}
-/* 正しい時刻（サーバーの時刻）。null のあいだは売買できない */
+SX.forEach((s,i)=>{let h=0;for(const ch of s.id)h=(h*31+ch.charCodeAt(0))|0;s.seed=(h>>>0)%100000+i*977+11});
+const sxById=id=>SX.find(s=>s.id===id);
+function sxHash(a,b){let h=Math.imul(a|0,374761393)+Math.imul(b|0,668265263)|0;h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return (h>>>0)/4294967296}
+function sxNoise(seed,x){const i=Math.floor(x),f=x-i,u=f*f*(3-2*f);return (sxHash(seed,i)*(1-u)+sxHash(seed,i+1)*u)*2-1}
+const sxZ=(seed,n)=>(sxHash(seed,n*4)+sxHash(seed,n*4+1)+sxHash(seed,n*4+2)+sxHash(seed,n*4+3)-2)*1.7320508;
+function sxTick(p){return p<=3000?1:p<=5000?5:p<=30000?10:p<=50000?50:p<=300000?100:500}
+function sxRound(p){const t=sxTick(p);return Math.max(1,Math.round(p/t)*t)}
+const SX_LIM=[[100,30],[200,50],[500,80],[700,100],[1000,150],[1500,300],[2000,400],[3000,500],[5000,700],[7000,1000],[10000,1500],[15000,3000],[20000,4000],[30000,5000],[50000,7000],[70000,10000],[100000,15000],[150000,30000],[200000,40000],[300000,50000],[500000,70000]];
+function sxLimit(b){for(const [u,l] of SX_LIM)if(b<u)return l;return 100000}
+const sxDayOf=T=>Math.floor((T*1e4+32400000)/864e5);
+const sxT0=d=>(d*864e5-32400000)/1e4;
+const sxDate=d=>new Date(d*864e5);
+const sxMonthEnd=d=>sxDate(d+1).getUTCDate()===1;
+const sxWeekEnd=d=>{let x=d;while(sxDate(x).getUTCDay()!==0)x++;return x};
+/* ---------- 日足 ---------- */
+const SXD={};
+function sxDay(s,d){
+  let st=SXD[s.id];if(!st)st=SXD[s.id]={arr:[],logF:Math.log(s.p0*1.02),eps:s.eps};
+  const i=d-SX_D0;if(i<0)return {b:s.p0,c:s.p0,J:0,e:0,eps:s.eps,div:0,pc:s.p0};
+  while(st.arr.length<=i){
+    const j=st.arr.length,dd=SX_D0+j,dt=sxDate(dd),pc=j?st.arr[j-1].c:s.p0;
+    const div=j&&dt.getUTCDate()===1?Math.round(s.dps/12*10)/10:0;
+    const b=sxRound(Math.max(1,pc-div)),L=sxLimit(b);
+    let J=0,e=0;
+    if(dt.getUTCDay()===s.ew){e=sxZ(s.seed,dd*7+3)*s.vol*2+.003;J=e*1.15;st.eps=Math.max(.3,st.eps*(1+e*.7));st.logF+=J*.85}
+    st.logF+=.00015+sxZ(s.seed,dd*7+5)*.003;
+    const r=.045*(st.logF-Math.log(b))+s.vol*sxZ(s.seed,dd*7+1)+J;
+    const c=Math.min(b+L,Math.max(Math.max(1,b-L),sxRound(b*Math.exp(r))));
+    st.arr.push({b,c,J,e,eps:st.eps,div,pc,L,d:dd});
+  }
+  return st.arr[i];
+}
+/* ---------- 10秒ごとの値動き ---------- */
+const SX_OCT=[[6,.05],[30,.1],[180,.2],[720,.32],[2160,.42]];
+function sxN(s,d,x){let v=0;for(let o=0;o<SX_OCT.length;o++){const [p,a]=SX_OCT[o];v+=a*sxNoise(s.seed*31+o*977+d*13,x/p)}return v}
+function sxPxDK(s,d,k){
+  const D=sxDay(s,d);if(D.n0===undefined){D.n0=sxN(s,d,0);D.n1=sxN(s,d,SX_TPD)}
+  const u=k/SX_TPD,lb=Math.log(D.b),lc=Math.log(D.c);
+  const lp=lb+(lc-D.J-lb)*u+(k>=5400?D.J:0)+s.vol*1.1*(sxN(s,d,k)-(1-u)*D.n0-u*D.n1);
+  return Math.min(D.b+D.L,Math.max(Math.max(1,D.b-D.L),sxRound(Math.exp(lp))));
+}
+/* 1日ぶんの値と出来高（計算した所まで覚えておく） */
+const SXS={};
+function sxSeries(s,d,upto){
+  const key=s.id+':'+d;let o=SXS[key];
+  if(!o){o=SXS[key]={p:new Float64Array(SX_TPD),v:new Float64Array(SX_TPD),n:0,t:0};
+    const keys=Object.keys(SXS);if(keys.length>40)keys.sort((a,b)=>SXS[a].t-SXS[b].t).slice(0,keys.length-40).forEach(k=>delete SXS[k])}
+  o.t=Date.now();upto=Math.min(SX_TPD-1,upto);
+  const D=sxDay(s,d);
+  for(let k=o.n;k<=upto;k++){
+    const p=sxPxDK(s,d,k),pp=k?o.p[k-1]:D.b;o.p[k]=p;
+    let v=s.v0/SX_TPD*(.3+1.4*sxHash(s.seed*17+d,k))*(1+25*Math.abs(Math.log(p/pp))/s.vol);
+    if(k===5400&&D.J)v*=40;
+    o.v[k]=Math.round(v/100)*100;
+  }
+  o.n=Math.max(o.n,upto+1);return o;
+}
+function sxPx(s,T){const d=sxDayOf(T),k=T-sxT0(d);return sxSeries(s,d,k).p[k]}
+/* 日足の4本値と出来高 */
+const SXO={};
+function sxOHLC(s,d,uptoK){
+  const key=s.id+':'+d,full=uptoK===undefined||uptoK>=SX_TPD-1;
+  if(full&&SXO[key])return SXO[key];
+  const k1=full?SX_TPD-1:uptoK,o=sxSeries(s,d,k1);let h=-1,l=1e15,v=0;
+  for(let k=0;k<=k1;k++){const p=o.p[k];if(p>h)h=p;if(p<l)l=p;v+=o.v[k]}
+  const r={o:o.p[0],h,l,c:o.p[k1],v,d};if(full)SXO[key]=r;return r;
+}
+/* 今の時刻（サーバーの時刻に合わせたもの） */
 const STKT={off:null,at:0,busy:false};
 async function stkSync(){
   if(STKT.busy)return;STKT.busy=true;
@@ -10574,144 +10684,455 @@ async function stkSync(){
   }catch(e){}finally{STKT.busy=false}
 }
 const stkNow=()=>Date.now()+(STKT.off||0);
-const stkMin=()=>Math.floor(stkNow()/60000);
 const stkReady=()=>STKT.off!==null&&Date.now()-STKT.at<30*60000&&Date.now()>=STKT.at-60000;
-/* 持ち株 */
-function stkLoad(){const d=store.get('stk',null);const h={};
-  if(d&&d.h&&typeof d.h==='object')STK.forEach(s=>{const x=d.h[s.id];if(x&&num(x.n)>0)h[s.id]={n:Math.floor(num(x.n)),cost:num(x.cost)}});
-  return {h,pl:d&&Number.isFinite(+d.pl)?+d.pl:0,t:num(d&&d.t)}}
-function stkSave(d){d.t=Date.now();store.set('stk',d);pushCloud()}
-{const bc=buildCloud;buildCloud=function(){const d=bc.apply(this,arguments);try{d.stk=stkLoad()}catch(e){}return d}}
-{const mc=mergeCloud;mergeCloud=function(d){const r=mc.apply(this,arguments);try{if(d&&d.stk&&typeof d.stk==='object'&&num(d.stk.t)>stkLoad().t){store.set('stk',d.stk)}}catch(e){}return r}}
-function stkGain(n){n=Math.round(n);if(n<=0)return;const w=loadWallet();w.e+=n;store.set('wallet',w);renderCoins()}
-const stkVal=d=>STK.reduce((a,s)=>a+(d.h[s.id]?d.h[s.id].n*stkPrice(s,stkMin()):0),0);
-const stkCostIn=d=>STK.reduce((a,s)=>a+(d.h[s.id]?d.h[s.id].cost:0),0);
-const stkPct=(a,b)=>b?((a-b)/b*100):0;
-const stkSign=v=>(v>0?'+':v<0?'−':'±')+Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:1});
-/* ニュース: 直近6時間で大きく動いた会社 */
-function stkNews(n){
-  const m=stkMin(),out=[];
-  STK.forEach(s=>{for(let k=0;k<4;k++){const a=m-k*360,p0=stkPrice(s,a-360),p1=stkPrice(s,a),ch=stkPct(p1,p0);
-    if(Math.abs(ch)>=6){const L=ch>0?s.up:s.dn;out.push({s,ch,ago:k*6,text:L[Math.floor(stkHash(s.seed,Math.floor(a/360))*L.length)]});break}}});
-  return out.sort((a,b)=>a.ago-b.ago||Math.abs(b.ch)-Math.abs(a.ch)).slice(0,n||5);
+const sxNowT=()=>Math.floor(stkNow()/1e4);
+/* 銘柄の今の情報 */
+function sxQuote(s,T){
+  T=T===undefined?sxNowT():T;const d=sxDayOf(T),k=T-sxT0(d),D=sxDay(s,d),o=sxOHLC(s,d,k),p=o.c;
+  return {p,d,k,D,o,base:D.b,chg:p-D.b,pct:(p-D.b)/D.b*100,up:D.b+D.L,dn:Math.max(1,D.b-D.L),sHigh:p>=D.b+D.L,sLow:p<=Math.max(1,D.b-D.L),
+    vol:o.v,val:0,tick:sxTick(p),eps:D.eps,per:D.eps>0?p/D.eps:0,pbr:p/s.bps,yld:s.dps/p*100,cap:p*s.sh};
 }
+/* 指数「黒鍵平均」: 8社の値上がり率の平均（10/1 を 10,000 とする） */
+const sxIdxAt=T=>SX.reduce((a,s)=>a+sxPx(s,T)/s.p0,0)/SX.length*10000;
+function sxIdxBase(d){return SX.reduce((a,s)=>a+sxDay(s,d).pc/s.p0,0)/SX.length*10000}
+/* 次の決算発表の日 */
+function sxNextEarn(s,d){for(let x=d;x<d+8;x++)if(sxDate(x).getUTCDay()===s.ew)return x;return d}
+const sxMD=d=>{const t=sxDate(d);return `${t.getUTCMonth()+1}/${t.getUTCDate()}`};
+const sxWD=d=>'日月火水木金土'[sxDate(d).getUTCDay()];
+
+/* ---------- 口座・注文・約定 ---------- */
+const SX_MIN_DEP=300000,SX_IM=.3,SX_MM=.2,SX_RATE_L=.028,SX_RATE_S=.0115,SX_NISA_Y=2400000,SX_NISA_L=12000000,SX_ODD=.0022,SX_TERM=180;
+const sxYear=d=>sxDate(d).getUTCFullYear();
+const SX_ACT={buy:'現物買',sell:'現物売',mbuy:'信用新規買',msell:'信用新規売',close:'信用返済'};
+const SX_TYPE={mkt:'成行',lmt:'指値',stp:'逆指値'};
+function sxNew(){const d=sxDayOf(sxNowT());return {hold:{},nisa:{},mg:{dep:0,pos:[],call:null},ord:[],fills:[],log:[],yr:{y:sxYear(d),gain:0,tax:0,div:0},ny:{y:sxYear(d),used:0,sold:0},lastT:0,lastDay:d-1,seq:1,t:0}}
+let SXA=null;
+function sxAcct(){
+  if(SXA)return SXA;
+  let a=store.get('sx',null);
+  if(!a||typeof a!=='object'||!a.mg||!a.yr)a=sxNew();
+  ['hold','nisa'].forEach(k=>{if(!a[k]||typeof a[k]!=='object')a[k]={}});
+  ['ord','fills','log'].forEach(k=>{if(!Array.isArray(a[k]))a[k]=[]});
+  if(!Array.isArray(a.mg.pos))a.mg.pos=[];
+  /* 前の版（かんたんな株）の持ち株を、特定口座に引き継ぐ */
+  try{const old=store.get('stk',null);if(old&&old.h&&typeof old.h==='object'){Object.entries(old.h).forEach(([id,x])=>{if(sxById(id)&&num(x.n)>0){const h=a.hold[id]||{n:0,cost:0};h.n+=Math.floor(num(x.n));h.cost+=num(x.cost);a.hold[id]=h}});store.set('stk',null)}}catch(e){}
+  SXA=a;return a;
+}
+function sxSave(){if(!SXA)return;SXA.t=Date.now();SXA.ord=SXA.ord.filter(o=>o.st==='open').concat(SXA.ord.filter(o=>o.st!=='open').slice(-60));SXA.fills=SXA.fills.slice(-150);SXA.log=SXA.log.slice(-150);store.set('sx',SXA);pushCloud()}
+{const bc=buildCloud;buildCloud=function(){const d=bc.apply(this,arguments);try{d.sx=sxAcct()}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){const r=mc.apply(this,arguments);try{if(d&&d.sx&&typeof d.sx==='object'&&d.sx.mg&&num(d.sx.t)>num(sxAcct().t)){store.set('sx',d.sx);SXA=null}}catch(e){}return r}}
+function sxGive(n){n=Math.round(n);if(n>0){const w=loadWallet();w.e+=n;store.set('wallet',w)}else if(n<0)spend(-n);renderCoins()}
+const sxF=v=>Number.isInteger(v)?v.toLocaleString():v.toLocaleString(undefined,{minimumFractionDigits:1,maximumFractionDigits:1});
+const sxS=v=>(v>0?'+':v<0?'−':'±')+sxF(Math.abs(Math.round(v*10)/10));
+const sxTime=T=>{const j=new Date(T*1e4+32400000);return `${j.getUTCMonth()+1}/${j.getUTCDate()} ${String(j.getUTCHours()).padStart(2,'0')}:${String(j.getUTCMinutes()).padStart(2,'0')}`};
+function sxLog(a,T,text,note){a.log.push({T,text});if(note)addNote('event','📈 '+text,'sx:'+T+':'+text.slice(0,30))}
+function sxYearRoll(a,d){const y=sxYear(d);if(a.yr.y!==y)a.yr={y,gain:0,tax:0,div:0};if(a.ny.y!==y)a.ny={y,used:0,sold:0}}
+/* 特定口座（源泉徴収あり）: 今年の損益の合計に 20.315%。損が出たら、今年払った税金から戻る */
+function sxTaxGain(a,g,d){sxYearRoll(a,d);a.yr.gain+=g;const dl=Math.round(Math.max(0,a.yr.gain)*SX_TAX-a.yr.tax);a.yr.tax+=dl;return dl}
+function sxMgEval(a,T){let val=0,pl=0;a.mg.pos.forEach(p=>{const px=sxPx(sxById(p.sid),T);val+=p.px*p.n;pl+=(px-p.px)*p.n*(p.side==='L'?1:-1)});const eq=a.mg.dep+pl;return {val,pl,eq,rate:val?eq/val:Infinity}}
+const sxPendMg=a=>a.ord.filter(o=>o.st==='open'&&(o.act==='mbuy'||o.act==='msell')).reduce((x,o)=>x+o.est*SX_IM,0);
+function sxMgFree(a,T){const e=sxMgEval(a,T);return e.eq-e.val*SX_IM-sxPendMg(a)}
+function sxWithdrawable(a,T){const e=sxMgEval(a,T),need=e.val||sxPendMg(a)?Math.max(e.val*SX_IM+sxPendMg(a),SX_MIN_DEP):0;return Math.max(0,Math.floor(Math.min(a.mg.dep,e.eq-need)))}
+const sxLocked=(a,sid,acct)=>a.ord.filter(o=>o.st==='open'&&o.act==='sell'&&o.sid===sid&&o.acct===acct).reduce((x,o)=>x+o.n,0);
+const sxClosing=(a,pid)=>a.ord.filter(o=>o.st==='open'&&o.act==='close'&&o.pos===pid).reduce((x,o)=>x+o.n,0);
+const sxNisaPend=a=>a.ord.filter(o=>o.st==='open'&&o.act==='buy'&&o.acct==='nisa').reduce((x,o)=>x+o.rsv,0);
+const sxNisaLife=a=>Object.values(a.nisa).reduce((x,h)=>x+h.cost,0)+a.ny.sold;
+/* 注文を出す。だめなら理由の文字を返す */
+function sxPlace(o){
+  if(!stkReady())return 'サーバーの時刻を確かめられないので、いまは注文できません。電波を確かめてください。';
+  sxRun();const a=sxAcct(),T=sxNowT(),d=sxDayOf(T),s=sxById(o.sid);if(!s)return '銘柄が見つかりません';
+  sxYearRoll(a,d);
+  const q=sxQuote(s,T);o.n=Math.floor(+o.n||0);
+  if(!(o.n>0))return '株数を入れてください';
+  if(o.odd){if(o.act!=='buy'&&o.act!=='sell')return '単元未満株は現物だけです';if(o.type!=='mkt')return '単元未満株は成行だけです';if(o.n>=100&&o.n%100===0)return '100株ちょうどの倍数は、単元未満株ではなく通常の注文にしてください'}
+  else if(o.n%100)return '売買単位は100株です（100株ずつ）。1株から買うときは「単元未満株」にしてください';
+  if(o.type!=='mkt'){o.px=+o.px;if(!(o.px>0))return '値段を入れてください';if(o.px%sxTick(o.px))return `この値段の呼値（刻み）は${sxTick(o.px)}です`;
+    if(o.exp===d&&(o.px>q.up||o.px<q.dn))return `今日の値幅制限（${sxF(q.dn)}〜${sxF(q.up)}）の外の値段です`}
+  if(o.type==='stp'){const buy=o.act==='buy'||o.act==='mbuy'||(o.act==='close'&&o.side==='S');if(buy?o.px<=q.p:o.px>=q.p)return buy?'買いの逆指値は、今の値段より高い値段にします':'売りの逆指値は、今の値段より安い値段にします'}
+  o.est=(o.type==='mkt'?q.p:o.px)*o.n;
+  if(o.act==='buy'){
+    o.rsv=Math.ceil((o.type==='lmt'?o.px:q.up)*o.n*(o.odd?1+SX_ODD:1));
+    if(o.acct==='nisa'){if(a.ny.used+sxNisaPend(a)+o.rsv>SX_NISA_Y)return `NISAの年間投資枠（${sxF(SX_NISA_Y)}）をこえます（残り ${sxF(Math.max(0,SX_NISA_Y-a.ny.used-sxNisaPend(a)))}）`;
+      if(sxNisaLife(a)+sxNisaPend(a)+o.rsv>SX_NISA_L)return 'NISAの生涯投資枠（1,200万）をこえます'}
+    if(coins()<o.rsv)return `コインが足りません（注文には ${sxF(o.rsv)} コインを先に預けます。${o.type==='lmt'?'':'成行・逆指値はストップ高の値段で計算します'}）`;
+    spend(o.rsv);renderCoins();
+  }else if(o.act==='sell'){
+    const h=(o.acct==='nisa'?a.nisa:a.hold)[o.sid],have=h?h.n-sxLocked(a,o.sid,o.acct):0;
+    if(have<o.n)return `売れる株が足りません（${o.acct==='nisa'?'NISA':'特定口座'}で売れるのは ${have} 株）`;
+    if(!o.odd&&h.n>=100&&o.n%100)return '売買単位は100株です';
+  }else if(o.act==='mbuy'||o.act==='msell'){
+    if(a.mg.dep<SX_MIN_DEP)return `信用取引には、保証金が30万コイン以上いります（いま ${sxF(a.mg.dep)}）。「資産」から入金してください`;
+    if(a.mg.call)return '追証が出ているあいだは、新しく建てられません';
+    if(sxMgFree(a,T)<o.est*SX_IM)return `保証金が足りません（建てるのに ${sxF(Math.ceil(o.est*SX_IM))} いります。余力 ${sxF(Math.max(0,Math.floor(sxMgFree(a,T))))}）`;
+  }else if(o.act==='close'){
+    const p=a.mg.pos.find(x=>x.id===o.pos);if(!p)return '建玉が見つかりません';
+    if(p.n-sxClosing(a,p.id)<o.n)return `返済できる株数は ${p.n-sxClosing(a,p.id)} 株です`;o.side=p.side;o.sid=p.sid;
+  }else return '取引の種類がちがいます';
+  o.id='O'+(a.seq++);o.T0=T;o.st='open';a.ord.push(o);
+  sxTry(a,o,T);sxSave();return '';
+}
+function sxCancel(id){const a=sxAcct(),o=a.ord.find(x=>x.id===id&&x.st==='open');if(!o)return;o.st='cancel';o.end=sxNowT();if(o.rsv)sxGive(o.rsv);sxLog(a,o.end,`取消: ${sxById(o.sid).name} ${SX_ACT[o.act]} ${o.n}株`);sxSave()}
+/* その時刻の値段で約定できるか */
+function sxTry(a,o,T){
+  const s=sxById(o.sid),d=sxDayOf(T),D=sxDay(s,d),p=sxPx(s,T),up=D.b+D.L,dn=Math.max(1,D.b-D.L),t=sxTick(p);
+  const buy=o.act==='buy'||o.act==='mbuy'||(o.act==='close'&&o.side==='S');
+  if(buy&&p>=up)return false;if(!buy&&p<=dn)return false;
+  let fp=null;
+  if(o.type==='mkt')fp=buy?Math.min(up,p+t):p;
+  else if(o.type==='lmt'){if(buy?p<=o.px:p>=o.px)fp=p}
+  else if(buy?p>=o.px:p<=o.px)fp=buy?Math.min(up,p+t):p;
+  if(fp===null)return false;
+  if(o.odd)fp=Math.round(fp*(1+(buy?SX_ODD:-SX_ODD))*10)/10;
+  sxExec(a,o,fp,T);return true;
+}
+function sxExec(a,o,fp,T){
+  const s=sxById(o.sid),d=sxDayOf(T),amt=Math.round(fp*o.n);sxYearRoll(a,d);
+  o.st='done';o.fp=fp;o.end=T;let note='';
+  if(o.act==='buy'){
+    sxGive(o.rsv-amt);const box=o.acct==='nisa'?a.nisa:a.hold,h=box[o.sid]||{n:0,cost:0};h.n+=o.n;h.cost+=amt;box[o.sid]=h;
+    if(o.acct==='nisa')a.ny.used+=amt;
+  }else if(o.act==='sell'){
+    const box=o.acct==='nisa'?a.nisa:a.hold,h=box[o.sid],basis=h.cost*o.n/h.n;h.n-=o.n;h.cost-=basis;if(h.n<=0)delete box[o.sid];
+    const gain=amt-basis;let tax=0;
+    if(o.acct==='nisa')a.ny.sold+=basis;else tax=sxTaxGain(a,gain,d);
+    sxGive(amt-tax);o.pl=gain;o.tax=tax;note=` 損益 ${sxS(Math.round(gain))}${tax>0?`（税金 ${sxF(tax)} を源泉徴収）`:tax<0?`（払いすぎた税金 ${sxF(-tax)} が戻りました）`:''}`;
+  }else if(o.act==='mbuy'||o.act==='msell'){
+    a.mg.pos.push({id:'P'+(a.seq++),sid:o.sid,side:o.act==='mbuy'?'L':'S',n:o.n,px:fp,T,d,cost:0});
+  }else{
+    const p=a.mg.pos.find(x=>x.id===o.pos);if(p){const r=sxClosePos(a,p,o.n,fp,T);o.pl=r.pl;o.tax=r.tax;note=` 損益 ${sxS(Math.round(r.pl))}`}
+  }
+  a.fills.push({T,sid:o.sid,act:o.act,acct:o.acct,n:o.n,fp,pl:o.pl,tax:o.tax,side:o.side});
+  sxLog(a,T,`約定 ${s.name} ${SX_ACT[o.act]}${o.acct==='nisa'?'（NISA）':''} ${o.n.toLocaleString()}株 @${sxF(fp)}${note}`,true);
+  try{[67,72,76].forEach((m,i)=>play(m,i*.05,.25))}catch(e){}
+}
+function sxClosePos(a,p,n,fp,T){
+  const d=sxDayOf(T),pl=(fp-p.px)*n*(p.side==='L'?1:-1),tax=sxTaxGain(a,pl,d);
+  a.mg.dep+=pl-tax;p.n-=n;if(p.n<=0)a.mg.pos=a.mg.pos.filter(x=>x!==p);
+  return {pl,tax};
+}
+function sxForceAll(a,T,why){
+  a.ord.filter(o=>o.st==='open'&&o.act==='close').forEach(o=>{o.st='cancel';o.end=T});
+  a.mg.pos.slice().forEach(p=>{const fp=sxPx(sxById(p.sid),T),n=p.n,r=sxClosePos(a,p,n,fp,T);
+    a.fills.push({T,sid:p.sid,act:'close',n,fp,pl:r.pl,tax:r.tax,side:p.side,force:1});
+    sxLog(a,T,`強制決済（${why}）: ${sxById(p.sid).name} ${p.side==='L'?'買建':'売建'} ${n}株 @${sxF(fp)} 損益 ${sxS(Math.round(r.pl))}`,true)});
+}
+/* 1日の終わり（日本時間 24:00）にやること */
+function sxDayEnd(a,d){
+  const T=sxT0(d+1)-1;sxYearRoll(a,d);
+  a.ord.forEach(o=>{if(o.st==='open'&&o.exp<=d){o.st='expired';o.end=T;if(o.rsv)sxGive(o.rsv);sxLog(a,T,`期限切れ（失効）: ${sxById(o.sid).name} ${SX_ACT[o.act]} ${o.n}株`)}});
+  /* 金利・貸株料・逆日歩 */
+  a.mg.pos.forEach(p=>{const s=sxById(p.sid);let c=p.px*p.n*(p.side==='L'?SX_RATE_L:SX_RATE_S)/365;
+    if(p.side==='S'&&sxHash(s.seed*7+d,99)<.06){const r=Math.round((.05+.45*sxHash(s.seed*7+d,98))*100)/100;c+=r*p.n;sxLog(a,T,`逆日歩: ${s.name} 1株 ${r} コイン × ${p.n}株`)}
+    c=Math.round(c*10)/10;a.mg.dep-=c;p.cost=(p.cost||0)+c});
+  /* 月末は権利確定日: 配当と株主優待 */
+  if(sxMonthEnd(d))SX.forEach(s=>{
+    const dm=Math.round(s.dps/12*10)/10,h=a.hold[s.id],nh=a.nisa[s.id];
+    if(dm>0){
+      if(h&&h.n){const g=Math.round(dm*h.n),tax=sxTaxGain(a,g,d);a.yr.div+=g;sxGive(g-tax);sxLog(a,T,`配当: ${s.name} ${h.n}株 × ${dm} = ${sxF(g)}（税 ${sxF(tax)}）`,true)}
+      if(nh&&nh.n){const g=Math.round(dm*nh.n);a.yr.div+=g;sxGive(g);sxLog(a,T,`配当（NISA・非課税）: ${s.name} ${nh.n}株 × ${dm} = ${sxF(g)}`,true)}
+      a.mg.pos.filter(p=>p.sid===s.id).forEach(p=>{const g=Math.round(dm*p.n*(p.side==='L'?1-SX_TAX:1)*10)/10;a.mg.dep+=p.side==='L'?g:-g;sxLog(a,T,`配当落調整金: ${s.name} ${p.side==='L'?'受取':'支払'} ${sxF(g)}`)});
+    }
+    const own=(h?h.n:0)+(nh?nh.n:0);
+    if(own>=100&&s.yu){
+      if(s.yu.tk)applyGift('sxyu:'+s.id+':'+d,{coins:0,tk:s.yu.tk,items:[],from:{kind:'u',name:s.name+'の株主優待'}});
+      if(s.yu.chips){try{chipAdd(s.yu.chips)}catch(e){}}
+      sxLog(a,T,`株主優待: ${s.name} ${s.yuText.replace(/（毎月）|100株以上: /g,'')}`,true);
+    }
+  });
+  /* 追証と返済期限 */
+  if(a.mg.pos.length){
+    const e=sxMgEval(a,T);
+    if(a.mg.call){if(e.rate>=SX_IM){a.mg.call=null;sxLog(a,T,'追証が解消しました',true)}else if(d>=a.mg.call.due){sxForceAll(a,T,'追証の未解消');a.mg.call=null}}
+    else if(e.rate<SX_MM){a.mg.call={amt:Math.ceil(e.val*SX_IM-e.eq),due:d+1,at:d};sxLog(a,T,`⚠ 追証が発生しました（維持率 ${(e.rate*100).toFixed(1)}%）。${sxMD(d+1)} の24時までに、入金か返済で維持率を30%に戻してください。戻らないと強制決済になります。必要額のめやす ${sxF(a.mg.call.amt)}`,true)}
+    a.mg.pos.filter(p=>d>=p.d+SX_TERM).forEach(p=>{const fp=sxPx(sxById(p.sid),T),n=p.n,r=sxClosePos(a,p,n,fp,T);sxLog(a,T,`返済期限（6か月）で決済: ${sxById(p.sid).name} ${n}株 @${sxF(fp)} 損益 ${sxS(Math.round(r.pl))}`,true)});
+  }else a.mg.call=null;
+  /* 建玉がなくて保証金がマイナス（不足金）なら、コインから精算する */
+  if(!a.mg.pos.length&&a.mg.dep<0){const v=Math.ceil(-a.mg.dep);sxGive(-v);a.mg.dep=0;sxLog(a,T,`不足金 ${sxF(v)} をコインから精算しました`,true)}
+}
+/* 前回から今までを、時刻の順にすすめる（留守のあいだの約定・配当・追証も） */
+function sxRun(){
+  if(!stkReady())return false;
+  const a=sxAcct(),now=sxNowT();let from=a.lastT?a.lastT+1:now;
+  if(now-from>35*SX_TPD){from=now-35*SX_TPD}
+  if(a.lastDay<sxDayOf(from)-1)a.lastDay=sxDayOf(from)-1;
+  let T=from,ch=false;
+  while(T<=now){
+    const d=sxDayOf(T),endDay=sxT0(d+1)-1,end=Math.min(now,endDay);
+    if(a.ord.some(o=>o.st==='open'))for(let t=T;t<=end;t++){for(const o of a.ord){if(o.st==='open'&&o.T0<t&&o.exp>=d&&sxTry(a,o,t))ch=true}}
+    if(end===endDay&&a.lastDay<d){sxDayEnd(a,d);a.lastDay=d;ch=true}
+    T=end+1;
+  }
+  a.lastT=now;if(ch||!a.t||Date.now()-a.t>60000)sxSave();return true;
+}
+/* 現引（買建を、お金を払って現物にする）と 現渡（持っている現物を渡して売建を終える） */
+function sxDeliver(pid){
+  if(!stkReady())return '時刻を確かめられません';sxRun();
+  const a=sxAcct(),p=a.mg.pos.find(x=>x.id===pid),T=sxNowT();if(!p)return '建玉が見つかりません';
+  if(sxClosing(a,p.id))return '返済の注文が出ている建玉です。先に取り消してください';
+  const s=sxById(p.sid),amt=Math.round(p.px*p.n);
+  if(p.side==='L'){if(coins()<amt)return `現引には ${sxF(amt)} コインいります`;spend(amt);const h=a.hold[p.sid]||{n:0,cost:0};h.n+=p.n;h.cost+=amt;a.hold[p.sid]=h;sxLog(a,T,`現引: ${s.name} ${p.n}株（${sxF(amt)}コイン）`,true)}
+  else{const h=a.hold[p.sid];if(!h||h.n-sxLocked(a,p.sid,'tok')<p.n)return `現渡には、特定口座に ${s.name} が ${p.n}株 いります`;
+    const basis=h.cost*p.n/h.n;h.n-=p.n;h.cost-=basis;if(h.n<=0)delete a.hold[p.sid];const tax=sxTaxGain(a,amt-basis,sxDayOf(T));sxGive(amt-tax);sxLog(a,T,`現渡: ${s.name} ${p.n}株 受取 ${sxF(amt)}（損益 ${sxS(Math.round(amt-basis))}）`,true)}
+  a.mg.pos=a.mg.pos.filter(x=>x!==p);sxSave();return '';
+}
+function sxDeposit(n){n=Math.floor(+n||0);if(!(n>0))return '金額を入れてください';if(coins()<n)return 'コインが足りません';sxRun();const a=sxAcct();spend(n);renderCoins();a.mg.dep+=n;if(a.mg.call){const e=sxMgEval(a,sxNowT());if(e.rate>=SX_IM){a.mg.call=null;sxLog(a,sxNowT(),'追証が解消しました')}}sxLog(a,sxNowT(),`保証金に入金 ${sxF(n)}`);sxSave();return ''}
+function sxWithdraw(n){n=Math.floor(+n||0);if(!(n>0))return '金額を入れてください';sxRun();const a=sxAcct(),w=sxWithdrawable(a,sxNowT());if(n>w)return `出金できるのは ${sxF(w)} までです`;a.mg.dep-=n;sxGive(n);sxLog(a,sxNowT(),`保証金から出金 ${sxF(n)}`);sxSave();return ''}
 
 /* ---------- 画面 ---------- */
-const SK={sel:null,range:'day',qty:1,msg:'',bad:false};
+const SK={tab:'market',sel:null,rank:'code',chart:'5m',form:null,msg:'',bad:false,dep:'',wd:''};
 (function(){
   const P=document.createElement('section');P.id='stock';P.className='screen panel';P.hidden=true;
-  P.innerHTML='<div class="toprow"><h1>📈 黒鍵株式市場</h1><button class="sound" id="stkBack">メニューに戻る</button></div><div id="stkBody"></div>';
+  P.innerHTML='<div class="toprow"><h1>📈 黒鍵証券取引所</h1><button class="sound" id="stkBack">メニューに戻る</button></div><div id="stkBody"></div>';
   $('stage').appendChild(P);
-  $('stkBack').addEventListener('click',()=>{if(SK.sel){SK.sel=null;SK.msg='';renderStock();P.scrollTop=0}else P.hidden=true});
+  $('stkBack').addEventListener('click',()=>{P.hidden=true;renderStockCard()});
   const card=document.createElement('button');card.id='stockCard';card.className='stockCard';
-  card.innerHTML='<span class="kI" aria-hidden="true">📈</span><b>黒鍵株式市場</b><small id="stockInfo">株を買って、値上がりしたら売ってコインをかせぐ</small>';
+  card.innerHTML='<span class="kI" aria-hidden="true">📈</span><b>黒鍵証券取引所</b><small id="stockInfo">本物そっくりの株取引。安く買って高く売ろう</small>';
   card.addEventListener('click',openStock);
   ($('casinoCard')||$('plazaCard')).before(card);
 })();
-function openStock(){initAudio();stkSync();SK.sel=null;SK.msg='';const P=$('stock');P.hidden=false;P.scrollTop=0;renderStock()}
-function renderStockCard(){try{const d=stkLoad(),v=stkVal(d),c=stkCostIn(d),i=$('stockInfo');if(!i)return;
-  i.textContent=v?`持ち株 ${yen(v)}コイン（${stkSign(Math.round(v-c))}）`:'株を買って、値上がりしたら売ってコインをかせぐ'}catch(e){}}
-function stkSpark(cv,s,mins,step,big){
-  const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth||cv.width,h=cv.clientHeight||cv.height;cv.width=w*r;cv.height=h*r;
-  const g=cv.getContext('2d');g.scale(r,r);const m=stkMin(),pts=[];
-  for(let t=m-mins;t<=m;t+=step)pts.push(stkPrice(s,t));
-  const lo=Math.min(...pts),hi=Math.max(...pts),pad=big?14:3,y=v=>pad+(h-pad*2)*(1-(hi===lo?.5:(v-lo)/(hi-lo))),x=i=>i/(pts.length-1)*w;
-  const up=pts[pts.length-1]>=pts[0],col=up?'#ff5a5a':'#4aa3ff';
-  const gr=g.createLinearGradient(0,0,0,h);gr.addColorStop(0,up?'rgba(255,90,90,.32)':'rgba(74,163,255,.32)');gr.addColorStop(1,'rgba(0,0,0,0)');
-  g.beginPath();pts.forEach((v,i)=>g[i?'lineTo':'moveTo'](x(i),y(v)));g.lineTo(w,h);g.lineTo(0,h);g.closePath();g.fillStyle=gr;g.fill();
-  g.beginPath();pts.forEach((v,i)=>g[i?'lineTo':'moveTo'](x(i),y(v)));g.strokeStyle=col;g.lineWidth=big?2:1.5;g.lineJoin='round';g.stroke();
-  if(big){g.font='600 11px '+FONT_B;g.fillStyle='rgba(255,255,255,.6)';g.textBaseline='top';g.textAlign='right';g.fillText('高値 '+yen(hi),w-4,2);g.textBaseline='bottom';g.fillText('安値 '+yen(lo),w-4,h-2);
-    const d=stkLoad().h[s.id];if(d&&d.n){const avg=d.cost/d.n;if(avg>=lo&&avg<=hi){g.setLineDash([4,4]);g.strokeStyle='rgba(255,215,106,.8)';g.lineWidth=1;g.beginPath();g.moveTo(0,y(avg));g.lineTo(w,y(avg));g.stroke();g.setLineDash([]);g.textAlign='left';g.textBaseline='bottom';g.fillStyle='#ffd76a';g.fillText('買った値 '+yen(Math.round(avg)),4,y(avg)-2)}}}
+function openStock(){initAudio();stkSync().then(()=>{sxRun();if(!$('stock').hidden)sxRender()});SK.sel=null;SK.form=null;SK.msg='';const P=$('stock');P.hidden=false;P.scrollTop=0;sxRun();sxRender()}
+function sxTotals(){const a=sxAcct(),T=sxNowT();let gv=0,gc=0;[a.hold,a.nisa].forEach(b=>Object.entries(b).forEach(([id,h])=>{gv+=sxPx(sxById(id),T)*h.n;gc+=h.cost}));const e=sxMgEval(a,T);return {a,T,gv,gc,e,tot:coins()+gv+e.eq}}
+function renderStockCard(){try{const i=$('stockInfo');if(!i)return;const t=sxTotals();const has=t.gv||t.a.mg.pos.length||t.a.mg.dep;
+  const q=sxIdxAt(sxNowT()),b=sxIdxBase(sxDayOf(sxNowT()));
+  i.textContent=has?`株の資産 ${sxF(Math.round(t.gv+t.e.eq))} ・ 評価損益 ${sxS(Math.round(t.gv-t.gc+t.e.pl))}`:`黒鍵平均 ${q.toFixed(2)}（${sxS(Math.round((q-b)*100)/100)}）・ 本物そっくりの株取引`}catch(e){}}
+const sxCls=v=>v>0?'up':v<0?'dn':'';
+function sxBtn(txt,cls,fn){const b=el('button',cls||'',txt);b.addEventListener('click',fn);return b}
+function sxRender(){
+  const B=$('stkBody');if(!B)return;const keepY=$('stock').scrollTop;B.textContent='';
+  const T=sxNowT(),j=new Date(stkNow()+32400000);
+  const bar=el('div','sxBar');
+  const idx=sxIdxAt(T),ib=sxIdxBase(sxDayOf(T));
+  bar.append(el('span','',stkReady()?`${j.getUTCMonth()+1}/${j.getUTCDate()}（${sxWD(sxDayOf(T))}）${String(j.getUTCHours()).padStart(2,'0')}:${String(j.getUTCMinutes()).padStart(2,'0')}:${String(j.getUTCSeconds()).padStart(2,'0')} ・ 24時間取引中`:'⏳ サーバーの時刻を確かめています（そのあいだは注文できません）'),
+    el('b',sxCls(idx-ib),`黒鍵平均 ${idx.toFixed(2)} ${sxS(Math.round((idx-ib)*100)/100)}`));
+  B.appendChild(bar);
+  const tabs=el('div','sxTabs');[['market','マーケット'],['asset','資産'],['order','注文照会'],['hist','履歴']].forEach(([k,n])=>{
+    const open=k==='order'?sxAcct().ord.filter(o=>o.st==='open').length:0;
+    tabs.appendChild(sxBtn(n+(open?` (${open})`:''),k===SK.tab?'on':'',()=>{SK.tab=k;SK.sel=k==='market'?SK.sel:null;SK.form=null;SK.msg='';sxRender();$('stock').scrollTop=0}))});
+  B.appendChild(tabs);
+  if(SK.tab==='market'){SK.sel?sxDetail(B,sxById(SK.sel),T):sxMarket(B,T)}
+  else if(SK.tab==='asset')sxAssets(B,T);else if(SK.tab==='order')sxOrders(B,T);else sxHist(B);
+  $('stock').scrollTop=keepY;
 }
-const STK_RANGE={hour:['1時間',60,1],day:['1日',1440,10],week:['1週間',10080,60]};
-function renderStock(){
-  const B=$('stkBody');if(!B)return;B.textContent='';
-  const d=stkLoad(),m=stkMin(),val=stkVal(d),cost=stkCostIn(d);
-  const now=new Date(stkNow()),tm=`${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-  const sum=el('div','skSum');
-  [['持っているコイン',yen(coins())],['持ち株の値うち',yen(val)],['いまの損益',stkSign(Math.round(val-cost)),val-cost>0?'up':val-cost<0?'dn':''],['売って得た利益（合計）',stkSign(Math.round(d.pl)),d.pl>0?'up':d.pl<0?'dn':'']]
-    .forEach(([a,b,c])=>{const x=el('div','');x.append(el('small','',a),el('b',c||'',b));sum.appendChild(x)});
-  B.appendChild(sum);
-  const clk=el('p','skClock'+(stkReady()?'':' bad'));clk.id='skClock';
-  clk.textContent=stkReady()?`${tm} の株価 ・ 1分ごとに変わります（次の更新まで ${60-now.getSeconds()} 秒）`:'サーバーの時刻を確かめています…（確かめられるまで売り買いはできません）';
-  B.appendChild(clk);
-  if(SK.sel){renderStockDetail(B,STK.find(s=>s.id===SK.sel),d,m);return}
-  /* ニュース */
-  const nw=stkNews(4);
-  if(nw.length){const box=el('div','skNews');box.appendChild(el('b','','📰 黒鍵ニュース'));
-    nw.forEach(n=>{const r=el('button','skNewsRow');r.append(el('span','',`${n.s.icon} ${n.s.name}、${n.text}`),el('em',n.ch>0?'up':'dn',`${n.ch>0?'▲':'▼'}${Math.abs(n.ch).toFixed(1)}%`),el('small','',n.ago?`${n.ago}時間前`:'いま'));
-      r.addEventListener('click',()=>{SK.sel=n.s.id;SK.qty=1;SK.msg='';renderStock();$('stock').scrollTop=0});box.appendChild(r)});B.appendChild(box)}
-  /* 一覧 */
-  const L=el('div','skList');
-  STK.forEach(s=>{
-    const p=stkPrice(s,m),p0=stkPrice(s,m-1440),ch=stkPct(p,p0),own=d.h[s.id];
-    const r=el('button','skRow');
-    const nm=el('span','nm');nm.append(el('b','',`${s.icon} ${s.name}`),el('small','',own?`${own.n.toLocaleString()}株 持っている（${stkSign(Math.round(own.n*p-own.cost))}）`:s.id));
-    const cv=document.createElement('canvas');cv.className='sp';
-    const pr=el('span','pr');pr.append(el('b','',yen(p)),el('em',ch>0?'up':ch<0?'dn':'',`${ch>0?'▲':ch<0?'▼':''}${Math.abs(ch).toFixed(1)}%`));
-    r.append(nm,cv,pr);r.addEventListener('click',()=>{SK.sel=s.id;SK.qty=1;SK.msg='';renderStock();$('stock').scrollTop=0});L.appendChild(r);
-    requestAnimationFrame(()=>stkSpark(cv,s,1440,20,false));
+/* マーケット */
+function sxMarket(B,T){
+  const ic=document.createElement('canvas');ic.className='sxIdx';B.appendChild(ic);requestAnimationFrame(()=>sxLine(ic,i=>sxIdxAt(sxT0(sxDayOf(T))+i*30),Math.floor((T-sxT0(sxDayOf(T)))/30),sxIdxBase(sxDayOf(T)),'黒鍵平均（きょう）'));
+  const rk=el('div','sxRank');[['code','コード順'],['up','値上がり率'],['dn','値下がり率'],['vol','出来高'],['val','売買代金']].forEach(([k,n])=>rk.appendChild(sxBtn(n,k===SK.rank?'on':'',()=>{SK.rank=k;sxRender()})));B.appendChild(rk);
+  const rows=SX.map(s=>({s,q:sxQuote(s,T)})).map(x=>(x.q.val=x.q.vol*x.q.p,x));
+  const ord={code:()=>0,up:(a,b)=>b.q.pct-a.q.pct,dn:(a,b)=>a.q.pct-b.q.pct,vol:(a,b)=>b.q.vol-a.q.vol,val:(a,b)=>b.q.val-a.q.val}[SK.rank];rows.sort(ord);
+  const L=el('div','sxList'),a=sxAcct();
+  rows.forEach(({s,q})=>{
+    const r=el('button','sxRow');const nm=el('span','nm');
+    const own=(a.hold[s.id]?a.hold[s.id].n:0)+(a.nisa[s.id]?a.nisa[s.id].n:0),mg=a.mg.pos.filter(p=>p.sid===s.id).length;
+    nm.append(el('b','',`${s.icon} ${s.name}`),el('small','',`${s.code} ・ 出来高 ${sxF(q.vol)}${own?` ・ 保有 ${own}株`:''}${mg?' ・ 信用あり':''}`));
+    const pr=el('span','pr');pr.append(el('b','',sxF(q.p)),el('em',sxCls(q.chg),`${sxS(q.chg)}（${sxS(Math.round(q.pct*100)/100)}%）`));
+    if(q.sHigh)pr.appendChild(el('i','sh','ストップ高'));if(q.sLow)pr.appendChild(el('i','sl','ストップ安'));
+    r.append(nm,pr);r.addEventListener('click',()=>{SK.sel=s.id;SK.form=null;SK.msg='';sxRender();$('stock').scrollTop=0});L.appendChild(r);
   });
   B.appendChild(L);
-  B.appendChild(el('p','hint','株価は1分ごとに変わり、だれが見ても同じです。安いときに買って、高くなったら売るとコインが増えます。下がったときに売ると減ります。売り買いのたびに手数料が1%かかります。前日比は24時間前とくらべた値です。'));
+  /* ニュース */
+  const d=sxDayOf(T),k=T-sxT0(d),nw=[];
+  SX.forEach(s=>{for(let x=d;x>=d-2;x--){const D=sxDay(s,x);
+    if(D.e&&(x<d||k>=5400)){const g=D.e>0;nw.push([x*10+3,`${s.icon} ${s.name}が決算を発表（${sxMD(x)} 15:00）: ${g?'増益':'減益'}。1株利益 ${D.eps.toFixed(1)}（${sxS(Math.round(D.e*1000)/10)}%）`,g?'up':'dn'])}
+    if(x===d&&D.div)nw.push([x*10+1,`${s.icon} ${s.name}がきょう権利落ち（配当 ${D.div}）。基準値段は配当ぶん下がります`,''])}
+    const q=sxQuote(s,T);if(q.sHigh)nw.push([d*10+5,`${s.icon} ${s.name}がストップ高（${sxF(q.up)}）`,'up']);if(q.sLow)nw.push([d*10+5,`${s.icon} ${s.name}がストップ安（${sxF(q.dn)}）`,'dn'])});
+  const nb=el('div','sxNews');nb.appendChild(el('b','','📰 適時開示・ニュース'));
+  if(!nw.length)nb.appendChild(el('p','hint','きょうは大きなニュースはありません。'));
+  nw.sort((x,y)=>y[0]-x[0]).slice(0,8).forEach(([,t,c])=>nb.appendChild(el('p',c,t)));B.appendChild(nb);
+  B.appendChild(el('p','hint','値段は10秒ごとに動き、だれが見ても同じです。1日は日本時間の0:00〜24:00。前日比は基準値段（前日の終値。権利落ち日は配当ぶん引いた値段）とくらべます。売買単位は100株、手数料は0です。'));
 }
-function renderStockDetail(B,s,d,m){
-  const p=stkPrice(s,m),own=d.h[s.id]||{n:0,cost:0};
-  const hd=el('div','skHead');hd.append(el('span','ic',s.icon));const t=el('div','');t.append(el('b','',s.name),el('small','',`${s.id} ・ ${s.kind}`));hd.appendChild(t);B.appendChild(hd);
-  const rg=STK_RANGE[SK.range],p0=stkPrice(s,m-rg[1]),ch=stkPct(p,p0);
-  const pb=el('div','skPrice');pb.append(el('b','',yen(p)+' コイン'),el('em',ch>0?'up':ch<0?'dn':'',`${rg[0]}で ${ch>0?'▲':ch<0?'▼':''}${Math.abs(ch).toFixed(1)}%（${stkSign(p-p0)}）`));B.appendChild(pb);
-  const tabs=el('div','skTabs');Object.entries(STK_RANGE).forEach(([k,[n]])=>{const b=el('button',k===SK.range?'on':'',n);b.addEventListener('click',()=>{SK.range=k;renderStock()});tabs.appendChild(b)});B.appendChild(tabs);
-  const cv=document.createElement('canvas');cv.className='skChart';B.appendChild(cv);requestAnimationFrame(()=>stkSpark(cv,s,rg[1],rg[2],true));
-  /* 持ち株 */
-  const hold=el('div','skHold');
-  if(own.n){const avg=own.cost/own.n,v=own.n*p;[['持っている株',own.n.toLocaleString()+' 株'],['買った値（平均）',yen(Math.round(avg))],['いまの値うち',yen(v)],['損益',`${stkSign(Math.round(v-own.cost))}（${stkSign(stkPct(v,own.cost))}%）`,v>own.cost?'up':v<own.cost?'dn':'']].forEach(([a,b,c])=>{const x=el('div','');x.append(el('small','',a),el('b',c||'',b));hold.appendChild(x)})}
-  else hold.appendChild(el('p','hint','この会社の株は、まだ持っていません。'));
-  B.appendChild(hold);
-  /* 売り買い */
-  const tr=el('div','skTrade');
-  const maxBuy=Math.max(0,Math.floor(coins()/(p*(1+STK_FEE)+.0001)));
-  SK.qty=Math.max(1,Math.floor(SK.qty)||1);
-  const q=document.createElement('input');q.type='number';q.inputMode='numeric';q.min=1;q.step=1;q.value=SK.qty;q.setAttribute('aria-label','株の数');
-  const prev=el('p','skPrev');
-  const upd=()=>{SK.qty=Math.max(1,Math.floor(+q.value||1));const g=SK.qty*p,f=Math.max(1,Math.round(g*STK_FEE));prev.textContent=`${SK.qty.toLocaleString()}株 ・ 買うと ${yen(g+f)} コイン必要 ／ 売ると ${yen(Math.max(0,g-f))} コイン受け取り（手数料 ${yen(f)}）`;buy.disabled=!stkReady()||SK.qty>maxBuy;sell.disabled=!stkReady()||SK.qty>own.n};
-  const chips=el('div','skChips');[[1,'1'],[10,'10'],[100,'100'],['half','買える半分'],['max','買えるだけ'],['all','持ち株ぜんぶ']].forEach(([v,n])=>{const b=el('button','',n);
-    b.addEventListener('click',()=>{q.value=v==='max'?Math.max(1,maxBuy):v==='half'?Math.max(1,Math.floor(maxBuy/2)):v==='all'?Math.max(1,own.n):v;upd()});chips.appendChild(b)});
-  const bt=el('div','skBtns'),buy=el('button','buy','買う'),sell=el('button','sell','売る');
-  buy.addEventListener('click',()=>stkTrade(s,SK.qty,true));sell.addEventListener('click',()=>stkTrade(s,SK.qty,false));
-  q.addEventListener('input',upd);bt.append(buy,sell);
-  tr.append(el('label','','株の数'),q,chips,prev,bt);
-  const msg=el('p','skMsg'+(SK.bad?' bad':''),SK.msg||'');tr.appendChild(msg);
-  B.appendChild(tr);upd();
-  B.appendChild(el('p','hint',`買えるのは最大 ${maxBuy.toLocaleString()} 株（手数料こみ）。黄色の点線は、あなたが買った平均の値です。`));
+/* 線グラフ（指数） */
+function sxLine(cv,f,n,base,label){
+  const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const g=cv.getContext('2d');g.scale(r,r);
+  const pts=[];for(let i=0;i<=n;i++)pts.push(f(i));if(!pts.length)return;
+  const lo=Math.min(base,...pts),hi=Math.max(base,...pts),y=v=>8+(h-26)*(1-(hi===lo?.5:(v-lo)/(hi-lo))),x=i=>i/288*w;
+  g.strokeStyle='rgba(255,255,255,.18)';g.setLineDash([3,3]);g.beginPath();g.moveTo(0,y(base));g.lineTo(w,y(base));g.stroke();g.setLineDash([]);
+  const last=pts[pts.length-1],col=last>=base?'#ff6b6b':'#5eb0ff';
+  g.beginPath();pts.forEach((v,i)=>g[i?'lineTo':'moveTo'](x(i),y(v)));g.strokeStyle=col;g.lineWidth=1.6;g.stroke();
+  g.font='600 11px '+FONT_B;g.fillStyle='rgba(255,255,255,.65)';g.textBaseline='bottom';g.fillText(label+'  0時〜24時',4,h-2);
 }
-function stkTrade(s,n,isBuy){
-  SK.bad=false;
-  if(!stkReady()){SK.msg='サーバーの時刻を確かめられないので、いまは売り買いできません。電波を確かめてください。';SK.bad=true;stkSync();renderStock();return}
-  n=Math.floor(n);if(!(n>0))return;
-  const d=stkLoad(),p=stkPrice(s,stkMin()),g=n*p,f=Math.max(1,Math.round(g*STK_FEE)),own=d.h[s.id]||{n:0,cost:0};
-  if(isBuy){
-    if(coins()<g+f){SK.msg='コインが足りません';SK.bad=true;renderStock();return}
-    spend(g+f);own.n+=n;own.cost+=g+f;d.h[s.id]=own;stkSave(d);renderCoins();
-    SK.msg=`✅ ${s.name}を ${n.toLocaleString()}株 買いました（${yen(g+f)}コイン）`;[60,64,67].forEach((x,i)=>play(x,i*.04,.3));
-  }else{
-    if(own.n<n){SK.msg='持っている株より多くは売れません';SK.bad=true;renderStock();return}
-    const part=own.cost*n/own.n,get=Math.max(0,g-f),gain=get-part;
-    own.n-=n;own.cost-=part;if(own.n<=0)delete d.h[s.id];else d.h[s.id]=own;d.pl+=gain;stkSave(d);stkGain(get);
-    SK.msg=`${gain>=0?'🎉':'💧'} ${n.toLocaleString()}株 売って ${yen(get)}コイン受け取りました（${gain>=0?'もうけ':'損'} ${yen(Math.abs(Math.round(gain)))}コイン）`;
-    (gain>=0?[72,76,79,84]:[60,57,53]).forEach((x,i)=>play(x,i*.05,.32));
+/* ローソク足 */
+function sxCandles(cv,s,mode,T){
+  const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const g=cv.getContext('2d');g.scale(r,r);
+  const C=[];
+  if(mode==='d'){const d=sxDayOf(T);for(let x=Math.max(SX_D0,d-59);x<=d;x++){const o=x===d?sxOHLC(s,x,T-sxT0(x)):sxOHLC(s,x);C.push({...o,lab:sxMD(x)})}}
+  else{const span=mode==='1m'?6:30,n=mode==='1m'?90:96,cur=T-((T-sxT0(sxDayOf(T)))%span);
+    for(let i=n-1;i>=0;i--){const t0=cur-i*span;let o=0,hh=-1,l=1e15,c=0,v=0;
+      for(let t=t0;t<t0+span&&t<=T;t++){const d=sxDayOf(t),k=t-sxT0(d),S=sxSeries(s,d,k),p=S.p[k];if(t===t0)o=p;if(p>hh)hh=p;if(p<l)l=p;c=p;v+=S.v[k]}
+      const jj=new Date(t0*1e4+32400000);C.push({o,h:hh,l,c,v,lab:`${String(jj.getUTCHours()).padStart(2,'0')}:${String(jj.getUTCMinutes()).padStart(2,'0')}`})}}
+  const ma=n=>C.map((x,i)=>i<n-1?null:C.slice(i-n+1,i+1).reduce((a,y)=>a+y.c,0)/n);
+  const m5=ma(5),m25=ma(25);
+  const lo=Math.min(...C.map(x=>x.l)),hi=Math.max(...C.map(x=>x.h)),vmax=Math.max(...C.map(x=>x.v))||1;
+  const R=46,ph=h*.7,cw=(w-R)/C.length,y=v=>10+(ph-16)*(1-(hi===lo?.5:(v-lo)/(hi-lo)));
+  g.font='10px '+FONT_B;g.fillStyle='rgba(255,255,255,.5)';g.strokeStyle='rgba(255,255,255,.08)';g.lineWidth=1;
+  for(let i=0;i<=3;i++){const v=lo+(hi-lo)*i/3,yy=y(v);g.beginPath();g.moveTo(0,yy);g.lineTo(w-R,yy);g.stroke();g.textAlign='left';g.textBaseline='middle';g.fillText(sxF(Math.round(v*10)/10),w-R+4,yy)}
+  C.forEach((x,i)=>{const cx=i*cw+cw/2,up=x.c>=x.o,col=up?'#ff5a5a':'#4aa3ff';g.strokeStyle=col;g.fillStyle=col;
+    g.beginPath();g.moveTo(cx,y(x.h));g.lineTo(cx,y(x.l));g.stroke();const bw=Math.max(1,cw*.66),top=y(Math.max(x.o,x.c)),bh=Math.max(1,Math.abs(y(x.o)-y(x.c)));g.fillRect(cx-bw/2,top,bw,bh);
+    const vh=(h*.24)*x.v/vmax;g.globalAlpha=.5;g.fillRect(cx-bw/2,h-vh-12,bw,vh);g.globalAlpha=1});
+  [[m5,'#ffd76a'],[m25,'#c58aff']].forEach(([m,c])=>{g.strokeStyle=c;g.lineWidth=1.2;g.beginPath();let st=false;m.forEach((v,i)=>{if(v===null)return;const xx=i*cw+cw/2;st?g.lineTo(xx,y(v)):g.moveTo(xx,y(v));st=true});g.stroke()});
+  const last=C[C.length-1].c;g.setLineDash([3,3]);g.strokeStyle='rgba(255,255,255,.5)';g.beginPath();g.moveTo(0,y(last));g.lineTo(w-R,y(last));g.stroke();g.setLineDash([]);
+  g.fillStyle='rgba(255,255,255,.55)';g.textAlign='center';g.textBaseline='bottom';[0,Math.floor(C.length/2),C.length-1].forEach(i=>g.fillText(C[i].lab,Math.min(w-R-16,Math.max(16,i*cw+cw/2)),h));
+  g.textAlign='left';g.textBaseline='top';g.fillStyle='#ffd76a';g.fillText(mode==='d'?'5日線':'5本線',4,2);g.fillStyle='#c58aff';g.fillText(mode==='d'?'25日線':'25本線',44,2);g.fillStyle='rgba(255,255,255,.5)';g.fillText('出来高',4,h*.74);
+}
+/* 銘柄の詳細 */
+function sxDetail(B,s,T){
+  const q=sxQuote(s,T),a=sxAcct(),D=q.D;
+  B.appendChild(sxBtn('← 銘柄一覧','sxLink',()=>{SK.sel=null;SK.form=null;sxRender()}));
+  const hd=el('div','sxHead');hd.append(el('span','ic',s.icon));const ht=el('div','');ht.append(el('b','',s.name),el('small','',`${s.code} ・ 東証プライム（架空） ・ ${s.sector} ・ 貸借銘柄`));hd.appendChild(ht);B.appendChild(hd);
+  const pb=el('div','sxPrice');pb.append(el('b','',sxF(q.p)),el('em',sxCls(q.chg),`前日比 ${sxS(q.chg)}（${sxS(Math.round(q.pct*100)/100)}%）`));
+  if(q.sHigh)pb.appendChild(el('i','sh','ストップ高'));if(q.sLow)pb.appendChild(el('i','sl','ストップ安'));
+  if(D.e&&q.k>=5400)pb.appendChild(el('i','ev','決算発表あり'));if(D.div)pb.appendChild(el('i','ev','権利落ち'));
+  B.appendChild(pb);
+  const ct=el('div','sxTabs sm');[['1m','1分足'],['5m','5分足'],['d','日足']].forEach(([k,n])=>ct.appendChild(sxBtn(n,k===SK.chart?'on':'',()=>{SK.chart=k;sxRender()})));B.appendChild(ct);
+  const cv=document.createElement('canvas');cv.className='sxChart';B.appendChild(cv);requestAnimationFrame(()=>sxCandles(cv,s,SK.chart,T));
+  /* 指標 */
+  const st=el('div','sxStats');const ne=sxNextEarn(s,q.k>=5400?q.d+1:q.d);
+  [['始値',sxF(q.o.o)],['高値',sxF(q.o.h)],['安値',sxF(q.o.l)],['前日終値',sxF(D.pc)],['基準値段',sxF(D.b)],['値幅制限',`${sxF(q.dn)}〜${sxF(q.up)}`],
+   ['出来高',sxF(q.vol)+'株'],['売買代金',sxF(Math.round(q.vol*q.p/1e4)/100)+'百万'],['時価総額',sxF(Math.round(q.cap/1e8))+'億'],
+   ['PER（予想）',q.per?q.per.toFixed(1)+'倍':'—（赤字）'],['PBR',q.pbr.toFixed(2)+'倍'],['配当利回り',s.dps?q.yld.toFixed(2)+'%':'無配'],
+   ['1株配当（年）',s.dps?`${s.dps}（月 ${Math.round(s.dps/12*10)/10}）`:'0'],['売買単位','100株'],['呼値',sxTick(q.p)+'刻み'],
+   ['次の決算',`${sxMD(ne)}（${sxWD(ne)}）15:00`],['権利確定日','毎月末'],['株主優待',s.yuText]].forEach(([k,v])=>{const x=el('div','');x.append(el('small','',k),el('b','',v));st.appendChild(x)});
+  B.appendChild(st);
+  B.appendChild(el('p','hint',s.kind));
+  /* 板と歩み値 */
+  const bw=el('div','sxBW');
+  const bd=el('div','sxBoard');bd.appendChild(el('div','bh',''));bd.firstChild.innerHTML='<span>売数量</span><span>気配値</span><span>買数量</span>';
+  const t=sxTick(q.p),qty=(i,side)=>{const pp=side?q.p+t*i:q.p-t*(i-1);let v=Math.round((.25+sxHash(s.seed*3+T,i*2+side)*1.2)*s.v0/260/100)*100;if(pp%100===0)v*=3;if(i===1)v=Math.round(v*.5/100)*100||100;return v};
+  const row=(sq,px,bq,cur)=>{const r=el('div','br'+(cur?' cur':''));r.append(el('span','sq',sq),el('span','px',px),el('span','bq',bq));return r};
+  bd.appendChild(row('OVER','',''));
+  for(let i=8;i>=1;i--){const px=q.p+t*i;if(q.sHigh){bd.appendChild(row('','',''));continue}bd.appendChild(row(px>q.up?'':sxF(qty(i,1)),px>q.up?'':sxF(px),''))}
+  if(q.sHigh)bd.appendChild(row('',`特別買い気配 ${sxF(q.up)}`,sxF(Math.round(s.v0*.4/100)*100),true));
+  for(let i=1;i<=8;i++){const px=q.p-t*(i-1);if(q.sLow&&i===1){bd.appendChild(row(sxF(Math.round(s.v0*.4/100)*100),`特別売り気配 ${sxF(q.dn)}`,'',true));continue}if(q.sLow){bd.appendChild(row('','',''));continue}bd.appendChild(row('',px<q.dn?'':sxF(px),px<q.dn?'':sxF(qty(i,0)),i===1))}
+  bd.appendChild(row('','','UNDER'));
+  const tp=el('div','sxTape');tp.appendChild(el('div','bh',''));tp.firstChild.innerHTML='<span>時刻</span><span>約定値</span><span>出来高</span>';
+  for(let i=0;i<17;i++){const tt=T-i,d=sxDayOf(tt),k=tt-sxT0(d),S=sxSeries(s,d,k),p=S.p[k],pp=k?S.p[k-1]:sxDay(s,d).b,j=new Date(tt*1e4+32400000);
+    const r=el('div','br');r.append(el('span','',`${String(j.getUTCHours()).padStart(2,'0')}:${String(j.getUTCMinutes()).padStart(2,'0')}:${String(j.getUTCSeconds()).padStart(2,'0')}`),el('span',sxCls(p-pp),sxF(p)),el('span','',sxF(S.v[k])));tp.appendChild(r)}
+  bw.append(bd,tp);B.appendChild(bw);
+  /* 自分の持ち分 */
+  const mine=el('div','sxMine');const h=a.hold[s.id],nh=a.nisa[s.id],ps=a.mg.pos.filter(p=>p.sid===s.id);
+  if(h)mine.appendChild(el('p','',`特定口座 ${h.n.toLocaleString()}株 ・ 平均 ${sxF(Math.round(h.cost/h.n*10)/10)} ・ 損益 ${sxS(Math.round(q.p*h.n-h.cost))}`));
+  if(nh)mine.appendChild(el('p','',`NISA ${nh.n.toLocaleString()}株 ・ 平均 ${sxF(Math.round(nh.cost/nh.n*10)/10)} ・ 損益 ${sxS(Math.round(q.p*nh.n-nh.cost))}（非課税）`));
+  ps.forEach(p=>mine.appendChild(el('p','',`信用${p.side==='L'?'買建':'売建'} ${p.n.toLocaleString()}株 ・ 建値 ${sxF(p.px)} ・ 評価損益 ${sxS(Math.round((q.p-p.px)*p.n*(p.side==='L'?1:-1)))}`)));
+  if(mine.children.length){mine.prepend(el('b','','あなたの持ち分'));B.appendChild(mine)}
+  /* 注文 */
+  const ob=el('div','sxOrdBtns');[['buy','現物買','buy'],['sell','現物売','sell'],['mbuy','信用買','buy'],['msell','信用売','sell']].forEach(([act,n,c])=>ob.appendChild(sxBtn(n,c,()=>{SK.form={act,sid:s.id,acct:'tok',odd:false,n:act.startsWith('m')||!a.hold[s.id]?100:Math.min(100,(a.hold[s.id]||{n:100}).n),type:'lmt',px:q.p,exp:'day'};SK.msg='';sxRender();setTimeout(()=>{const f=document.querySelector('.sxForm');if(f)f.scrollIntoView({block:'start',behavior:'smooth'})},50)})));
+  B.appendChild(ob);
+  if(SK.form&&SK.form.sid===s.id)sxForm(B,s,q);
+}
+function sxForm(B,s,q){
+  const f=SK.form,a=sxAcct(),F=el('div','sxForm');
+  const isBuy=f.act==='buy'||f.act==='mbuy'||(f.act==='close'&&f.side==='S');
+  F.appendChild(el('b','',`${SX_ACT[f.act]} ・ ${s.name}`));
+  if(f.act==='buy'||f.act==='sell'){
+    const ac=el('div','sxSeg');[['tok','特定口座'],['nisa','NISA']].forEach(([k,n])=>ac.appendChild(sxBtn(n,f.acct===k?'on':'',()=>{f.acct=k;sxRender()})));F.append(el('label','','口座'),ac);
+    const od=el('label','check'),cb=document.createElement('input');cb.type='checkbox';cb.checked=!!f.odd;cb.addEventListener('change',()=>{f.odd=cb.checked;if(f.odd){f.type='mkt';if(f.n%100===0)f.n=1}else f.n=Math.max(100,Math.round(f.n/100)*100);sxRender()});
+    od.append(cb,document.createTextNode('単元未満株（1株から・成行のみ・手数料のかわりに0.22%）'));F.appendChild(od);
   }
-  renderStock();renderStockCard();
+  const step=f.odd?1:100;
+  const nr=el('div','sxNum'),ni=document.createElement('input');ni.type='number';ni.inputMode='numeric';ni.min=step;ni.step=step;ni.value=f.n;
+  ni.addEventListener('input',()=>{f.n=Math.floor(+ni.value||0);sum()});
+  nr.append(sxBtn('−'+step,'',()=>{f.n=Math.max(step,f.n-step);ni.value=f.n;sum()}),ni,sxBtn('+'+step,'',()=>{f.n+=step;ni.value=f.n;sum()}));
+  F.append(el('label','',`株数（${f.odd?'1株単位':'100株単位'}）`),nr);
+  if(f.act==='sell'){const h=(f.acct==='nisa'?a.nisa:a.hold)[s.id];F.appendChild(el('small','',`売れる株: ${h?h.n-sxLocked(a,s.id,f.acct):0}株`))}
+  if(!f.odd){
+    const ty=el('div','sxSeg');Object.entries(SX_TYPE).forEach(([k,n])=>ty.appendChild(sxBtn(n,f.type===k?'on':'',()=>{f.type=k;if(k!=='mkt'&&!f.px)f.px=q.p;sxRender()})));F.append(el('label','','執行条件'),ty);
+    if(f.type!=='mkt'){
+      const pr=el('div','sxNum'),pi=document.createElement('input');pi.type='number';pi.inputMode='decimal';pi.value=f.px;pi.addEventListener('input',()=>{f.px=+pi.value||0;sum()});
+      pr.append(sxBtn('−','',()=>{f.px=sxRound(f.px-sxTick(f.px-1));pi.value=f.px;sum()}),pi,sxBtn('＋','',()=>{f.px=sxRound(f.px+sxTick(f.px));pi.value=f.px;sum()}));
+      F.append(el('label','',f.type==='lmt'?`指値（${isBuy?'この値段以下で買う':'この値段以上で売る'}）`:`逆指値（${isBuy?'この値段以上になったら成行で買う':'この値段以下になったら成行で売る'}）`),pr,el('small','',`今日の値幅: ${sxF(q.dn)}〜${sxF(q.up)} ・ 呼値 ${sxTick(f.px||q.p)}`));
+    }
+    const ex=el('div','sxSeg');[['day','当日中'],['week','今週中'],['30','30日']].forEach(([k,n])=>ex.appendChild(sxBtn(n,f.exp===k?'on':'',()=>{f.exp=k;sxRender()})));
+    if(f.type!=='mkt')F.append(el('label','','有効期限'),ex);
+  }
+  const sm=el('p','sxSum');F.appendChild(sm);
+  const sum=()=>{const px=f.type==='mkt'||f.odd?(isBuy?q.p+sxTick(q.p):q.p):f.px,amt=Math.round(px*f.n*(f.odd?1+(isBuy?SX_ODD:-SX_ODD):1));
+    let t=`概算の約定代金 ${sxF(amt)} コイン（手数料 0）`;
+    if(f.act==='buy')t+=` ・ 買付余力 ${sxF(coins())}`;
+    if(f.act==='mbuy'||f.act==='msell')t+=` ・ 必要保証金 ${sxF(Math.ceil(amt*SX_IM))} ・ 余力 ${sxF(Math.max(0,Math.floor(sxMgFree(a,sxNowT()))))}`;
+    if(f.act==='sell'&&f.acct==='tok')t+=' ・ もうけには20.315%の税金（今年の損と相殺）';
+    if(f.acct==='nisa')t+=` ・ NISA年間枠の残り ${sxF(Math.max(0,SX_NISA_Y-a.ny.used-sxNisaPend(a)))}`;
+    sm.textContent=t};sum();
+  const go=sxBtn(`${SX_ACT[f.act]}の注文を出す`,isBuy?'go buy':'go sell',()=>{
+    const d=sxDayOf(sxNowT()),exp=f.type==='mkt'||f.odd?d:f.exp==='day'?d:f.exp==='week'?sxWeekEnd(d):d+29;
+    const err=sxPlace({sid:s.id,act:f.act,acct:f.act.startsWith('m')||f.act==='close'?'tok':f.acct,type:f.odd?'mkt':f.type,px:f.px,n:f.n,odd:!!f.odd,exp,pos:f.pos,side:f.side});
+    SK.bad=!!err;SK.msg=err||'✅ 注文を受け付けました（約定したかは「注文照会」と「履歴」で見られます）';if(!err)SK.form=null;sxRender();renderStockCard()});
+  F.appendChild(go);
+  F.appendChild(sxBtn('やめる','sxLink',()=>{SK.form=null;sxRender()}));
+  B.appendChild(F);
+  if(SK.msg)B.appendChild(el('p','sxMsg'+(SK.bad?' bad':''),SK.msg));
 }
-/* 1秒ごとに時計、分が変わったら画面を描き直す */
-let stkLastMin=-1;
+/* 資産 */
+function sxAssets(B,T){
+  const t=sxTotals(),a=t.a,e=t.e;
+  const sm=el('div','sxStats big');
+  [['総資産',sxF(Math.round(t.tot))],['コイン（買付余力）',sxF(coins())],['現物の評価額',sxF(Math.round(t.gv))],['現物の評価損益',sxS(Math.round(t.gv-t.gc)),sxCls(t.gv-t.gc)],
+   ['信用の保証金',sxF(Math.round(a.mg.dep))],['信用の評価損益',sxS(Math.round(e.pl)),sxCls(e.pl)]].forEach(([k,v,c])=>{const x=el('div','');x.append(el('small','',k),el('b',c||'',v));sm.appendChild(x)});
+  B.appendChild(sm);
+  if(SK.msg){B.appendChild(el('p','sxMsg'+(SK.bad?' bad':''),SK.msg))}
+  /* 現物 */
+  const g=el('div','sxSec');g.appendChild(el('b','','現物（特定口座・NISA）'));
+  let any=false;[['tok',a.hold],['nisa',a.nisa]].forEach(([k,box])=>Object.entries(box).forEach(([id,h])=>{any=true;const s=sxById(id),p=sxPx(s,T),v=p*h.n;
+    const r=el('button','sxHold');r.append(el('span','',`${s.icon} ${s.name}${k==='nisa'?' 〔NISA〕':''}`),el('small','',`${h.n.toLocaleString()}株 ・ 平均 ${sxF(Math.round(h.cost/h.n*10)/10)} → ${sxF(p)}`),el('em',sxCls(v-h.cost),`${sxS(Math.round(v-h.cost))}（${sxS(Math.round((v-h.cost)/h.cost*1000)/10)}%）`));
+    r.addEventListener('click',()=>{SK.tab='market';SK.sel=id;sxRender();$('stock').scrollTop=0});g.appendChild(r)}));
+  if(!any)g.appendChild(el('p','hint','まだ株を持っていません。「マーケット」から銘柄を選んで買えます。'));
+  B.appendChild(g);
+  /* 信用 */
+  const m=el('div','sxSec');m.appendChild(el('b','','信用取引'));
+  m.appendChild(el('p','',`保証金 ${sxF(Math.round(a.mg.dep))} ・ 建玉 ${sxF(Math.round(e.val))} ・ 維持率 ${e.val?(e.rate*100).toFixed(1)+'%':'—'} ・ 新規建余力 ${sxF(Math.max(0,Math.floor(sxMgFree(a,T)/SX_IM)))}`));
+  if(a.mg.call)m.appendChild(el('p','bad',`⚠ 追証が出ています。${sxMD(a.mg.call.due)} の24時までに維持率を30%に戻してください（めやす ${sxF(a.mg.call.amt)} の入金）。戻らないと全部の建玉が強制決済されます。`));
+  const dr=el('div','sxNum'),di=document.createElement('input');di.type='number';di.inputMode='numeric';di.placeholder='金額';di.value=SK.dep;di.addEventListener('input',()=>{SK.dep=di.value});
+  dr.append(di,sxBtn('入金','',()=>{const err=sxDeposit(SK.dep);SK.bad=!!err;SK.msg=err||'✅ 保証金に入金しました';if(!err)SK.dep='';sxRender()}),sxBtn('出金','',()=>{const err=sxWithdraw(SK.dep);SK.bad=!!err;SK.msg=err||'✅ 保証金から出金しました';if(!err)SK.dep='';sxRender()}));
+  m.append(dr,el('small','',`出金できる額 ${sxF(sxWithdrawable(a,T))} ・ 最低保証金 30万 ・ 委託保証金率 30% ・ 維持率20%未満で追証`));
+  a.mg.pos.forEach(p=>{const s=sxById(p.sid),px=sxPx(s,T),pl=(px-p.px)*p.n*(p.side==='L'?1:-1),cl=sxClosing(a,p.id);
+    const r=el('div','sxPos');r.append(el('b','',`${s.icon} ${s.name} ・ ${p.side==='L'?'買建':'売建'} ${p.n.toLocaleString()}株`),
+      el('small','',`建値 ${sxF(p.px)} → ${sxF(px)} ・ 建日 ${sxMD(p.d)} ・ 期日 ${sxMD(p.d+SX_TERM)} ・ 金利など ${sxF(Math.round(p.cost||0))}${cl?` ・ 返済注文中 ${cl}株`:''}`),el('em',sxCls(pl),sxS(Math.round(pl))));
+    const bt=el('div','sxRowBtns');
+    bt.append(sxBtn('成行で返済','',()=>{const err=sxPlace({sid:p.sid,act:'close',type:'mkt',n:p.n-cl,pos:p.id,exp:sxDayOf(sxNowT())});SK.bad=!!err;SK.msg=err||'✅ 返済の注文を出しました';sxRender()}),
+      sxBtn('指値で返済','',()=>{SK.tab='market';SK.sel=p.sid;SK.form={act:'close',sid:p.sid,pos:p.id,side:p.side,acct:'tok',n:p.n-cl,type:'lmt',px:px,exp:'day'};sxRender()}),
+      sxBtn(p.side==='L'?'現引':'現渡','',()=>{const err=sxDeliver(p.id);SK.bad=!!err;SK.msg=err||'✅ '+(p.side==='L'?'現引':'現渡')+'しました';sxRender()}));
+    r.appendChild(bt);m.appendChild(r)});
+  B.appendChild(m);
+  /* NISA と税金 */
+  const n=el('div','sxSec');n.appendChild(el('b','',`NISA（成長投資枠）と税金 ・ ${a.yr.y}年`));
+  n.appendChild(el('p','',`NISA 年間枠 ${sxF(Math.round(a.ny.used))} / ${sxF(SX_NISA_Y)} ・ 生涯枠 ${sxF(Math.round(sxNisaLife(a)))} / ${sxF(SX_NISA_L)}（売った枠は翌年に戻ります）`));
+  n.appendChild(el('p','',`特定口座の今年の損益 ${sxS(Math.round(a.yr.gain))}（うち配当 ${sxF(Math.round(a.yr.div))}） ・ 源泉徴収された税金 ${sxF(Math.round(a.yr.tax))}`));
+  n.appendChild(el('small','','税率 20.315%。今年の損と益は自動で相殺され、払いすぎた税金はすぐに戻ります。NISAの売買と配当は非課税です。'));
+  B.appendChild(n);
+}
+/* 注文照会 */
+function sxOrders(B,T){
+  const a=sxAcct(),open=a.ord.filter(o=>o.st==='open');
+  const o1=el('div','sxSec');o1.appendChild(el('b','',`出ている注文（${open.length}）`));
+  if(!open.length)o1.appendChild(el('p','hint','いま出ている注文はありません。'));
+  open.slice().reverse().forEach(o=>{const s=sxById(o.sid),r=el('div','sxPos');
+    r.append(el('b','',`${s.icon} ${s.name} ・ ${SX_ACT[o.act]}${o.acct==='nisa'?'（NISA）':''}${o.odd?'（単元未満）':''}`),
+      el('small','',`${o.n.toLocaleString()}株 ・ ${SX_TYPE[o.type]}${o.type!=='mkt'?' '+sxF(o.px):''} ・ ${o.exp===sxDayOf(T)?'当日中':sxMD(o.exp)+'まで'} ・ 注文 ${sxTime(o.T0)}${o.rsv?` ・ 預り ${sxF(o.rsv)}`:''}`),
+      el('em','',`いま ${sxF(sxPx(s,T))}`));
+    r.appendChild(sxBtn('取り消す','',()=>{sxCancel(o.id);sxRender()}));o1.appendChild(r)});
+  B.appendChild(o1);
+  const done=a.ord.filter(o=>o.st!=='open').slice(-20).reverse();
+  const o2=el('div','sxSec');o2.appendChild(el('b','','終わった注文（最近20件）'));
+  if(!done.length)o2.appendChild(el('p','hint','まだありません。'));
+  done.forEach(o=>{const s=sxById(o.sid);o2.appendChild(el('p','',`${sxTime(o.end||o.T0)} ${s.name} ${SX_ACT[o.act]} ${o.n}株 ${SX_TYPE[o.type]} → ${o.st==='done'?'約定 @'+sxF(o.fp):o.st==='cancel'?'取消':'失効'}`))});
+  B.appendChild(o2);
+}
+/* 履歴 */
+function sxHist(B){
+  const a=sxAcct(),L=el('div','sxSec');L.appendChild(el('b','','約定・配当・優待・追証などの履歴'));
+  if(!a.log.length)L.appendChild(el('p','hint','まだありません。'));
+  a.log.slice(-80).reverse().forEach(x=>L.appendChild(el('p','',`${sxTime(x.T)}  ${x.text}`)));B.appendChild(L);
+}
+/* 10秒ごとに値が動く。入力中は描き直さない */
+let sxLastT=-1;
 setInterval(()=>{try{
   if(Date.now()-STKT.at>10*60000&&!STKT.busy)stkSync();
-  const P=$('stock');if(!P||P.hidden||gameBusy())return;
-  const m=stkMin();if(m!==stkLastMin){stkLastMin=m;const y=P.scrollTop;renderStock();P.scrollTop=y;return}
-  const c=$('skClock');if(c&&stkReady()){const n=new Date(stkNow());c.textContent=`${n.getHours()}:${String(n.getMinutes()).padStart(2,'0')} の株価 ・ 1分ごとに変わります（次の更新まで ${60-n.getSeconds()} 秒）`;c.classList.remove('bad')}
+  if(!stkReady())return;const T=sxNowT();if(T===sxLastT)return;sxLastT=T;
+  if(gameBusy())return;sxRun();
+  const P=$('stock');if(!P||P.hidden)return;
+  const ae=document.activeElement;if(ae&&P.contains(ae)&&(ae.tagName==='INPUT'||ae.tagName==='TEXTAREA'))return;
+  sxRender();
 }catch(e){}},1000);
-setInterval(renderStockCard,60000);
-stkSync();renderStockCard();
+setInterval(()=>{if(!gameBusy())renderStockCard()},30000);
+stkSync().then(()=>{try{sxRun();renderStockCard()}catch(e){}});renderStockCard();
 
 
 /* ==================== 神の領域の先: 8つの部屋（星霧の間から続く道） ====================
