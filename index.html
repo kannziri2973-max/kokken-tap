@@ -12054,7 +12054,7 @@ function trClean(t){if(!t||typeof t!=='object')return null;const id=trS(t.id,24)
   const size=[4,8,16,32].includes(+t.size)?+t.size:8,R=Math.log2(size);
   const songs=(Array.isArray(t.songs)?t.songs:[]).slice(0,R).map(x=>typeof x==='string'&&/^[\w-]{1,40}$/.test(x)?x:'');while(songs.length<R)songs.push('');
   const pz=t.prize&&typeof t.prize==='object'?t.prize:{};const P=k=>Math.max(0,Math.min(1e7,Math.floor(num(pz[k]))));
-  return {id,name:trS(t.name,30)||'大会',desc:trS(t.desc,300),size,R,songs,start:num(t.start),entryEnd:num(t.entryEnd),roundH:Math.max(.25,Math.min(72,+t.roundH||24)),prize:{c1:P('c1'),c2:P('c2'),c4:P('c4'),cp:P('cp')},tag:t.tag!==false,draft:t.draft===true,t:num(t.t)}}
+  return {id,name:trS(t.name,30)||'大会',desc:trS(t.desc,300),size,R,songs,start:num(t.start),entryEnd:num(t.entryEnd),roundH:Math.max(.05,Math.min(72,+t.roundH||24)),prize:{c1:P('c1'),c2:P('c2'),c4:P('c4'),cp:P('cp')},tag:t.tag!==false,draft:t.draft===true,t:num(t.t)}}
 const trDl=(t,r)=>t.entryEnd+(r+1)*t.roundH*36e5;
 const trEnd=t=>trDl(t,t.R-1);
 const trPhase=t=>{const n=Date.now();return n<t.start?'soon':n<t.entryEnd?'entry':n<trEnd(t)?'play':'done'};
@@ -12188,8 +12188,8 @@ function renderTrnEdit(){
   const dt=(v,on)=>{const i=document.createElement('input');i.type='datetime-local';i.value=plDT(v);i.addEventListener('input',()=>on(i.value?new Date(i.value).getTime():0));return i};
   f.append(el('label','','エントリー開始'),dt(t.start,v=>t.start=v),el('label','','エントリー締め切り（ここから試合が始まります）'),dt(t.entryEnd,v=>{t.entryEnd=v;rh.textContent=sched()}));
   const rh=el('small','');const sched=()=>Array.from({length:Math.log2(t.size)},(_,r)=>`${trRoundName({R:Math.log2(t.size)},r)} 〜${fmtTime(t.entryEnd+(r+1)*t.roundH*36e5)}`).join(' ／ ');
-  const rl=document.createElement('select');[[1,'1時間'],[3,'3時間'],[6,'6時間'],[12,'12時間'],[24,'1日'],[48,'2日']].forEach(([v,n])=>{const o=document.createElement('option');o.value=v;o.textContent=n;rl.appendChild(o)});rl.value=t.roundH;rl.addEventListener('change',()=>{t.roundH=+rl.value;rh.textContent=sched()});
-  rh.textContent=sched();f.append(el('label','','1回戦ごとの時間'),rl,rh);
+  const TR_LEN=[[3,'3分'],[5,'5分'],[10,'10分'],[15,'15分'],[20,'20分'],[30,'30分'],[45,'45分'],[60,'1時間'],[90,'1時間30分'],[120,'2時間'],[180,'3時間'],[360,'6時間'],[720,'12時間'],[1440,'1日'],[2880,'2日']];const rl=document.createElement('select');TR_LEN.forEach(([v,n])=>{const o=document.createElement('option');o.value=v;o.textContent=n;rl.appendChild(o)});{const o=document.createElement('option');o.value='c';o.textContent='自分で決める（分で入れる）';rl.appendChild(o)}const curM=Math.round(t.roundH*60);rl.value=TR_LEN.some(x=>x[0]===curM)?String(curM):'c';const cm=document.createElement('input');cm.type='number';cm.inputMode='numeric';cm.min=3;cm.max=4320;cm.step=1;cm.value=curM;cm.placeholder='分（3〜4320）';cm.hidden=rl.value!=='c';cm.style.cssText='margin-top:6px;width:100%;box-sizing:border-box;min-height:42px;padding:6px 10px;font:inherit;font-size:16px';const setM=m=>{m=Math.max(3,Math.min(4320,Math.round(+m||0)));t.roundH=m/60;rh.textContent=sched()};rl.addEventListener('change',()=>{if(rl.value==='c'){cm.hidden=false;cm.value=Math.round(t.roundH*60);cm.focus()}else{cm.hidden=true;setM(+rl.value)}});cm.addEventListener('input',()=>{if(cm.value)setM(cm.value)});
+  rh.textContent=sched();f.append(el('label','','1回戦ごとの時間（この時間のうちに、その回戦の曲を1回弾きます）'),rl,cm,rh);
   const pool=SONGS.filter(x=>!x.audio&&!['mine','ugc'].includes(x.cat));
   t.songs.forEach((sid,r)=>{const s=document.createElement('select');const o0=document.createElement('option');o0.value='';o0.textContent='おまかせ（だんだん難しく）';s.appendChild(o0);
     pool.forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=`${x.name}（${x.by||''}）`;s.appendChild(o)});s.value=sid;s.addEventListener('change',()=>t.songs[r]=s.value);
