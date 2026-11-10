@@ -1569,6 +1569,82 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .sxPos>button{min-height:38px;background:#111a17;color:#e9f0ee;border:1px solid #26403a;font-weight:700}
 .sxRowBtns{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .sxRowBtns button{min-height:38px;background:#111a17;color:#e9f0ee;border:1px solid #26403a;font-weight:700;font-size:12.5px}
+.sxCap{font-size:12px;font-weight:700;color:#8aa39b;margin:2px 0 -6px;flex:none}
+.sxIdx{height:150px}
+.sxChart{height:300px;touch-action:pan-y}
+.sxIdx{touch-action:pan-y}
+.sxRow{grid-template-columns:minmax(0,1fr) 64px auto}
+.sxSpark{width:64px;height:34px;display:block}
+.sxCtl{display:flex;flex-direction:column;gap:6px;flex:none}
+.sxCtl .sxSeg button{min-height:36px;font-size:12.5px}
+.sxLeg{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:11.5px;color:#cfe0da;flex:none;margin-top:-4px}
+.sxLeg span{display:inline-flex;align-items:center;gap:4px}
+.sxLeg i{display:inline-block;width:14px;height:3px;background:#fff}
+.sxLeg i.r{background:#ff5a5a;height:8px}.sxLeg i.b{background:#3d9bff;height:8px}.sxLeg i.y{background:#ffd76a}.sxLeg i.p{background:#c58aff}
+.sxLeg i.d{background:repeating-linear-gradient(90deg,#fff 0 4px,transparent 4px 8px)}
+.sxStats>button{background:#0c1412;padding:7px 9px;display:flex;flex-direction:column;gap:2px;min-width:0;text-align:left;color:inherit}
+.sxStats>button.on{background:#143a2c}
+.sxHelp{margin:0;padding:10px 12px;background:#10241d;border:1px solid #2b5146;font-size:13px;line-height:1.7;color:#e9fff6;flex:none}
+.sxTutBanner{display:flex;flex-direction:column;gap:6px;padding:12px;background:linear-gradient(135deg,#123a2c,#0b1a14);border:1px solid #3fe0a0;flex:none}
+.sxTutBanner b{font-size:15px;color:#bfffe0}
+.sxTutBanner p{margin:0;font-size:12.5px;line-height:1.6;color:#cfe0da}
+.sxTutBanner .go{min-height:46px;font-size:15px}
+/* チュートリアル */
+#sxtut{background:#070a0c;color:#e9f0ee;gap:12px;z-index:7}
+#sxtut h1{color:#e9f0ee;font-size:20px}
+#sxtut .sound{background:#111a17;color:#e9f0ee;border:1px solid #26403a}
+.sxtProg{display:flex;align-items:center;gap:10px;font-size:12px;color:#8aa39b;flex:none}
+.sxtProg i{flex:1;height:6px;background:#1c302a}.sxtProg i b{display:block;height:100%;background:#3fe0a0}
+.sxtSel{min-height:40px;padding:6px 10px;background:#0c1412;color:#e9f0ee;border:1px solid #26403a;font:inherit;font-size:14px;flex:none}
+.sxtCard{background:#0c1412;border:1px solid #1c302a;padding:16px 14px;display:flex;flex-direction:column;gap:10px;flex:none}
+.sxtCard h2{margin:0;font-size:21px;color:#bfffe0;letter-spacing:.04em}
+.sxtBodyIn{display:flex;flex-direction:column;gap:12px;font-size:15px;line-height:1.85}
+.sxtBodyIn p{margin:0}
+.sxtBodyIn p.big{font-size:18px;font-weight:700}
+.sxtBodyIn ul,.sxtBodyIn ol{margin:0;padding-left:1.3em;display:flex;flex-direction:column;gap:6px}
+.sxtBodyIn .up,.sxtCard .up{color:#ff6464}.sxtBodyIn .dn,.sxtCard .dn{color:#4fa8ff}
+.sxtBodyIn .tx{padding:10px 12px;border-left:4px solid #3fe0a0;background:#10241d;font-size:14px;line-height:1.75}
+.sxtBodyIn .tx.warn{border-left-color:#ffb36a;background:#2a1d0c}
+.sxtBodyIn .tx.tip{border-left-color:#ffd76a;background:#221d0a}
+.sxtBodyIn .tx.big{font-size:16px;font-weight:700}
+.sxtBodyIn .dg{background:#070c0b;border:1px solid #1c302a;padding:12px;display:flex;flex-direction:column;gap:8px}
+.dg.comp{align-items:center;text-align:center}
+.dg.comp .co{display:flex;flex-direction:column;font-size:28px;line-height:1.2}.dg.comp .co b{font-size:15px}.dg.comp .co small{font-size:11px;color:#8aa39b}
+.dg.comp .arw{font-size:13px;color:#8aa39b}
+.dg.comp .sh{display:grid;grid-template-columns:repeat(8,18px);gap:4px;justify-content:center}.dg.comp .sh i{width:18px;height:18px;background:#ffd76a;border-radius:3px}.dg.comp .sh small{grid-column:1/-1;font-size:11px;color:#8aa39b}
+.dg.calc>div{display:flex;flex-direction:column;gap:1px}.dg.calc small{font-size:11px;color:#8aa39b}.dg.calc b{font-size:15px}.dg.calc em{font-style:normal;font-size:14px}
+.dg.calc .ar{font-size:12.5px;color:#cfe0da;text-align:center}
+.dg.calc .res{font-size:17px;font-weight:700;text-align:center;padding:6px;background:#10241d}
+.dg.calc .res.up{color:#ff8080;background:#2a1012}.dg.calc .res.dn{color:#7cc0ff;background:#0c1a2a}
+.dg.tug{flex-direction:row;align-items:center;justify-content:space-between;text-align:center;font-weight:700;font-size:14px}
+.dg.tug .b{color:#ff8080}.dg.tug .s{color:#7cc0ff}.dg.tug .vs{font-size:22px;color:#8aa39b}
+.dg.row{display:grid;grid-template-columns:minmax(0,1fr) 64px auto;align-items:center;gap:8px}
+.dg.row .l{display:flex;flex-direction:column}.dg.row .l small{font-size:11px;color:#8aa39b}.dg.row .r{display:flex;flex-direction:column;align-items:flex-end}.dg.row .r em{font-style:normal;font-size:12px;font-weight:700}
+.dg canvas.mini{width:64px;height:34px}
+.dg canvas.demo{width:100%;height:150px}
+.dg.candle svg{width:100%;max-width:340px;height:auto;align-self:center}
+.dg.board .bd{font-size:13px;font-variant-numeric:tabular-nums}
+.dg.board .bd>div{display:grid;grid-template-columns:1fr 1fr 1fr;text-align:center;padding:2px 0}
+.dg.board .bd .h{font-size:11px;color:#8aa39b;border-bottom:1px solid #1c302a}
+.dg.board .bd .c span:nth-child(2){background:#173a2e}
+.dg.board .s{color:#7cc0ff}.dg.board .b{color:#ff8080}
+.sxtBodyIn .lab li{line-height:1.7}
+.sxtBodyIn .steps li{padding-left:2px}
+.tb{width:100%;border-collapse:collapse;font-size:14px}
+.tb th,.tb td{border:1px solid #1c302a;padding:8px;vertical-align:top;text-align:left;line-height:1.6}
+.tb th{white-space:nowrap;background:#10241d;font-size:14px}.tb th small{display:block;font-size:10.5px;color:#8aa39b;font-weight:500}
+.tb.sm{font-size:12.5px}.tb.sm th{font-size:12.5px;white-space:normal}
+.gl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 10px;font-size:13.5px;line-height:1.6}
+.gl dt{font-weight:700;color:#bfffe0}.gl dd{margin:0;color:#cfe0da}
+.sxtNav{display:grid;grid-template-columns:1fr 2fr;gap:8px;flex:none;position:sticky;bottom:0;background:#070a0c;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0px))}
+.sxtNav button{min-height:50px;font-size:16px;font-weight:700}
+.sxq{display:flex;flex-direction:column;gap:6px;padding:10px 0;border-top:1px solid #1c302a}
+.sxq>b{font-size:15px;line-height:1.6}
+.sxq button{min-height:44px;text-align:left;padding:8px 12px;background:#0a1110;border:1px solid #26403a;color:#e9f0ee;font-size:14px}
+.sxq button.ok{background:#14402e;border-color:#3fe0a0}.sxq button.ng{background:#3a1416;border-color:#ff6b6b}
+.sxq p{margin:0;font-size:13px;line-height:1.6}.sxq p.ok{color:#7dffcf}.sxq p.ng{color:#ffb3b3}
+.sxtCard p.win{margin:0;padding:10px;background:#14402e;color:#bfffe0;font-weight:700}
+.sxtCard p.ng{margin:0;color:#ffb3b3}
 /* ===== 神の領域の先の部屋 ===== */
 .rz{background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.15) 55%,rgba(0,0,0,.42)),var(--scene) center/cover no-repeat,#05050a}
 #rz_zero{background:linear-gradient(rgba(255,250,235,.25),rgba(255,250,235,0) 55%,rgba(20,17,10,.35)),var(--scene) center/cover no-repeat,#f6f2e6}
@@ -1579,6 +1655,34 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .rzConds li.ok{color:var(--s-gold)}
 .rzConds span:last-child{font-variant-numeric:tabular-nums}
 .rzEnd{text-align:center;font-family:var(--mystic);font-size:14px;line-height:1.9;color:#14110a;max-width:30em}
+/* ===== 武勇伝 ===== */
+.bragCard{flex:none;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;align-items:center;text-align:left;padding:12px 14px;color:#fff6dc;border:1px solid #8a6a1c;background:radial-gradient(120% 140% at 100% 0%,#5a3d06 0%,#2a1a04 50%,#0b0805 100%);box-shadow:inset 0 1px 0 rgba(255,220,140,.15)}
+.bragCard .bI{grid-row:1/3;font-size:28px;filter:drop-shadow(0 0 8px rgba(255,200,80,.6))}
+.bragCard b{font-family:var(--display);font-weight:400;font-size:18px;letter-spacing:.08em;color:#ffd76a}
+.bragCard small{font-size:12px;color:#e8c98a;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#brag{background:radial-gradient(120% 420px at 50% -80px,#3a2a06 0%,rgba(58,42,6,0) 70%),#0b0805;color:#fff6dc;gap:12px}
+#brag h1{color:#ffd76a}
+#brag .sound{background:#1a130a;color:#fff6dc;border:1px solid #4a3a1a}
+#brag .hint{color:#c9b48a;font-size:12px;line-height:1.7;margin:0}
+#brag .check{font-size:13px;color:#fff6dc}
+.bgTabs{display:flex;gap:6px;overflow-x:auto;flex:none;scrollbar-width:none}
+.bgTabs button{flex:none;min-height:38px;padding:4px 14px;background:#1a130a;color:#c9b48a;border:1px solid #4a3a1a;font-weight:700;font-size:13px}
+.bgTabs button.on{color:#1a1200;background:#ffd76a;border-color:#ffd76a}
+.bgList{display:flex;flex-direction:column;gap:8px;flex:none}
+.bgRow{display:flex;flex-direction:column;gap:4px;background:#160f08;border:1px solid #3a2c12;border-left:4px solid #6a5420;padding:10px 12px}
+.bgRow.win{border-left-color:#ff5a5a}
+.bgRow.lose{border-left-color:#4aa3ff}
+.bgRow.me{background:#21170a;border-color:#8a6a1c}
+.bgWho{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.bgWho b{font-size:14px}
+.bgWho small{margin-left:auto;font-size:11px;color:#c9b48a}
+.bgWho .rk{min-width:22px;height:22px;display:grid;place-items:center;font-size:12px;font-weight:700;background:#ffd76a;color:#1a1200}
+.bgRow p{margin:0;font-size:13.5px;line-height:1.6}
+.bgRow em{font-style:normal;font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+.bgRow.win em{color:#ff6b6b}
+.bgRow.lose em{color:#5eb0ff}
+.bgSep{margin-top:8px;font-size:13px;font-weight:700;color:#ffd76a}
+.bgEmpty{margin:0;padding:14px;background:#160f08;border:1px solid #3a2c12;font-size:13px;color:#c9b48a}
 /* カジノチップを買うボタン */
 .chipBuy{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chipBuy button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border:1px solid #c9a227;background:rgba(255,215,106,.1);color:inherit;font-weight:700}
@@ -9439,7 +9543,7 @@ const gameBusy=()=>!!(G&&['ready','play','countdown','failing','paused'].include
 setInterval(()=>{try{if(gameBusy()&&cloud.unsub&&cloud.rows){try{cloud.unsub()}catch(e){}cloud.unsub=null;cloud.feedPaused=true}
   else if(!gameBusy()&&cloud.feedPaused&&cloud.db&&!cloud.unsub){openRankFeed()}}catch(e){}},700);
 /* ---------- 版の番号と、古い版のままの端末を自動で新しくする（Web版） ---------- */
-const APP_VER='105';
+const APP_VER='107';
 {const m=$('menu');if(m){const v=document.createElement('small');v.id='appVer';v.style.cssText='flex:none;display:block;text-align:center;font-size:11px;color:#9a9db0;padding:8px 0 16px';v.textContent='黒鍵タップ 版 '+APP_VER+(window.KOKKEN_WEB?'（Web版）':'');m.appendChild(v)}}
 function verCheck(){if(!window.KOKKEN_WEB||gameBusy())return;try{fetch(location.pathname+'?vc='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.text():'').then(t=>{const m=/APP_VER='(\d+)'/.exec(t||'');if(!m||+m[1]<=+APP_VER)return;
   const k='kokken:verReload';let last=0;try{last=+sessionStorage.getItem(k)||0}catch(e){}if(Date.now()-last<60e3)return;try{sessionStorage.setItem(k,String(Date.now()))}catch(e){}
@@ -10700,6 +10804,84 @@ function sxNextEarn(s,d){for(let x=d;x<d+8;x++)if(sxDate(x).getUTCDay()===s.ew)r
 const sxMD=d=>{const t=sxDate(d);return `${t.getUTCMonth()+1}/${t.getUTCDate()}`};
 const sxWD=d=>'日月火水木金土'[sxDate(d).getUTCDay()];
 
+/* ---------- グラフ（見やすく） ----------
+   期間: 1時間（1分ごと）/ 今日（10分ごと）/ 5日（1時間ごと）/ 1か月・3か月（1日ごと）
+   表示: 折れ線（はじめての人向け）/ ローソク足
+   指でなぞる（マウスを乗せる）と、その時の値段が上に出る */
+const SX_PER={h1:{name:'1時間',span:6,n:60,unit:'1分'},today:{name:'今日',span:60,unit:'10分'},d5:{name:'5日',span:360,n:120,unit:'1時間'},m1:{name:'1か月',days:30,unit:'1日'},m3:{name:'3か月',days:90,unit:'1日'}};
+const sxHM=T=>{const j=new Date(T*1e4+32400000);return `${String(j.getUTCHours()).padStart(2,'0')}:${String(j.getUTCMinutes()).padStart(2,'0')}`};
+const sxMDHM=T=>{const j=new Date(T*1e4+32400000);return `${j.getUTCMonth()+1}/${j.getUTCDate()} ${String(j.getUTCHours()).padStart(2,'0')}:${String(j.getUTCMinutes()).padStart(2,'0')}`};
+function sxAgg(f,t0,t1){let o=0,h=-1,l=1e15,c=0,v=0;for(let t=t0;t<=t1;t++){const r=f(t);if(t===t0)o=r[0];if(r[0]>h)h=r[0];if(r[0]<l)l=r[0];c=r[0];v+=r[1]}return {o,h,l,c,v}}
+function sxData(s,per,T){
+  const P=SX_PER[per],d=sxDayOf(T),C=[];
+  if(P.days){for(let x=Math.max(SX_D0,d-P.days+1);x<=d;x++){const o=x===d?sxOHLC(s,x,T-sxT0(x)):sxOHLC(s,x);C.push({...o,lab:sxMD(x),tip:`${sxMD(x)}（${sxWD(x)}）`})}
+    return {C,base:C.length?sxDay(s,C[0].d).b:s.p0,baseLab:'期間のはじめ',unit:P.unit}}
+  const f=t=>{const dd=sxDayOf(t),k=t-sxT0(dd),S=sxSeries(s,dd,k);return [S.p[k],S.v[k]]};
+  let start;
+  if(per==='today')start=sxT0(d);else{const cur=T-((T-sxT0(d))%P.span);start=cur-(P.n-1)*P.span}
+  for(let t0=start;t0<=T;t0+=P.span){const o=sxAgg(f,t0,Math.min(T,t0+P.span-1));C.push({...o,lab:per==='d5'?sxMD(sxDayOf(t0))+' '+sxHM(t0).slice(0,2)+'時':sxHM(t0),tip:per==='d5'?sxMDHM(t0):sxHM(t0)})}
+  return {C,base:per==='d5'?(C.length?C[0].o:s.p0):sxDay(s,d).b,baseLab:per==='d5'?'期間のはじめ':'前日終値（基準値段）',unit:P.unit};
+}
+function sxIdxData(T){const d=sxDayOf(T),t0=sxT0(d),C=[];for(let t=t0;t<=T;t+=60){const v=sxIdxAt(t);C.push({o:v,h:v,l:v,c:v,v:0,lab:sxHM(t),tip:sxHM(t)})}return {C,base:sxIdxBase(d),baseLab:'前日の終わり',unit:'10分',idx:1}}
+function sxChartDraw(cv,o,hi){
+  const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;if(!w||!h)return;
+  if(cv.width!==Math.round(w*r)){cv.width=Math.round(w*r);cv.height=Math.round(h*r)}
+  const g=cv.getContext('2d');g.setTransform(r,0,0,r,0,0);g.clearRect(0,0,w,h);
+  const C=o.C;if(!C.length)return;
+  const fmt=v=>sxF(o.idx?Math.round(v*100)/100:Math.round(v));
+  const vol=!o.idx,R=58,TOP=o.small?6:34,BOT=o.small?6:22,ph=vol?(h-TOP-BOT)*.74:(h-TOP-BOT),vy0=TOP+ph+8,vh=vol?h-BOT-vy0:0;
+  let lo=Math.min(o.base,...C.map(x=>o.type==='line'?x.c:x.l)),hi2=Math.max(o.base,...C.map(x=>o.type==='line'?x.c:x.h));
+  const pad=(hi2-lo)*.08||Math.max(1,hi2*.01);lo-=pad;hi2+=pad;
+  const W=w-(o.small?0:R),cw=W/C.length,X=i=>i*cw+cw/2,Y=v=>TOP+ph*(1-(v-lo)/(hi2-lo));
+  const last=C[C.length-1].c,up=last>=o.base,col=up?'#ff5a5a':'#3d9bff';
+  if(!o.small){
+    /* 目もり */
+    g.font=`600 11px ${FONT_B}`;g.textBaseline='middle';g.textAlign='left';
+    for(let i=0;i<=4;i++){const v=lo+(hi2-lo)*(i+.5)/5,y=Y(v);g.strokeStyle='rgba(255,255,255,.07)';g.lineWidth=1;g.beginPath();g.moveTo(0,y);g.lineTo(W,y);g.stroke();g.fillStyle='rgba(255,255,255,.55)';g.fillText(fmt(v),W+6,y)}
+    g.textAlign='center';g.textBaseline='bottom';g.fillStyle='rgba(255,255,255,.55)';
+    const lab=[0,Math.round((C.length-1)/3),Math.round((C.length-1)*2/3),C.length-1].filter((v,i,a)=>a.indexOf(v)===i);
+    lab.forEach(i=>{const x=Math.min(W-22,Math.max(22,X(i)));g.fillText(C[i].lab,x,h-4);g.strokeStyle='rgba(255,255,255,.05)';g.beginPath();g.moveTo(X(i),TOP);g.lineTo(X(i),TOP+ph);g.stroke()});
+  }
+  /* 基準の線 */
+  const by=Y(o.base);g.setLineDash([4,4]);g.strokeStyle='rgba(255,255,255,.4)';g.lineWidth=1;g.beginPath();g.moveTo(0,by);g.lineTo(W,by);g.stroke();g.setLineDash([]);
+  if(!o.small){g.font=`600 10.5px ${FONT_B}`;g.fillStyle='rgba(255,255,255,.6)';g.textAlign='left';g.textBaseline=by>TOP+14?'bottom':'top';g.fillText(`${o.baseLab} ${fmt(o.base)}`,4,by+(by>TOP+14?-2:2))}
+  if(o.type==='line'||o.small){
+    const gr=g.createLinearGradient(0,TOP,0,TOP+ph);gr.addColorStop(0,up?'rgba(255,90,90,.32)':'rgba(61,155,255,.32)');gr.addColorStop(1,'rgba(0,0,0,0)');
+    g.beginPath();C.forEach((x,i)=>g[i?'lineTo':'moveTo'](X(i),Y(x.c)));g.lineTo(X(C.length-1),TOP+ph);g.lineTo(X(0),TOP+ph);g.closePath();g.fillStyle=gr;g.fill();
+    g.beginPath();C.forEach((x,i)=>g[i?'lineTo':'moveTo'](X(i),Y(x.c)));g.strokeStyle=col;g.lineWidth=o.small?1.5:2.2;g.lineJoin='round';g.stroke();
+    if(!o.small){g.fillStyle=col;g.beginPath();g.arc(X(C.length-1),Y(last),3.5,0,7);g.fill()}
+  }else{
+    C.forEach((x,i)=>{const u=x.c>=x.o,c=u?'#ff5a5a':'#3d9bff',cx=X(i),bw=Math.max(1.5,Math.min(14,cw*.68));
+      g.strokeStyle=c;g.lineWidth=1;g.beginPath();g.moveTo(cx,Y(x.h));g.lineTo(cx,Y(x.l));g.stroke();
+      const t=Y(Math.max(x.o,x.c)),bh=Math.max(1.5,Math.abs(Y(x.o)-Y(x.c)));g.fillStyle=c;g.fillRect(cx-bw/2,t,bw,bh)});
+    const ma=(n,c)=>{if(C.length<n)return;g.strokeStyle=c;g.lineWidth=1.4;g.beginPath();let st=false;for(let i=n-1;i<C.length;i++){let a=0;for(let j=i-n+1;j<=i;j++)a+=C[j].c;const y=Y(a/n);st?g.lineTo(X(i),y):g.moveTo(X(i),y);st=true}g.stroke()};
+    ma(5,'#ffd76a');ma(25,'#c58aff');
+  }
+  /* 出来高 */
+  if(vol&&!o.small){const vm=Math.max(...C.map(x=>x.v))||1;C.forEach((x,i)=>{const bh=vh*x.v/vm,bw=Math.max(1,Math.min(14,cw*.68));g.fillStyle=x.c>=x.o?'rgba(255,90,90,.45)':'rgba(61,155,255,.45)';g.fillRect(X(i)-bw/2,vy0+vh-bh,bw,bh)});
+    g.font=`600 10px ${FONT_B}`;g.fillStyle='rgba(255,255,255,.45)';g.textAlign='left';g.textBaseline='top';g.fillText('出来高',3,vy0)}
+  /* 今の値段の札 */
+  if(!o.small){const y=Math.min(TOP+ph-8,Math.max(TOP+8,Y(last)));g.fillStyle=col;g.fillRect(W+2,y-9,R-4,18);g.fillStyle='#fff';g.font=`700 11px ${FONT_B}`;g.textAlign='left';g.textBaseline='middle';g.fillText(fmt(last),W+6,y)}
+  /* なぞったところ */
+  if(!o.small){
+    const i=hi==null?C.length-1:hi,x=C[i],chg=x.c-o.base;
+    if(hi!=null){g.strokeStyle='rgba(255,255,255,.55)';g.lineWidth=1;g.beginPath();g.moveTo(X(i),TOP);g.lineTo(X(i),TOP+ph+(vol?vh+8:0));g.stroke();g.beginPath();g.moveTo(0,Y(x.c));g.lineTo(W,Y(x.c));g.stroke();g.fillStyle='#fff';g.beginPath();g.arc(X(i),Y(x.c),4,0,7);g.fill()}
+    g.fillStyle='rgba(8,12,12,.9)';g.fillRect(0,0,w,TOP-6);
+    g.font=`700 12px ${FONT_B}`;g.textBaseline='middle';g.textAlign='left';g.fillStyle='#fff';
+    const f=v=>fmt(v);
+    const txt=o.type==='line'||o.idx?`${x.tip}  ${f(x.c)}`:`${x.tip}  始${f(x.o)} 高${f(x.h)} 安${f(x.l)} 終${f(x.c)}`;
+    g.fillText(txt,4,(TOP-6)/2);
+    g.textAlign='right';g.fillStyle=chg>=0?'#ff8080':'#7cc0ff';g.fillText(`${chg>=0?'+':'−'}${f(Math.abs(chg))}（${chg>=0?'+':'−'}${Math.abs(chg/o.base*100).toFixed(2)}%）`,w-4,(TOP-6)/2);
+  }
+}
+function sxChartMount(cv,o){
+  let hi=null;const draw=()=>sxChartDraw(cv,o,hi);
+  const at=e=>{const rc=cv.getBoundingClientRect(),W=rc.width-58,i=Math.floor((e.clientX-rc.left)/(W/o.C.length));hi=Math.max(0,Math.min(o.C.length-1,i));draw()};
+  cv.addEventListener('pointerdown',e=>{at(e)});cv.addEventListener('pointermove',e=>{if(e.pointerType==='mouse'||e.buttons||e.pressure>0)at(e)});
+  cv.addEventListener('pointerleave',()=>{hi=null;draw()});cv.addEventListener('pointerup',e=>{if(e.pointerType!=='mouse'){hi=null;setTimeout(draw,1600)}});
+  requestAnimationFrame(draw);
+}
+
 /* ---------- 口座・注文・約定 ---------- */
 const SX_MIN_DEP=300000,SX_IM=.3,SX_MM=.2,SX_RATE_L=.028,SX_RATE_S=.0115,SX_NISA_Y=2400000,SX_NISA_L=12000000,SX_ODD=.0022,SX_TERM=180;
 const sxYear=d=>sxDate(d).getUTCFullYear();
@@ -10878,8 +11060,157 @@ function sxDeliver(pid){
 function sxDeposit(n){n=Math.floor(+n||0);if(!(n>0))return '金額を入れてください';if(coins()<n)return 'コインが足りません';sxRun();const a=sxAcct();spend(n);renderCoins();a.mg.dep+=n;if(a.mg.call){const e=sxMgEval(a,sxNowT());if(e.rate>=SX_IM){a.mg.call=null;sxLog(a,sxNowT(),'追証が解消しました')}}sxLog(a,sxNowT(),`保証金に入金 ${sxF(n)}`);sxSave();return ''}
 function sxWithdraw(n){n=Math.floor(+n||0);if(!(n>0))return '金額を入れてください';sxRun();const a=sxAcct(),w=sxWithdrawable(a,sxNowT());if(n>w)return `出金できるのは ${sxF(w)} までです`;a.mg.dep-=n;sxGive(n);sxLog(a,sxNowT(),`保証金から出金 ${sxF(n)}`);sxSave();return ''}
 
+/* ---------- はじめての株（チュートリアル） ----------
+   19ページ。図とゲームの中の数字で説明して、最後に確認クイズ。全問正解で入門ボーナス（1回だけ）。 */
+const SXT_BONUS=10000;
+const sxBox=(cls,html)=>`<div class="tx ${cls}">${html}</div>`;
+const SXT=[
+ {t:'はじめに',h:`<p class="big">株（かぶ）がはじめてでも、だいじょうぶ。</p>
+  <p>このチュートリアルを読めば、<b>黒鍵証券取引所</b>で株を買ったり売ったりできるようになります。</p>
+  ${sxBox('ok','✅ ここで使うのは<b>ゲームのコインだけ</b>です。本物のお金は1円も使いません。安心してためしてください。')}
+  <p>こんなことがわかります。</p>
+  <ul><li>株ってなに？ どうしてもうかるの？</li><li>グラフの読みかた（折れ線・ローソク足）</li><li>注文の出しかた（成行・指値・逆指値）</li><li>配当・株主優待・税金・NISA</li><li>信用取引のこわさ</li></ul>
+  <p>最後の<b>確認クイズ</b>に全部正解すると、<b>入門ボーナス ${SXT_BONUS.toLocaleString()}コイン</b>がもらえます（1回だけ）。</p>`},
+ {t:'株ってなに？',h:`<p><b>株</b>は、会社の「小さなかけら」です。</p>
+  <div class="dg comp"><div class="co">🎹<b>黒鍵ピアノ製作所</b><small>（会社）</small></div><div class="arw">→ 5,000万こに分ける →</div><div class="sh">${'<i></i>'.repeat(24)}<small>1こ＝1株</small></div></div>
+  <p>株を持っている人は<b>株主（かぶぬし）</b>とよばれて、その会社を少しだけ持っていることになります。</p>
+  <p>会社がもうかって人気が出ると、「その株がほしい！」という人がふえて、株の値段（<b>株価</b>）が上がります。</p>
+  ${sxBox('tip','💡 このゲームの会社は8社。どれもゲームの中だけの、架空の会社です。')}`},
+ {t:'どうやってもうかるの？',h:`<p>しくみはかんたん。<b>安いときに買って、高くなったら売る</b>。その差がもうけになります。</p>
+  <div class="dg calc"><div><small>買う</small><b>1株 1,000コイン × 100株</b><em>= 100,000コイン はらう</em></div><div class="ar">↓ 株価が上がった！</div><div><small>売る</small><b>1株 1,200コイン × 100株</b><em class="up">= 120,000コイン もらう</em></div><div class="res up">もうけ +20,000コイン 🎉</div></div>
+  <p>でも、株価は<b>下がることもあります</b>。</p>
+  <div class="dg calc"><div><small>買う</small><b>1株 1,000コイン × 100株</b><em>= 100,000コイン</em></div><div class="ar">↓ 株価が下がった…</div><div><small>売る</small><b>1株 800コイン × 100株</b><em class="dn">= 80,000コイン</em></div><div class="res dn">損 −20,000コイン 💧</div></div>
+  ${sxBox('warn','⚠ 下がっても、売らなければ損は決まりません。上がるまで待つこともできます。でも、ずっと上がらないこともあります。')}`},
+ {t:'株価はどうして動くの？',h:`<p>株価は「<b>買いたい人</b>」と「<b>売りたい人</b>」のつなひきで決まります。</p>
+  <div class="dg tug"><span class="b">買いたい人が多い<br>⬆ 上がる</span><span class="vs">⇄</span><span class="s">売りたい人が多い<br>⬇ 下がる</span></div>
+  <p>どんなときに動くの？</p>
+  <ul><li><b>決算（けっさん）</b>… 会社の成績発表。もうかっていれば上がりやすく、悪いと下がりやすい</li><li><b>ニュース</b>… 新しい商品がヒットした、など</li><li><b>なんとなくの気分</b>… 理由がなくても、少しずつ上下します</li></ul>
+  ${sxBox('tip','💡 このゲームでは株価が<b>10秒ごと</b>に動きます。値段は<b>だれが見ても同じ</b>で、24時間いつでも売り買いできます。')}`},
+ {t:'銘柄一覧の見かた',h:`<p>取引所の「マーケット」には、8社の株（<b>銘柄（めいがら）</b>）がならんでいます。</p>
+  <div class="dg row"><div class="l"><b>🎹 黒鍵ピアノ製作所</b><small>881K ・ 出来高 1,405,600</small></div><canvas class="mini" data-demo="up"></canvas><div class="r"><b>1,013</b><em class="up">+13（+1.3%）</em></div></div>
+  <ul class="lab"><li><b>1,013</b> … いまの値段（<b>現在値</b>）。1株あたりのコイン</li><li><b class="up">+13（+1.3%）</b> … <b>前日比</b>。きのうの終わりの値段とくらべてどれだけ動いたか</li><li><b class="up">赤</b>は上がった、<b class="dn">青</b>は下がった</li><li>まん中の小さなグラフは、きょうの値動き</li><li><b>出来高</b> … きょう売り買いされた株の数。多いほど注目されている</li></ul>
+  ${sxBox('tip','💡 上の「値上がり率」「値下がり率」ボタンで、よく動いている順にならべかえられます。')}`},
+ {t:'グラフの見かた（折れ線）',h:`<p>銘柄をおすと、くわしい画面とグラフが出ます。まずは<b>折れ線</b>から。</p>
+  <div class="dg"><canvas class="demo" data-demo="line"></canvas></div>
+  <ul class="lab"><li><b>右に行くほど新しい</b>（いちばん右が、いま）</li><li><b>上に行くほど高い</b>値段</li><li><b>点線</b>は、きのうの終わりの値段（前日終値）。線より上なら、きのうより上がっている</li><li>右はしの色つきの札が、いまの値段</li></ul>
+  <p>上のボタンで<b>期間</b>をえらべます：1時間 ／ 今日 ／ 5日 ／ 1か月 ／ 3か月。</p>
+  ${sxBox('ok','👆 グラフを<b>指でなぞる</b>と、そのときの時間と値段が上に出ます。')}`},
+ {t:'ローソク足ってなに？',h:`<p>「ローソク足」に切りかえると、1本のローソクで<b>4つの値段</b>がわかります。</p>
+  <div class="dg candle">
+   <svg viewBox="0 0 300 190" aria-label="ローソク足の図"><line x1="70" y1="20" x2="70" y2="170" stroke="#ff5a5a" stroke-width="2"/><rect x="50" y="55" width="40" height="80" fill="#ff5a5a"/>
+   <line x1="210" y1="20" x2="210" y2="170" stroke="#3d9bff" stroke-width="2"/><rect x="190" y="55" width="40" height="80" fill="#3d9bff"/>
+   <g font-size="11" fill="#e9f0ee"><text x="95" y="24">高値（いちばん高い）</text><text x="95" y="59">終値（おわり）</text><text x="95" y="139">始値（はじまり）</text><text x="95" y="174">安値（いちばん安い）</text>
+   <text x="236" y="59">始値</text><text x="236" y="139">終値</text></g>
+   <text x="70" y="188" font-size="12" fill="#ff8080" text-anchor="middle">赤＝上がった</text><text x="210" y="188" font-size="12" fill="#7cc0ff" text-anchor="middle">青＝下がった</text></svg></div>
+  <ul class="lab"><li><b>太いところ</b>（実体）… はじまりの値段とおわりの値段のあいだ</li><li><b>細い線</b>（ひげ）… そのあいだにいちばん高く・安くなったところ</li><li><b class="up">赤</b>は、はじまりより<b>上がって</b>おわった ／ <b class="dn">青</b>は<b>下がって</b>おわった</li></ul>
+  ${sxBox('tip','💡 「今日」なら1本が10分、「1か月」なら1本が1日ぶんです。')}`},
+ {t:'出来高と平均線',h:`<p>グラフの下の<b>棒</b>が<b>出来高</b>（売り買いされた株の数）です。棒が高いところは、たくさんの人が売り買いした「もり上がった時間」です。</p>
+  <p>ローソク足にすると、<b>2本の線</b>も出ます。</p>
+  <ul class="lab"><li><b style="color:#ffd76a">黄色の線</b> … 最近5本の平均の値段</li><li><b style="color:#c58aff">むらさきの線</b> … 最近25本の平均の値段</li></ul>
+  <p>線が<b>右上がり</b>なら上がり調子、<b>右下がり</b>なら下がり調子のめやすになります。</p>
+  ${sxBox('warn','⚠ 平均線は「これまで」の動き。これからどうなるかは、だれにもわかりません。')}`},
+ {t:'買ってみよう',h:`<p>じっさいの手順です。</p>
+  <ol class="steps"><li>「マーケット」で<b>銘柄をおす</b></li><li>下の<b class="up">「現物買」</b>をおす（現物＝ふつうの株）</li><li><b>株数</b>をきめる（100株ずつ）</li><li><b>執行条件</b>で「成行」をえらぶ（いますぐ買う）</li><li><b>「現物買の注文を出す」</b>をおす</li></ol>
+  <p>買えると「履歴」に<b>約定（やくじょう）</b>と出ます。約定＝売り買いが成立したこと。</p>
+  <p>売るときは、同じように<b class="dn">「現物売」</b>をおします。</p>
+  ${sxBox('tip','💡 株は<b>100株ずつ</b>しか買えません（<b>単元株</b>）。1株 1,000コインなら、100株で 100,000コイン。<br>コインが足りないときは「<b>単元未満株</b>」にチェックすると、<b>1株から</b>買えます（すぐ買う成行だけ、値段に0.22%上乗せ）。')}`},
+ {t:'注文の3つの出しかた',h:`<table class="tb"><tr><th>成行<small>なりゆき</small></th><td>値段を決めずに<b>いますぐ</b>売り買い。かんたん。<br><small>買うときは、いまの値段より少しだけ高くなることがある</small></td></tr>
+  <tr><th>指値<small>さしね</small></th><td>値段を決めて<b>待つ</b>。<br>例：「950コインまで下がったら買う」「1,200コインまで上がったら売る」</td></tr>
+  <tr><th>逆指値<small>ぎゃくさしね</small></th><td>「ここまで来たら、すぐ売り買い」の予約。<br>例：「<b>900コインを下回ったら売る</b>」→ これ以上損をしないための<b>損切り</b>に使う</td></tr></table>
+  <p>指値と逆指値には<b>有効期限</b>があります：当日中 ／ 今週中 ／ 30日。期限までに条件にならなかった注文は、なくなります（コインは戻ります）。</p>
+  ${sxBox('ok','✅ ゲームを閉じているあいだに条件になった注文も、ちゃんと<b>その時刻・その値段</b>で約定します。「注文照会」で出している注文を見たり、取り消したりできます。')}`},
+ {t:'板と歩み値',h:`<p>くわしい画面の下のほうにある表です。</p>
+  <div class="dg board"><div class="bd"><div class="h"><span>売りたい数</span><span>値段</span><span>買いたい数</span></div><div><span class="s">3,800</span><span>1,016</span><span></span></div><div><span class="s">4,000</span><span>1,015</span><span></span></div><div><span class="s">2,200</span><span>1,014</span><span></span></div><div class="c"><span></span><span>1,013</span><span class="b">2,000</span></div><div><span></span><span>1,012</span><span class="b">4,600</span></div><div><span></span><span>1,011</span><span class="b">5,500</span></div></div></div>
+  <ul class="lab"><li><b>板（いた）</b>… 売りたい人と買いたい人の「行列」。上の<b class="dn">青い数字</b>は「この値段なら売るよ」、下の<b class="up">赤い数字</b>は「この値段なら買うよ」という株の数</li><li>成行で買うと、いちばん安い売り（この例では 1,014）で買えます</li><li><b>歩み値（あゆみね）</b>… じっさいに売り買いされた時刻・値段・株数の記録</li></ul>`},
+ {t:'ストップ高・ストップ安',h:`<p>株価が1日に動ける幅には<b>限界</b>があります（<b>値幅制限</b>）。</p>
+  <div class="dg calc"><div><small>きのうの終わり</small><b>1,000コイン</b></div><div class="ar">1日に動けるのは ±150コインまで（この値段のとき）</div><div><small>上の限界</small><b class="up">1,150 ＝ ストップ高</b></div><div><small>下の限界</small><b class="dn">850 ＝ ストップ安</b></div></div>
+  <ul class="lab"><li><b>ストップ高</b>のあいだは、買いたい人ばかりで<b>買えません</b></li><li><b>ストップ安</b>のあいだは、売りたい人ばかりで<b>売れません</b></li></ul>
+  <p>幅は値段によってちがいます。くわしい画面の「値幅制限」で、きょうの上と下が見られます。</p>`},
+ {t:'配当と株主優待',h:`<p>株を<b>持っているだけ</b>でもらえるものがあります。</p>
+  <ul class="lab"><li><b>配当（はいとう）</b>… 会社のもうけの一部が、コインで配られる</li><li><b>株主優待（ゆうたい）</b>… 100株以上持っている人へのプレゼント</li></ul>
+  <p>このゲームでは<b>毎月の最後の日（24時）</b>に持っている人がもらえます（<b>権利確定日</b>）。</p>
+  <table class="tb sm">${SX.map(s=>`<tr><th>${s.icon} ${s.name}</th><td>${s.yuText.replace('100株以上: ','')}</td></tr>`).join('')}</table>
+  ${sxBox('warn','⚠ 次の日（<b>権利落ち日</b>）は、配当のぶんだけ株価が下がってスタートします。「もらってすぐ売る」だけでは、あまりもうかりません。')}`},
+ {t:'決算とニュース',h:`<p>どの会社も<b>週に1回、15:00</b>に<b>決算</b>（成績発表）をします。</p>
+  <ul class="lab"><li>成績がよい（増益）→ 上がりやすい</li><li>成績がわるい（減益）→ 下がりやすい</li></ul>
+  <p>発表のしゅんかんに、株価が<b>大きく動く</b>ことがあります。ストップ高やストップ安になることも。</p>
+  <p>次の決算の日は、くわしい画面の「次の決算」に出ています。結果は「マーケット」の<b>ニュース</b>にのります。</p>
+  ${sxBox('tip','💡 決算の前に買うのは「かけ」。当たれば大きいけど、はずれると大きく下がります。')}`},
+ {t:'税金とNISA',h:`<p>本物と同じで、株のもうけには<b>税金</b>がかかります。</p>
+  <div class="dg calc"><div><small>特定口座（ふつう）</small><b>もうけ 20,000コイン</b><em>税金 20.315% ＝ 4,063コイン</em></div><div class="res">手もとに 15,937コイン</div></div>
+  <ul class="lab"><li>税金は自動ではらわれます。あとで損をしたら、その年の税金から<b>自動で戻ります</b></li><li><b>NISA（ニーサ）</b>で買った株は、もうけも配当も<b>税金0</b>！</li><li>NISAは1年に240万コインぶんまで、合計1,200万コインまで</li></ul>
+  ${sxBox('ok','✅ 買うときに「口座」で<b>NISA</b>をえらぶだけ。のんびり長く持つならNISAがおトクです。')}`},
+ {t:'信用取引（上級者向け）',h:`${sxBox('warn big','⚠ はじめてのうちは、やらないのがおすすめです。')}
+  <p><b>信用取引</b>は、あずけたコイン（<b>保証金</b>）の<b>約3.3倍</b>まで売り買いできるしくみです。</p>
+  <ul class="lab"><li><b>信用買い</b>… 上がると思ったら。もうけも損も約3.3倍</li><li><b>空売り（からうり）</b>… 下がると思ったら。<b>下がるともうかる</b>ふしぎな取引</li><li>持っているあいだ、毎日<b>金利</b>がかかる</li><li>損がふくらむと<b>追証（おいしょう）</b>… コインを足さないと<b>強制決済</b>（むりやり売られる）</li></ul>
+  <p>保証金は<b>30万コイン以上</b>いります。「資産」から入金します。</p>`},
+ {t:'じょうずになるコツ',h:`<ol class="steps"><li><b>少しずつ買う</b>… 一度に全部のコインを使わない</li><li><b>損切りを決めておく</b>… 「ここまで下がったら売る」を逆指値で予約</li><li><b>値動きのちがいを知る</b>… 調律ホールディングスはおだやか、第零番レコードや黒鍵カジノは<b>大当たりも大損も</b></li><li><b>配当・優待でのんびり</b>… 長く持つならNISAで</li><li><b>あせらない</b>… 下がったときにあわてて売ると、損が決まってしまう</li></ol>
+  ${sxBox('tip','💡 大勝ち・大負けは「🏆 武勇伝」にのって、みんなに見られます。')}`},
+ {t:'ことばの辞典',h:`<dl class="gl">${[['株価','株1つの値段'],['銘柄','売り買いできる会社の株のこと'],['現在値','いまの株価'],['前日比','きのうの終わりの値段とのちがい'],['始値・高値・安値・終値','その日（その時間）のはじまり・いちばん高い・いちばん安い・おわりの値段'],['出来高','売り買いされた株の数'],['売買代金','売り買いされたお金の合計'],['約定','注文が成立すること'],['単元株','売り買いの単位。100株ずつ'],['成行・指値・逆指値','注文の出しかた（いますぐ／値段を決めて待つ／ここまで来たら）'],['板','売りたい人・買いたい人の行列'],['ストップ高・安','1日に動ける限界まで上がった・下がった状態'],['配当','もうけの一部がもらえるもの'],['株主優待','株主へのプレゼント'],['権利確定日','配当・優待をもらえる人が決まる日（毎月末）'],['権利落ち','権利確定日の次の日。配当のぶん値段が下がる'],['PER','株価が1株あたりのもうけの何倍か。小さいほど割安といわれる'],['PBR','株価が会社の持ち物（1株あたり）の何倍か。1倍より小さいと割安といわれる'],['配当利回り','株価に対して、1年でもらえる配当の割合'],['時価総額','株価×株の数。会社の大きさ'],['損切り','損が小さいうちに売ってしまうこと'],['信用取引・空売り','保証金の約3.3倍まで取引するしくみ。空売りは下がるともうかる'],['追証・強制決済','損がふくらんだときの追加のコイン。足りないとむりやり決済される'],['NISA','税金がかからない口座']].map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`},
+ {t:'確認クイズ',quiz:1},
+];
+const SXQ=[
+ {q:'株を「安いときに買って、高くなったら売る」と、どうなる？',o:['もうかる','損をする','なにも変わらない'],a:0,e:'買った値段より高く売れば、その差がもうけになります。'},
+ {q:'ローソク足が「赤」のとき、その時間の値段は？',o:['はじまりより上がっておわった','はじまりより下がっておわった','動かなかった'],a:0,e:'赤は上がった、青は下がった、です。'},
+ {q:'「950コインまで下がったら買いたい」。どの注文？',o:['成行','指値','単元未満株'],a:1,e:'値段を決めて待つのが指値です。'},
+ {q:'このゲームで、ふつうに株を買えるのは何株ずつ？',o:['1株ずつ','10株ずつ','100株ずつ'],a:2,e:'売買単位は100株（単元株）。1株から買いたいときは単元未満株にします。'},
+ {q:'NISAで買った株を売ってもうけが出たとき、税金は？',o:['20.315%かかる','かからない','もうけが全部なくなる'],a:1,e:'NISAはもうけも配当も非課税です。'},
+];
+const SXTS={p:0,ans:[],done:false};
+(function(){
+  const P=document.createElement('section');P.id='sxtut';P.className='screen panel';P.hidden=true;
+  P.innerHTML='<div class="toprow"><h1>📘 はじめての株</h1><button class="sound" id="sxtClose">取引所へ戻る</button></div><div id="sxtBody"></div>';
+  $('stage').appendChild(P);$('sxtClose').addEventListener('click',()=>{P.hidden=true;store.set('sxTutPage',SXTS.p);try{sxRender()}catch(e){}});
+})();
+function openTut(page){SXTS.p=page!=null?page:Math.min(SXT.length-1,Math.max(0,Math.floor(num(store.get('sxTutPage',0)))));SXTS.ans=[];SXTS.done=false;const P=$('sxtut');P.hidden=false;renderTut()}
+function sxDemo(cv,kind){
+  const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;if(!w)return;cv.width=w*r;cv.height=h*r;const g=cv.getContext('2d');g.scale(r,r);
+  const pts=[];let v=1000;for(let i=0;i<60;i++){v+=Math.sin(i*.37)*6+Math.cos(i*.13)*4+(kind==='up'?.9:.5);pts.push(v)}
+  const base=1000,lo=Math.min(base,...pts)-8,hi=Math.max(base,...pts)+8,Y=x=>6+(h-12)*(1-(x-lo)/(hi-lo)),X=i=>i/(pts.length-1)*(w-(kind==='line'?50:0));
+  g.setLineDash([4,4]);g.strokeStyle='rgba(255,255,255,.45)';g.beginPath();g.moveTo(0,Y(base));g.lineTo(w,Y(base));g.stroke();g.setLineDash([]);
+  g.beginPath();pts.forEach((p,i)=>g[i?'lineTo':'moveTo'](X(i),Y(p)));g.strokeStyle='#ff5a5a';g.lineWidth=2;g.stroke();
+  if(kind==='line'){const y=Y(pts[pts.length-1]);g.fillStyle='#ff5a5a';g.fillRect(w-48,y-9,46,18);g.fillStyle='#fff';g.font='700 11px '+FONT_B;g.textBaseline='middle';g.fillText(Math.round(pts[pts.length-1]).toLocaleString(),w-44,y);
+    g.fillStyle='rgba(255,255,255,.6)';g.font='600 10.5px '+FONT_B;g.textBaseline='bottom';g.fillText('前日終値 1,000',4,Y(base)-2);g.textBaseline='top';g.fillText('← むかし',4,h-14);g.textAlign='right';g.fillText('いま →',w-54,h-14)}
+}
+function renderTut(){
+  const B=$('sxtBody');B.textContent='';const pg=SXT[SXTS.p],n=SXT.length;
+  const pr=el('div','sxtProg');pr.append(el('span','',`${SXTS.p+1} / ${n}`));const bar=el('i');const f=el('b');f.style.width=((SXTS.p+1)/n*100)+'%';bar.appendChild(f);pr.appendChild(bar);B.appendChild(pr);
+  const sel=document.createElement('select');sel.className='sxtSel';sel.setAttribute('aria-label','ページをえらぶ');SXT.forEach((x,i)=>{const o=document.createElement('option');o.value=i;o.textContent=`${i+1}. ${x.t}`;sel.appendChild(o)});sel.value=SXTS.p;
+  sel.addEventListener('change',()=>{SXTS.p=+sel.value;store.set('sxTutPage',SXTS.p);renderTut();$('sxtut').scrollTop=0});B.appendChild(sel);
+  const card=el('div','sxtCard');card.appendChild(el('h2','',pg.t));
+  if(pg.quiz)sxQuiz(card);else{const body=el('div','sxtBodyIn');body.innerHTML=pg.h;card.appendChild(body)}
+  B.appendChild(card);
+  requestAnimationFrame(()=>card.querySelectorAll('canvas[data-demo]').forEach(c=>sxDemo(c,c.dataset.demo)));
+  const nav=el('div','sxtNav');
+  const bk=el('button','sound','← もどる');bk.disabled=SXTS.p===0;bk.addEventListener('click',()=>{SXTS.p--;store.set('sxTutPage',SXTS.p);renderTut();$('sxtut').scrollTop=0});
+  const nx=el('button','go buy',SXTS.p===n-1?'取引所へ':'つぎへ →');nx.addEventListener('click',()=>{if(SXTS.p===n-1){$('sxtut').hidden=true;try{sxRender()}catch(e){}return}SXTS.p++;store.set('sxTutPage',SXTS.p);play(72,0,.12);renderTut();$('sxtut').scrollTop=0});
+  nav.append(bk,nx);B.appendChild(nav);
+}
+function sxQuiz(card){
+  const got=giftUsed().includes('sxtut');
+  card.appendChild(el('p','',got?'もう入門ボーナスは受け取っています。復習にどうぞ。':`5問ぜんぶ正解すると、入門ボーナス ${SXT_BONUS.toLocaleString()}コイン！ まちがえても、何回でもやり直せます。`));
+  SXQ.forEach((q,i)=>{const b=el('div','sxq');b.appendChild(el('b','',`Q${i+1}. ${q.q}`));
+    q.o.forEach((o,j)=>{const a=SXTS.ans[i],btn=el('button',a==null?'':j===q.a?'ok':j===a?'ng':'',o);btn.disabled=a!=null;btn.addEventListener('click',()=>{SXTS.ans[i]=j;play(j===q.a?76:48,0,.2);renderTut()});b.appendChild(btn)});
+    if(SXTS.ans[i]!=null)b.appendChild(el('p',SXTS.ans[i]===q.a?'ok':'ng',(SXTS.ans[i]===q.a?'⭕ 正解！ ':'❌ ざんねん。 ')+q.e));
+    card.appendChild(b)});
+  const doneN=SXTS.ans.filter(x=>x!=null).length,ok=SXQ.every((q,i)=>SXTS.ans[i]===q.a);
+  if(doneN===SXQ.length){
+    if(ok){store.set('sxTutDone',true);
+      if(!got){applyGift('sxtut',{coins:SXT_BONUS,tk:{},items:[],from:{kind:'u',name:'黒鍵証券取引所'}});card.appendChild(el('p','win',`🎉 全問正解！ 入門ボーナス ${SXT_BONUS.toLocaleString()}コインを受け取りました。さっそく株を買ってみよう！`))}
+      else card.appendChild(el('p','win','🎉 全問正解！'))}
+    else{const r=el('button','sound','もう一度ちょうせんする');r.addEventListener('click',()=>{SXTS.ans=[];renderTut()});card.append(el('p','ng',`${SXQ.filter((q,i)=>SXTS.ans[i]===q.a).length}問正解。全問正解をめざそう！`),r)}
+  }
+}
+/* 用語を押したときの説明 */
+const SX_HELP={'始値':'その日（0:00）のはじまりの値段','高値':'その日いちばん高かった値段','安値':'その日いちばん安かった値段','前日終値':'きのうの終わり（24:00）の値段',
+ '基準値段':'前日比や値幅制限のもとになる値段。ふつうは前日終値。配当の権利落ち日は、配当のぶんを引いた値段','値幅制限':'きょう動ける範囲。上の限界がストップ高（買えなくなる）、下の限界がストップ安（売れなくなる）',
+ '出来高':'きょう売り買いされた株の数。多いほど注目されている','売買代金':'きょう売り買いされたコインの合計（百万＝100万）','時価総額':'株価 × 株の数。会社の大きさのめやす',
+ 'PER（予想）':'株価が「1株あたりのもうけ」の何倍か。小さいほど割安といわれる。赤字だと出ない','PBR':'株価が「1株あたりの会社の持ち物」の何倍か。1倍より小さいと割安といわれる',
+ '配当利回り':'いまの株価で買ったとき、1年でもらえる配当の割合','1株配当（年）':'1株持っていると1年でもらえる配当。毎月12分の1ずつ（月末に持っている人）','売買単位':'100株ずつしか売り買いできない（単元株）。1株からは単元未満株で',
+ '呼値':'値段の刻み。3,000コイン以下なら1コインずつ、それより高いと5コイン・10コインずつ','次の決算':'会社の成績発表の日時。株価が大きく動きやすい','権利確定日':'この日の24時に株を持っている人が、配当と株主優待をもらえる','株主優待':'100株以上（現物）を月末に持っている人へのプレゼント'};
+
 /* ---------- 画面 ---------- */
-const SK={tab:'market',sel:null,rank:'code',chart:'5m',form:null,msg:'',bad:false,dep:'',wd:''};
+const SK={tab:'market',sel:null,rank:'code',per:'today',ctype:store.get('sxCtype','line')==='candle'?'candle':'line',help:'',form:null,msg:'',bad:false,dep:'',wd:''};
 (function(){
   const P=document.createElement('section');P.id='stock';P.className='screen panel';P.hidden=true;
   P.innerHTML='<div class="toprow"><h1>📈 黒鍵証券取引所</h1><button class="sound" id="stkBack">メニューに戻る</button></div><div id="stkBody"></div>';
@@ -10915,7 +11246,10 @@ function sxRender(){
 }
 /* マーケット */
 function sxMarket(B,T){
-  const ic=document.createElement('canvas');ic.className='sxIdx';B.appendChild(ic);requestAnimationFrame(()=>sxLine(ic,i=>sxIdxAt(sxT0(sxDayOf(T))+i*30),Math.floor((T-sxT0(sxDayOf(T)))/30),sxIdxBase(sxDayOf(T)),'黒鍵平均（きょう）'));
+  if(!store.get('sxTutDone',false)){const tb=el('div','sxTutBanner');tb.append(el('b','','📘 株がはじめての人へ'),el('p','',`株のしくみ・グラフの見かた・注文の出しかたを、図でやさしく説明します。最後のクイズに全問正解すると ${SXT_BONUS.toLocaleString()}コイン！`));tb.appendChild(sxBtn('チュートリアルを読む','go buy',()=>openTut()));B.appendChild(tb)}
+  else B.appendChild(sxBtn('📘 はじめての株（チュートリアル）をもう一度読む','sxLink',()=>openTut()));
+  B.appendChild(el('div','sxCap','黒鍵平均（8社の平均の動き）・ きょう'));
+  const ic=document.createElement('canvas');ic.className='sxIdx';B.appendChild(ic);sxChartMount(ic,{...sxIdxData(T),type:'line',idx:1});
   const rk=el('div','sxRank');[['code','コード順'],['up','値上がり率'],['dn','値下がり率'],['vol','出来高'],['val','売買代金']].forEach(([k,n])=>rk.appendChild(sxBtn(n,k===SK.rank?'on':'',()=>{SK.rank=k;sxRender()})));B.appendChild(rk);
   const rows=SX.map(s=>({s,q:sxQuote(s,T)})).map(x=>(x.q.val=x.q.vol*x.q.p,x));
   const ord={code:()=>0,up:(a,b)=>b.q.pct-a.q.pct,dn:(a,b)=>a.q.pct-b.q.pct,vol:(a,b)=>b.q.vol-a.q.vol,val:(a,b)=>b.q.val-a.q.val}[SK.rank];rows.sort(ord);
@@ -10926,7 +11260,8 @@ function sxMarket(B,T){
     nm.append(el('b','',`${s.icon} ${s.name}`),el('small','',`${s.code} ・ 出来高 ${sxF(q.vol)}${own?` ・ 保有 ${own}株`:''}${mg?' ・ 信用あり':''}`));
     const pr=el('span','pr');pr.append(el('b','',sxF(q.p)),el('em',sxCls(q.chg),`${sxS(q.chg)}（${sxS(Math.round(q.pct*100)/100)}%）`));
     if(q.sHigh)pr.appendChild(el('i','sh','ストップ高'));if(q.sLow)pr.appendChild(el('i','sl','ストップ安'));
-    r.append(nm,pr);r.addEventListener('click',()=>{SK.sel=s.id;SK.form=null;SK.msg='';sxRender();$('stock').scrollTop=0});L.appendChild(r);
+    const sp=document.createElement('canvas');sp.className='sxSpark';requestAnimationFrame(()=>sxChartDraw(sp,{...sxData(s,'today',T),type:'line',small:1}));
+    r.append(nm,sp,pr);r.addEventListener('click',()=>{SK.sel=s.id;SK.form=null;SK.msg='';sxRender();$('stock').scrollTop=0});L.appendChild(r);
   });
   B.appendChild(L);
   /* ニュース */
@@ -10941,7 +11276,7 @@ function sxMarket(B,T){
   B.appendChild(el('p','hint','値段は10秒ごとに動き、だれが見ても同じです。1日は日本時間の0:00〜24:00。前日比は基準値段（前日の終値。権利落ち日は配当ぶん引いた値段）とくらべます。売買単位は100株、手数料は0です。'));
 }
 /* 線グラフ（指数） */
-function sxLine(cv,f,n,base,label){
+function sxLine_old(cv,f,n,base,label){
   const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const g=cv.getContext('2d');g.scale(r,r);
   const pts=[];for(let i=0;i<=n;i++)pts.push(f(i));if(!pts.length)return;
   const lo=Math.min(base,...pts),hi=Math.max(base,...pts),y=v=>8+(h-26)*(1-(hi===lo?.5:(v-lo)/(hi-lo))),x=i=>i/288*w;
@@ -10951,7 +11286,7 @@ function sxLine(cv,f,n,base,label){
   g.font='600 11px '+FONT_B;g.fillStyle='rgba(255,255,255,.65)';g.textBaseline='bottom';g.fillText(label+'  0時〜24時',4,h-2);
 }
 /* ローソク足 */
-function sxCandles(cv,s,mode,T){
+function sxCandles_old(cv,s,mode,T){
   const r=Math.min(2,window.devicePixelRatio||1),w=cv.clientWidth,h=cv.clientHeight;cv.width=w*r;cv.height=h*r;const g=cv.getContext('2d');g.scale(r,r);
   const C=[];
   if(mode==='d'){const d=sxDayOf(T);for(let x=Math.max(SX_D0,d-59);x<=d;x++){const o=x===d?sxOHLC(s,x,T-sxT0(x)):sxOHLC(s,x);C.push({...o,lab:sxMD(x)})}}
@@ -10982,16 +11317,24 @@ function sxDetail(B,s,T){
   if(q.sHigh)pb.appendChild(el('i','sh','ストップ高'));if(q.sLow)pb.appendChild(el('i','sl','ストップ安'));
   if(D.e&&q.k>=5400)pb.appendChild(el('i','ev','決算発表あり'));if(D.div)pb.appendChild(el('i','ev','権利落ち'));
   B.appendChild(pb);
-  const ct=el('div','sxTabs sm');[['1m','1分足'],['5m','5分足'],['d','日足']].forEach(([k,n])=>ct.appendChild(sxBtn(n,k===SK.chart?'on':'',()=>{SK.chart=k;sxRender()})));B.appendChild(ct);
-  const cv=document.createElement('canvas');cv.className='sxChart';B.appendChild(cv);requestAnimationFrame(()=>sxCandles(cv,s,SK.chart,T));
+  const ctl=el('div','sxCtl'),per=el('div','sxSeg'),ty=el('div','sxSeg');
+  Object.entries(SX_PER).forEach(([k,v])=>per.appendChild(sxBtn(v.name,k===SK.per?'on':'',()=>{SK.per=k;sxRender()})));
+  [['line','折れ線'],['candle','ローソク足']].forEach(([k,n])=>ty.appendChild(sxBtn(n,k===SK.ctype?'on':'',()=>{SK.ctype=k;store.set('sxCtype',k);sxRender()})));
+  ctl.append(per,ty);B.appendChild(ctl);
+  const cd=sxData(s,SK.per,T),cv=document.createElement('canvas');cv.className='sxChart';B.appendChild(cv);sxChartMount(cv,{...cd,type:SK.ctype});
+  const lg=el('div','sxLeg');
+  lg.innerHTML=SK.ctype==='line'?`<span><i class="r"></i>赤い線＝${cd.baseLab}より上</span><span><i class="b"></i>青い線＝下</span><span><i class="d"></i>点線＝${cd.baseLab}</span><span>👆 なぞると値段が出ます</span>`
+    :`<span><i class="r"></i>赤＝上がった</span><span><i class="b"></i>青＝下がった</span><span><i class="y"></i>5本の平均</span><span><i class="p"></i>25本の平均</span><span>1本＝${cd.unit}</span><span>👆 なぞると4本値</span>`;
+  B.appendChild(lg);
   /* 指標 */
   const st=el('div','sxStats');const ne=sxNextEarn(s,q.k>=5400?q.d+1:q.d);
   [['始値',sxF(q.o.o)],['高値',sxF(q.o.h)],['安値',sxF(q.o.l)],['前日終値',sxF(D.pc)],['基準値段',sxF(D.b)],['値幅制限',`${sxF(q.dn)}〜${sxF(q.up)}`],
    ['出来高',sxF(q.vol)+'株'],['売買代金',sxF(Math.round(q.vol*q.p/1e4)/100)+'百万'],['時価総額',sxF(Math.round(q.cap/1e8))+'億'],
    ['PER（予想）',q.per?q.per.toFixed(1)+'倍':'—（赤字）'],['PBR',q.pbr.toFixed(2)+'倍'],['配当利回り',s.dps?q.yld.toFixed(2)+'%':'無配'],
    ['1株配当（年）',s.dps?`${s.dps}（月 ${Math.round(s.dps/12*10)/10}）`:'0'],['売買単位','100株'],['呼値',sxTick(q.p)+'刻み'],
-   ['次の決算',`${sxMD(ne)}（${sxWD(ne)}）15:00`],['権利確定日','毎月末'],['株主優待',s.yuText]].forEach(([k,v])=>{const x=el('div','');x.append(el('small','',k),el('b','',v));st.appendChild(x)});
+   ['次の決算',`${sxMD(ne)}（${sxWD(ne)}）15:00`],['権利確定日','毎月末'],['株主優待',s.yuText]].forEach(([k,v])=>{const x=el('button',SK.help===k?'on':'');x.append(el('small','',k+(SX_HELP[k]?' ？':'')),el('b','',v));x.addEventListener('click',()=>{SK.help=SK.help===k?'':k;sxRender()});st.appendChild(x)});
   B.appendChild(st);
+  if(SK.help&&SX_HELP[SK.help])B.appendChild(el('p','sxHelp',`📘 ${SK.help}: ${SX_HELP[SK.help]}`));else B.appendChild(el('p','hint','👆 ことばを押すと、意味が出ます'));
   B.appendChild(el('p','hint',s.kind));
   /* 板と歩み値 */
   const bw=el('div','sxBW');
@@ -11034,7 +11377,7 @@ function sxForm(B,s,q){
   F.append(el('label','',`株数（${f.odd?'1株単位':'100株単位'}）`),nr);
   if(f.act==='sell'){const h=(f.acct==='nisa'?a.nisa:a.hold)[s.id];F.appendChild(el('small','',`売れる株: ${h?h.n-sxLocked(a,s.id,f.acct):0}株`))}
   if(!f.odd){
-    const ty=el('div','sxSeg');Object.entries(SX_TYPE).forEach(([k,n])=>ty.appendChild(sxBtn(n,f.type===k?'on':'',()=>{f.type=k;if(k!=='mkt'&&!f.px)f.px=q.p;sxRender()})));F.append(el('label','','執行条件'),ty);
+    const ty=el('div','sxSeg');Object.entries(SX_TYPE).forEach(([k,n])=>ty.appendChild(sxBtn(n,f.type===k?'on':'',()=>{f.type=k;if(k!=='mkt'&&!f.px)f.px=q.p;sxRender()})));F.append(el('label','','執行条件'),ty,el('small','',{mkt:'成行: 値段を決めずに、いますぐ売り買いします',lmt:'指値: 値段を決めて、その値段になるまで待ちます',stp:'逆指値: 「ここまで来たら、すぐ売り買い」の予約。損切りに使います'}[f.type]));
     if(f.type!=='mkt'){
       const pr=el('div','sxNum'),pi=document.createElement('input');pi.type='number';pi.inputMode='decimal';pi.value=f.px;pi.addEventListener('input',()=>{f.px=+pi.value||0;sum()});
       pr.append(sxBtn('−','',()=>{f.px=sxRound(f.px-sxTick(f.px-1));pi.value=f.px;sum()}),pi,sxBtn('＋','',()=>{f.px=sxRound(f.px+sxTick(f.px));pi.value=f.px;sum()}));
@@ -11319,6 +11662,126 @@ function rzAmb(now,cat){
   }
 }}
 
+
+/* ==================== 武勇伝（だれが、何に、いくら賭けて、どうなったか） ====================
+   カジノ（ハイ＆ロー・スコア賭け・賭け対戦・みんなの予想）と株の大きな勝ち負けを記録して、みんなで見る。
+   保存は自分の記録（scores/<自分のID>）の中の brag に、最近の15件と「いちばんの大勝ち・大負け」だけ。
+   ランキングと同じ記録をみんなが読んでいるので、新しい設定（Firestore のルール）はいらない。
+   見せたくない人は、武勇伝の画面で「自分の武勇伝をみんなに見せる」を外せる。 */
+const BRAG_MIN_BET=10000,BRAG_MIN_GAIN=30000;
+const bragPub=()=>store.get('bragPub',true)!==false;
+function bragLoad(){const d=store.get('brag',null);return d&&typeof d==='object'&&Array.isArray(d.list)?d:{list:[],best:null,worst:null}}
+const bragGain=e=>e.k==='st'||e.k==='sf'?num(Math.abs(e.pl))*(e.pl<0?-1:1):num(e.pay)-num(e.bet);
+function brag(e){
+  try{
+    e.t=Date.now();e.bet=Math.round(num(e.bet));e.pay=Math.round(num(e.pay));if(e.s)e.s=String(e.s).slice(0,24);
+    const g=bragGain(e);
+    if(!(e.k==='sf'||e.bet>=BRAG_MIN_BET||Math.abs(g)>=BRAG_MIN_GAIN))return;
+    const d=bragLoad();d.list=d.list.concat([e]).slice(-15);
+    if(g>0&&(!d.best||g>bragGain(d.best)))d.best=e;
+    if(g<0&&(!d.worst||g<bragGain(d.worst)))d.worst=e;
+    store.set('brag',d);pushCloud();
+    if(!$('brag').hidden)renderBrag();renderBragCard();
+  }catch(err){}
+}
+{const bc=buildCloud;buildCloud=function(){const d=bc.apply(this,arguments);try{d.brag=bragPub()?bragLoad():{list:[],best:null,worst:null,off:1}}catch(e){}return d}}
+{const mc=mergeCloud;mergeCloud=function(d){const r=mc.apply(this,arguments);try{if(d&&d.brag&&Array.isArray(d.brag.list)&&!d.brag.off){const me=bragLoad(),seen=new Set(me.list.map(x=>x.t));
+  const list=me.list.concat(d.brag.list.filter(x=>x&&!seen.has(x.t))).sort((a,b)=>a.t-b.t).slice(-15);
+  const pick=(a,b,f)=>!a?b:!b?a:f(bragGain(a),bragGain(b))?a:b;
+  store.set('brag',{list,best:pick(me.best,d.brag.best,(x,y)=>x>=y),worst:pick(me.worst,d.brag.worst,(x,y)=>x<=y)})}}catch(e){}return r}}
+/* カジノと株の結果をひろう */
+{const hc=hlCash;hlCash=function(silent){const on=HL.on,bet=HL.bet,st=HL.step;const r=hc.apply(this,arguments);try{if(on&&HL.res==='win')brag({k:'hl',bet,pay:HL.pot,x:st})}catch(e){}return r}}
+{const hg=hlGuess;hlGuess=function(dir){const on=HL.on&&!HL.busy,bet=HL.bet,st=HL.step;const r=hg.apply(this,arguments);
+  if(on)setTimeout(()=>{try{if(!HL.on&&HL.res==='lose'&&HL.bet===bet)brag({k:'hl',bet,pay:0,x:st})}catch(e){}},450);return r}}
+{const bl=betLine;betLine=function(win,text){const r=bl.apply(this,arguments);try{
+  const m=/\+([\d,]+) コイン/.exec(text),pay=win&&m?+m[1].replace(/,/g,''):0;
+  if(/^🎯 スコア賭け(成功|失敗)/.test(text)&&G&&G.sbet)brag({k:'sb',bet:num(G.sbet.n),pay,s:G.song&&G.song.name});
+  else if(/^💰 賭け対戦に(勝利|負け)/.test(text)&&G&&G.vsBet){const n=/(\d+)人分/.exec(text);brag({k:'vs',bet:num(G.vsBet),pay,x:n?+n[1]:0,s:G.song&&G.song.name})}
+}catch(e){}return r}}
+{const an=addNote;addNote=function(kind,text){const r=an.apply(this,arguments);try{const m=/^📊 予想が当たった！ \+([\d,]+) コイン/.exec(String(text));if(m)brag({k:'bk',bet:0,pay:+m[1].replace(/,/g,'')})}catch(e){}return r}}
+{const ex=sxExec;sxExec=function(a,o,fp,T){const r=ex.apply(this,arguments);try{if((o.act==='sell'||o.act==='close')&&Math.abs(num(Math.abs(o.pl||0)))>=BRAG_MIN_GAIN)brag({k:'st',pl:Math.round(o.pl),n:o.n,s:sxById(o.sid).name,x:o.act==='close'?(o.side==='L'?1:2):0})}catch(e){}return r}}
+{const fa=sxForceAll;sxForceAll=function(a,T,why){const n0=a.fills.length;const r=fa.apply(this,arguments);try{const f=a.fills.slice(n0);if(f.length){const pl=f.reduce((x,y)=>x+num(Math.abs(y.pl))*(y.pl<0?-1:1),0);brag({k:'sf',pl:Math.round(pl),n:f.length,s:f.map(y=>sxById(y.sid).name).join('・')})}}catch(e){}return r}}
+/* 文にする */
+function bragText(e){
+  const y=v=>Math.round(num(v)).toLocaleString(),g=bragGain(e);
+  if(e.k==='hl')return e.pay?`🎹 ハイ＆ローに ${y(e.bet)}コイン賭けて ${e.x}連勝！ ${y(e.pay)}コインにして帰った（×${(e.pay/e.bet).toFixed(1)}）`
+    :`🎹 ハイ＆ローに ${y(e.bet)}コイン賭けて${e.x?` ${e.x}連勝のあと`:''} はずれ… 全部なくなった`;
+  if(e.k==='sb')return e.pay?`🎯「${e.s||'曲'}」のスコア賭けに ${y(e.bet)}コイン。みごと成功して ${y(e.pay)}コイン`:`🎯「${e.s||'曲'}」のスコア賭けに ${y(e.bet)}コイン。失敗して没収`;
+  if(e.k==='vs')return e.pay?`💰 賭け対戦（${e.x}人）に ${y(e.bet)}コイン賭けて勝利！ ${y(e.pay)}コインを総取り`:`💰 賭け対戦に ${y(e.bet)}コイン賭けて負け…`;
+  if(e.k==='bk')return `📊 みんなの予想を的中させて ${y(e.pay)}コイン`;
+  if(e.k==='st')return `📈 ${e.s}を${e.x===1?'信用買いで':e.x===2?'空売りで':''} ${num(e.n).toLocaleString()}株売買して ${g>=0?'+':'−'}${y(Math.abs(g))}コインの${g>=0?'大もうけ':'大損'}`;
+  if(e.k==='sf')return `💥 信用取引が追証で強制決済…（${e.s}） ${g>=0?'+':'−'}${y(Math.abs(g))}コイン`;
+  return '';
+}
+const bragAgo=t=>{const s=Math.max(0,(Date.now()-t)/1000);return s<60?'いま':s<3600?`${Math.floor(s/60)}分前`:s<86400?`${Math.floor(s/3600)}時間前`:`${Math.floor(s/86400)}日前`};
+/* みんなの武勇伝を集める（ランキングの記録から。自分の分は手元のものを使う） */
+function bragAll(){
+  const out=[],me=cloud.uid||'me',myName=(store.get('nick','')||'あなた').slice(0,16);
+  (cloud.rows||[]).forEach(r=>{if(r.id===me||!r.brag||r.brag.off||!Array.isArray(r.brag.list))return;
+    const who={id:r.id,name:String(r.nick||'プレイヤー').slice(0,16),tag:r.prof&&r.prof.tag};
+    r.brag.list.slice(-15).forEach(e=>{if(e&&typeof e==='object'&&num(e.t))out.push({...e,who})});
+    ['best','worst'].forEach(k=>{const e=r.brag[k];if(e&&num(e.t))out.push({...e,who,rec:k})})});
+  const my=bragLoad(),who={id:me,name:myName,tag:loadProfile().tag,me:1};
+  my.list.forEach(e=>out.push({...e,who}));['best','worst'].forEach(k=>{if(my[k])out.push({...my[k],who,rec:k})});
+  return out;
+}
+const BG={tab:'new'};
+(function(){
+  const P=document.createElement('section');P.id='brag';P.className='screen panel';P.hidden=true;
+  P.innerHTML='<div class="toprow"><h1>🏆 武勇伝</h1><button class="sound" id="bragBack">メニューに戻る</button></div><div id="bragBody"></div>';
+  $('stage').appendChild(P);$('bragBack').addEventListener('click',()=>{P.hidden=true});
+  const c=document.createElement('button');c.id='bragCard';c.className='bragCard';
+  c.innerHTML='<span class="bI" aria-hidden="true">🏆</span><b>武勇伝</b><small id="bragInfo">だれが、いくら賭けて、どうなったか</small>';
+  c.addEventListener('click',openBrag);($('casinoCard')||$('plazaCard')).after(c);
+})();
+function openBrag(){initAudio();const P=$('brag');P.hidden=false;P.scrollTop=0;renderBrag()}
+function renderBragCard(){try{const i=$('bragInfo');if(!i)return;const all=bragAll().filter(e=>!e.rec).sort((a,b)=>b.t-a.t);const e=all[0];
+  i.textContent=e?`${e.who.name}: ${bragText(e).replace(/^\S+ /,'')}`:'だれが、いくら賭けて、どうなったか'}catch(e){}}
+function renderBrag(){
+  const B=$('bragBody');if(!B)return;B.textContent='';
+  const tabs=el('div','bgTabs');[['new','新着'],['win','今日の大勝ち'],['lose','今日の大負け'],['hof','殿堂入り'],['me','自分']].forEach(([k,n])=>{const b=el('button',k===BG.tab?'on':'',n);b.addEventListener('click',()=>{BG.tab=k;renderBrag()});tabs.appendChild(b)});
+  B.appendChild(tabs);
+  const all=bragAll(),jd=t=>Math.floor((t+32400000)/864e5),day=jd(Date.now()),isToday=e=>jd(num(e.t))===day;
+  let L,head='';
+  if(BG.tab==='new'){L=all.filter(e=>!e.rec).sort((a,b)=>b.t-a.t).slice(0,60);head='みんなの最近の大勝負（賭け金 1万コイン以上、または勝ち負け 3万コイン以上）'}
+  else if(BG.tab==='win'){L=all.filter(e=>!e.rec&&isToday(e)&&bragGain(e)>0).sort((a,b)=>bragGain(b)-bragGain(a)).slice(0,30);head='きょういちばん勝った人たち'}
+  else if(BG.tab==='lose'){L=all.filter(e=>!e.rec&&isToday(e)&&bragGain(e)<0).sort((a,b)=>bragGain(a)-bragGain(b)).slice(0,30);head='きょういちばん負けた人たち（なぐさめてあげよう）'}
+  else if(BG.tab==='hof'){const seen=new Set();L=all.filter(e=>e.rec==='best').sort((a,b)=>bragGain(b)-bragGain(a)).filter(e=>!seen.has(e.who.id)&&seen.add(e.who.id)).slice(0,20);
+    const sw=new Set(),W=all.filter(e=>e.rec==='worst').sort((a,b)=>bragGain(a)-bragGain(b)).filter(e=>!sw.has(e.who.id)&&sw.add(e.who.id)).slice(0,10);
+    head='ひとりひとりの、いちばんの大勝ち';L=L.concat([{sep:'ひとりひとりの、いちばんの大負け'}]).concat(W)}
+  else{L=all.filter(e=>e.who.me&&!e.rec).sort((a,b)=>b.t-a.t);head='あなたの武勇伝'}
+  B.appendChild(el('p','hint',head));
+  const box=el('div','bgList');
+  if(!L.length)box.appendChild(el('p','bgEmpty',BG.tab==='me'?'まだありません。カジノで1万コイン以上賭けるか、株で大きく勝つ（負ける）と、ここにのります。':'まだだれの武勇伝もありません。'));
+  let rank=0;
+  L.forEach(e=>{
+    if(e.sep){box.appendChild(el('div','bgSep',e.sep));rank=0;return}
+    rank++;
+    const g=bragGain(e),r=el('div','bgRow'+(e.who.me?' me':'')+(g>=0?' win':' lose'));
+    const top=el('div','bgWho');
+    if(BG.tab==='win'||BG.tab==='lose'||BG.tab==='hof')top.appendChild(el('span','rk',String(rank)));
+    top.appendChild(el('b','',e.who.name+(e.who.me?'（あなた）':'')));
+    try{if(e.who.tag&&TAGS[e.who.tag])top.appendChild(tagEl(e.who.tag))}catch(x){}
+    top.appendChild(el('small','',bragAgo(e.t)));
+    r.append(top,el('p','',bragText(e)),el('em','',`${g>=0?'+':'−'}${Math.abs(Math.round(g)).toLocaleString()} コイン`));
+    box.appendChild(r);
+  });
+  B.appendChild(box);
+  const op=el('label','check'),cb=document.createElement('input');cb.type='checkbox';cb.checked=bragPub();
+  cb.addEventListener('change',()=>{store.set('bragPub',cb.checked);pushCloud();renderBrag()});
+  op.append(cb,document.createTextNode('自分の武勇伝をみんなに見せる'));B.appendChild(op);
+  B.appendChild(el('p','hint','カジノで1万コイン以上賭けたとき、または勝ち負けが3万コイン以上のとき、株で3万コイン以上もうけた（損した）ときに記録されます。ひとりにつき最近の15件と、いちばんの大勝ち・大負けがのります。'));
+}
+/* だれかがとても大きく勝ったら、お知らせする（10万コイン以上） */
+let bragSeen=Number(store.get('bragSeen',0))||Date.now();
+setInterval(()=>{try{if(gameBusy())return;renderBragCard();
+  const fresh=bragAll().filter(e=>!e.rec&&!e.who.me&&e.t>bragSeen&&Math.abs(bragGain(e))>=100000).sort((a,b)=>a.t-b.t);
+  if(fresh.length){const e=fresh[fresh.length-1];moveToast(`🔥 ${e.who.name}さん: ${bragText(e).replace(/^\S+ /,'')}`);bragSeen=Math.max(...fresh.map(x=>x.t));store.set('bragSeen',bragSeen)}
+  if(!$('brag').hidden)renderBrag();
+}catch(e){}},20000);
+{try{const ro=raidOnRows;raidOnRows=function(){const r=ro.apply(this,arguments);try{renderBragCard()}catch(e){}return r}}catch(e){}}
+renderBragCard();
+
 /* ==================== メニューを下のタブで分ける（見やすく） ====================
    もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
    どのタブにも入れていない部品は、上のお知らせの場所に残る */
@@ -11332,7 +11795,7 @@ function rzAmb(now,cat){
   const TABS=[
     ['play','🎹','あそぶ',()=>[top('hero'),top('dailyCard'),top('ticketChip'),top('modes'),top('songs'),keysHint]],
     ['story','📖','ストーリー',()=>[head('ストーリー'),top('ustoryCard'),top('storyCard'),head('ひみつの部屋'),top('exGate'),top('gate')]],
-    ['event','🎉','イベント',()=>[head('きょうのおたのしみ'),top('xD1'),top('surpriseBar'),top('eventBar'),top('wedBar'),head('お金をふやす'),top('stockCard'),top('casinoCard'),top('csPend')]],
+    ['event','🎉','イベント',()=>[head('きょうのおたのしみ'),top('xD1'),top('surpriseBar'),top('eventBar'),top('wedBar'),head('お金をふやす'),top('stockCard'),top('casinoCard'),top('bragCard'),top('csPend')]],
     ['social','👥','みんな',()=>[head('みんなと遊ぶ'),top('plazaCard'),navRow(['battleBtn','rankBtn'])]],
     ['more','☰','その他',()=>[head('ショップ・記録・設定'),navRow(['shopBtn','achBtn','profBtn','adminBtn']),top('bgFile'),top('appVer')]]
   ];
