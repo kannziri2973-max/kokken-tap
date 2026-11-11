@@ -22,6 +22,36 @@ Existing balances and frozen portfolios are not confiscated or reset.
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 #admin > .toprow{position:sticky;top:0;z-index:8;background:var(--paper,#fff);padding:10px 0;flex-shrink:0}
 #adminBack{flex-shrink:0;min-height:44px}
+
+/* Focused locker styling; the original game menu remains simple. */
+#prof.locker{background:#101b30;color:#f2f6ff;padding:18px 18px 40px;gap:16px}
+#prof.locker>.toprow{position:sticky;top:-18px;z-index:4;background:#101b30;padding:14px 0;color:#fff}
+#prof.locker h1{font-size:26px;color:#fff}
+#prof.locker .profHead{position:relative;display:flex;min-height:210px;align-items:center;justify-content:center;gap:28px;padding:42px 20px 20px;background:radial-gradient(ellipse at 25% 70%,#24516c,transparent 70%),#182b43;border:1px solid #436078;border-radius:8px;overflow:hidden}
+.lockerKicker{position:absolute;top:14px;left:16px;color:#b8d8e9;font-size:11px;letter-spacing:.12em}
+#prof.locker .profName{min-width:0;overflow-wrap:anywhere;color:white}
+#prof.locker #profNick{font-size:24px;color:#fff}#prof.locker #profCoins{color:#bed0e0}
+.lockerStatus{margin:0;color:#adbed1;font-size:12px;min-height:18px}
+.lockerTabs{display:flex;gap:6px;overflow-x:auto;flex:none;padding-bottom:6px}
+.lockerTabs button{flex:none;padding:12px 14px;border-radius:5px;background:#21334a;color:#cbd8e8;font-weight:700;font-size:13px;min-height:44px}
+.lockerTabs button[aria-pressed=true]{background:#c4f05b;color:#182310}
+#prof.locker .block{background:#17263b;border:1px solid #34465e;border-radius:8px;padding:14px}
+#prof.locker .label,#prof.locker .hint,#prof.locker label{color:#b8c9db}
+#prof.locker .pickRow,#prof.locker .iconGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+#prof.locker .pick,#prof.locker .iconGrid button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:112px;width:auto;margin:0;border:2px solid #42556e;border-radius:6px;background:#223650;color:white;padding:12px 5px;overflow:hidden}
+#prof.locker .iconGrid img{width:48px;height:48px}
+#prof.locker .pick[aria-pressed=true],#prof.locker .iconGrid button[aria-pressed=true]{border-color:#c4f05b;background:#354d40;box-shadow:0 0 0 1px #c4f05b}
+#prof.locker [aria-pressed=true].pick:after,#prof.locker .iconGrid button[aria-pressed=true]:after{content:'✓';position:absolute;right:5px;top:3px;color:#d4ff77;font-weight:900}
+.lockerItemName,#prof.locker .pick>span:last-child{font-size:11px;text-align:center;line-height:1.4}
+#prof.locker .tagItem{background:#223650;color:#fff;border:1px solid #42556e;padding:12px;border-radius:5px}
+#prof.locker .tagItem[aria-pressed=true]{border-color:#c4f05b}#prof.locker .tagItem small,#prof.locker .tagHead{color:#b8c9db}
+#prof.locker .tagItem u{color:#d4ff77}#prof.locker .tagItem:disabled{opacity:.5}
+#prof.locker input,#prof.locker textarea{color:#101b30;background:#fff}
+.lockerQuick{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 16px;border:1px solid #bcc7cb;background:#fff;text-align:left;margin-bottom:14px;width:100%}
+.lockerQuick span{font-size:12px;color:#555}.lockerQuick b{font-size:13px}
+@keyframes lockerEquip{50%{border-color:#c4f05b}}.lockerEquipped{animation:lockerEquip .35s ease-out}
+@media(prefers-reduced-motion:reduce){.lockerEquipped{animation:none}}
+@media(max-width:360px){#prof.locker .profHead{gap:12px;padding-inline:10px}#prof.locker #profNick{font-size:19px}}
 </style>
 <script>
 /* ===================================================================
@@ -4003,26 +4033,16 @@ function musicDelta(fallback){
   if(prev==null){for(const t of G.tiles)if(t.musicMarks)for(const [k,row] of t.musicMarks)if(row>=G.scroll-.001)t.musicMarks.delete(k);return 0}
   return Math.max(0,Math.min(.5,now-prev));
 }
-function scheduleMusic(){
-  if(!musicEnabled()||G.phase!=='play'||!ac)return;
-  const sp=Math.max(.1,G.speed),now=ac.currentTime,horizon=G.scroll+sp*.12;
-  // Each event, including notes inside a long tile, has its own deduplication key.
-  for(const t of G.tiles){
-    if(t.row>horizon)break;
-    if(!t.musicMarks)t.musicMarks=new Map();
-    const emit=(steps,part,velocity)=>steps.forEach((st,i)=>{
-      const key=part+':'+i,row=t.row+st.at;
-      if(t.musicMarks.has(key)||row>horizon)return;
-      t.musicMarks.set(key,row);
-      if(row<G.scroll-sp*.15)return; // do not burst stale notes after a stalled frame
-      const at=now+Math.max(0,(row-G.scroll)/sp);
-      for(const n of st.notes){if(!Number.isFinite(n))continue;play(n,0,velocity,at);
-        if(G.song.synth&&n>=0)play(n+(part==='mel'?1000:988),0,part==='mel'?.4:.26,at);
-        if(part==='mel'&&G.song.cat==='sanct')play(n+12,0,.2,at);
-      }
-    });
-    emit(t.steps,'mel',.95);emit(t.left||[],'left',.42);
-  }
+function playTileMusic(t){
+  if(!G||G.audio)return;
+  const sp=Math.max(.1,AUTO[G.mode]?G.speed:G.rate);
+  const emit=(steps,melody)=>{for(const st of steps||[])for(const n of st.notes){
+    if(!Number.isFinite(n))continue;
+    const offset=st.at/sp;play(n,offset,melody?.95:.42);
+    if(G.song.synth&&n>=0)play(n+(melody?1000:988),offset,melody?.4:.26);
+    if(melody&&G.song.cat==='sanct')play(n+12,offset,.2);
+  }};
+  emit(t.steps,true);emit(t.left,false);
 }
 
 /* ---------- 盤面 ---------- */
@@ -4173,9 +4193,14 @@ function advanceHead(){while(G.tiles[G.head]&&G.tiles[G.head].state!==0)G.head++
 
 function hitTile(t,id,x,y){
   t.hitAt=performance.now();
+  G.tapCombo=(G.tapCombo||0)+1;
+  G.tapBursts=(G.tapBursts||[]).filter(b=>t.hitAt-b.at<420).slice(-11);
+  G.tapBursts.push({x:(t.lane+.5)*lw,y:y==null?Math.min(H-PF-20,yBottom(t.row)-rh*.5):y,at:t.hitAt,lane:t.lane});
   G.lastHit={lane:t.lane,t:t.hitAt};
   G.count++;G.score+=G.pts||1;G.stageCount++;
   if(G.raid)raidHit(t);
+  // Legacy replay stores timing only, so do not publish a misleading out-of-order replay.
+  if(G.rec&&G.tiles[G.head]&&t.row!==G.tiles[G.head].row)G.rec=null;
   if(G.rec)G.rec.push(+G.scroll.toFixed(2));
   const sp=AUTO[G.mode]?G.speed:G.rate;
   if(!AUTO[G.mode]&&G.lastTap){
@@ -4183,15 +4208,8 @@ function hitTile(t,id,x,y){
     if(iv>.03&&iv<2){G.rate=G.rate*.7+(1/iv)*.3}
   }
   G.lastTap=t.hitAt;
-  /* 手動スクロールだけ入力時に発音。自動スクロールは共通の音楽時計で発音する。 */
-  const lead=0;
-  if(!AUTO[G.mode]&&!G.audio){
-  t.steps.forEach(st=>st.notes.forEach(n=>play(n,(lead+st.at/sp),.95)));
-  if(G.song.synth){
-    t.steps.forEach(st=>st.notes.forEach(n=>play(n+1000,(lead+st.at/sp),.4)));
-    if(!AUTO[G.mode])t.left.forEach(st=>st.notes.forEach(n=>{if(n>=0)play(n+988,(lead+st.at/sp),.26)}));
-  }
-  }
+  /* 音符と伴奏はタイルを押した瞬間から発音する。 */
+  playTileMusic(t);
   if(G.ev||G.tapfx){
     const cx=(t.lane+.5)*lw,cy=Math.min(H-10,yBottom(t.row)-rh/2),parts=[];
     G.fx=(G.fx||[]).filter(f=>t.hitAt-f.t0<900);
@@ -4199,7 +4217,6 @@ function hitTile(t,id,x,y){
     G.fx.push({evfx:G.ev||G.tapfx,x:cx,y:cy,t0:t.hitAt,parts,rot:Math.random()*6.28});
   }
   if(isStage(G.song)){
-    if(!AUTO[G.mode]&&!G.audio&&G.song.cat==='sanct')t.steps.forEach(st=>st.notes.forEach(n=>play(n+12,(lead+st.at/sp),.2)));
     const cx=(t.lane+.5)*lw,cy=Math.min(H-10,yBottom(t.row)-rh/2);
     if(G.song.cat!=='sanct'){
       G.fx=(G.fx||[]).filter(f=>t.hitAt-f.t0<900);
@@ -4211,12 +4228,12 @@ function hitTile(t,id,x,y){
     for(let i=0;i<10;i++){const a=i/10*6.283+Math.random()*.4;G.sparks.push({x:cx,y:cy,vx:Math.cos(a)*(60+Math.random()*90),vy:Math.sin(a)*(60+Math.random()*90),t0:t.hitAt})}
     }
   }
-  if(!AUTO[G.mode])t.left.forEach(st=>st.notes.forEach(n=>play(n,(lead+st.at/sp),.42)));
   if(t.len>1&&AUTO[G.mode]){
     t.state=1;t.owner=id;t.s0=G.scroll;t.need=t.len-.55;t.award=0;t.prog=0;G.holds.push(t);
   }else t.state=2;
   if(!AUTO[G.mode]){G.target=Math.max(G.target,t.row+1)}
-  if(t.lapEnd&&t.lapEnd>G.lap&&!G.tiles.some(x=>x.lapNo===t.lapNo&&x.state===0))completeLap(t.lapEnd,G.audio?G.song.total:t.row+t.len);
+  const lapEndTile=G.tiles.find(x=>x.lapNo===t.lapNo&&x.lapEnd>G.lap);
+  if(lapEndTile&&!G.tiles.some(x=>x.lapNo===t.lapNo&&x.state===0))completeLap(lapEndTile.lapEnd,G.audio?G.song.total:lapEndTile.row+lapEndTile.len);
   if(G.mode==='classic'&&G.count>=50){finish('50枚クリア')}
   if(G.mode==='relay'&&G.stageCount>=50){
     G.stage++;G.stageCount=0;G.timeLeft=Math.max(7,14-(G.stage-1));G.flash=1;
@@ -4242,26 +4259,33 @@ function press(x,y,id){
   if(!G||G.replay)return;
   if(G.phase!=='ready'&&G.phase!=='play')return;
   if(G.phase==='ready'&&G.audio){G.phase='play';startTrack(0);return}
-  /* 判定は列を優先する。次に押すタイルの列なら高さは問わず、隣の列へ少しはみ出しても拾う */
-  let best=null,bd=1e9;
-  /* 指の太さのぶん（FR）は、黒タイルのふちに少しでもかかっていれば当たりにする */
-  const FR=Math.max(18,lw*.14);
-  const J=G.judge||JUDGE.base,act=activeTiles(),reach=Math.max(act.length===1?lw*J[0]:lw*J[1],lw*.5+FR);
-  for(const t of act){
+  // Match the visible tile under the finger before considering lane assistance.
+  let best=null,bd=1e9,directHit=false;
+  const FR=Math.max(18,lw*.14),J=G.judge||JUDGE.base;
+  if(y!==null){
+    for(let i=G.head;i<G.tiles.length;i++){
+      const t=G.tiles[i];if(t.state!==0)continue;
+      const bottom=yBottom(t.row),top=bottom-t.len*rh;
+      if(bottom<0||top>H)continue;
+      if(x>=t.lane*lw&&x<(t.lane+1)*lw&&y>=Math.max(0,top)&&y<=Math.min(H,bottom)){
+        best=t;directHit=true;break;
+      }
+    }
+    // Repeated touches on an already pressed tile must not consume another tile in its lane.
+    if(!best&&G.tiles.some(t=>t.state!==0&&x>=t.lane*lw&&x<(t.lane+1)*lw&&y>=yBottom(t.row)-t.len*rh&&y<=yBottom(t.row)))return;
+  }
+  const act=activeTiles(),reach=Math.max(act.length===1?lw*J[0]:lw*J[1],lw*.5+FR);
+  if(!best)for(const t of act){
     const d=Math.abs(x-(t.lane+.5)*lw);
     if(d<reach&&d<bd){bd=d;best=t}
   }
-  // A direct touch on the next visible black tile must register, even above the timing line.
-  // Keyboard / lane-only taps keep the early-input limit; later rows never skip the next row.
-  const directHit=best&&y!==null&&x>=best.lane*lw&&x<=(best.lane+1)*lw&&
-    y>=Math.max(0,yBottom(best.row)-best.len*rh)&&y<=Math.min(H,yBottom(best.row));
   if(best&&!directHit&&G.phase==='play'&&AUTO[G.mode]&&best.row>G.scroll+Math.max(.8,G.speed*.18))return;
   if(best){
-    if(G.phase==='ready'){G.phase='play';startTrack(0);G.musicClock=ac?ac.currentTime:null;scheduleMusic()}
+    if(G.phase==='ready'){G.phase='play';startTrack(0);G.musicClock=ac?ac.currentTime:null}
     hitTile(best,id,x,y);return;
   }
   if(G.phase==='ready')return;
-  // Only the next row may be played; future tiles never auto-complete earlier ones.
+  // Earlier unpressed tiles remain pending; direct hits never auto-complete them.
   const lane=Math.max(0,Math.min(3,Math.floor(x/lw)));
   /* 指のはね返り、連打の直後の押し間違い、上のスコア表示のあたりへのタップは失敗にしない */
   const since=G.lastHit?performance.now()-G.lastHit.t:1e9;
@@ -4278,7 +4302,7 @@ function press(x,y,id){
   let row=y===null?(head?head.row:Math.round(G.scroll)):Math.floor(G.scroll-1+(H-PF-y)/rh)+0;
   row=Math.floor((H-PF-(y===null?yBottom(row)-rh/2:y))/rh+G.scroll-1);
   /* ミス保険: 白を押しても3回までは失敗にしない */
-  if(G.lives>0){G.lives--;G.warn={lane,row,t:performance.now()};play(45,0,.35);play(46,0.01,.25);return}
+  if(G.lives>0){G.tapCombo=0;G.lives--;G.warn={lane,row,t:performance.now()};play(45,0,.35);play(46,0.01,.25);return}
   fail('white',{lane,row});
 }
 function release(id){
@@ -4291,6 +4315,7 @@ function endHold(t,full){
   if(full){G.pops.push({x:(t.lane+.5)*lw,y:Math.max(rh*.8,yBottom(t.row)-t.len*rh+rh*.3),text:'+'+t.len*(G.pts||1),t:.7})}
 }
 function fail(kind,bad){
+  if(G)G.tapCombo=0;
   if(owner('god')){
     if(kind==='miss')activeTiles().forEach(t=>hitTile(t,'god'));
     if(kind==='time')G.timeLeft=14;
@@ -4326,7 +4351,6 @@ function update(dt){
       G.scroll+=(G.target-G.scroll)*Math.min(1,dt*24);
       G.maxSpeed=Math.max(G.maxSpeed,G.count>1?G.rate:0);
     }
-    scheduleMusic();
     if(G.replay)replayTick();
     for(const t of G.holds){
       const p=G.scroll-t.s0;t.prog=Math.min(1,(p+.5)/t.len);
@@ -4390,6 +4414,26 @@ function crown(cx,cy,r,on){
   ctx.lineTo(cx+r*.45,cy+r*.05);ctx.lineTo(cx+r,cy-r*.4);ctx.lineTo(cx+r,cy+r*.7);ctx.closePath();
   ctx.fillStyle=on?'#e0213a':'rgba(13,15,20,.14)';ctx.fill();
   if(on){ctx.lineWidth=1.5;ctx.strokeStyle='#fff';ctx.stroke()}
+}
+function drawTapFeedback(now){
+  if(!G)return;
+  const reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  ctx.save();
+  for(const b of G.tapBursts||[]){
+    const p=(now-b.at)/420;if(p<0||p>=1)continue;
+    const a=1-p;ctx.globalAlpha=a;
+    const gr=ctx.createLinearGradient(0,b.y-90,0,b.y+90);gr.addColorStop(0,'rgba(58,206,255,0)');gr.addColorStop(.5,'rgba(58,206,255,.28)');gr.addColorStop(1,'rgba(58,206,255,0)');
+    ctx.fillStyle=gr;ctx.fillRect(b.lane*lw,b.y-90,lw,180);
+    ctx.strokeStyle='#36c9f0';ctx.lineWidth=3*a;ctx.beginPath();ctx.arc(b.x,b.y,12+(reduced?0:p*38),0,Math.PI*2);ctx.stroke();
+    if(!reduced)for(let i=0;i<6;i++){const ang=i*Math.PI/3,d=14+p*48;ctx.fillStyle=i%2?'#fff':'#36c9f0';ctx.fillRect(b.x+Math.cos(ang)*d-2,b.y+Math.sin(ang)*d-2,4*a,4*a)}
+  }
+  if(G.tapCombo>=2&&G.lastHit&&now-G.lastHit.t<1300){
+    ctx.globalAlpha=Math.min(1,(1300-(now-G.lastHit.t))/300);const milestone=G.tapCombo%25===0;
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`800 ${milestone?27:21}px ${FONT_B}`;
+    ctx.lineWidth=4;ctx.strokeStyle='rgba(0,0,0,.65)';ctx.strokeText(G.tapCombo+' COMBO',W/2,H*.19);
+    ctx.fillStyle=milestone?'#ffdb66':'#fff';ctx.fillText(G.tapCombo+' COMBO',W/2,H*.19);
+  }
+  ctx.restore();
 }
 function drawTile(t,now){
   const x=t.lane*lw,b=yBottom(t.row),h=t.len*rh,top=b-h;
@@ -4864,6 +4908,7 @@ function draw(now){
       if(y>60)ctx.fillText('ゴール',W/2,Math.max(40,y-rh/2))}
   }
   for(let i=Math.max(0,G.head-8);i<G.tiles.length;i++)drawTile(G.tiles[i],now);
+  drawTapFeedback(now);
   if(G.sparks){
     ctx.fillStyle='#f4d98a';
     for(const s of G.sparks){
@@ -12978,6 +13023,31 @@ applyFont(fontNow());
   }catch(e){}}
   setInterval(dots,4000);
   menuTab(store.get('menuTab','play'));
+})();
+
+/* Locker: existing inventory and persistence remain authoritative. */
+(function(){
+  const root=$('prof');root.classList.add('locker');root.querySelector('h1').textContent='ロッカー';$('profBtn').textContent='ロッカー・プロフィール';
+  const hero=root.querySelector('.profHead');
+  const badge=el('span','lockerKicker','装備中のプロフィール');hero.prepend(badge);
+  const status=el('p','lockerStatus','アイテムを選ぶと、その場で装備・保存されます。');status.setAttribute('role','status');hero.after(status);
+  const tabs=el('nav','lockerTabs');tabs.setAttribute('aria-label','ロッカーのカテゴリ');status.after(tabs);
+  const sections=[['iconGrid','アイコン'],['frameList','フレーム'],['tagList','称号'],['skinList','タイル'],['fxList','タップ演出'],['profNickIn','名前'],['saveBlock','引き継ぎ']];
+  let selected='iconGrid';const panes=new Map(),buttons=new Map();
+  for(const [id,label] of sections){
+    const block=id==='saveBlock'?$(id):$(id).closest('.block');block.dataset.locker=id;panes.set(id,block);
+    const b=el('button','',label);b.type='button';b.setAttribute('aria-controls',id);b.onclick=()=>choose(id);tabs.appendChild(b);buttons.set(id,b);
+  }
+  function choose(id){selected=id;for(const [k,p] of panes)p.hidden=k!==id;for(const [k,b] of buttons)b.setAttribute('aria-pressed',String(k===id));}
+  const original=renderProf;renderProf=function(){const result=original.apply(this,arguments);const pf=loadProfile();$('profAva').textContent='';$('profAva').appendChild(avaEl(pf,120));
+    $('iconGrid').querySelectorAll('button').forEach(b=>{const label=el('span','lockerItemName',b.getAttribute('aria-label'));b.appendChild(label)});
+    choose(selected);return result;};
+  root.addEventListener('click',e=>{if(e.target.closest('#iconGrid button,#frameList button,#tagList button,#skinList button,#fxList button')){
+    status.textContent='装備中の見た目は上のプレビューで確認できます。';hero.classList.remove('lockerEquipped');void hero.offsetWidth;hero.classList.add('lockerEquipped');
+  }});
+  const quick=el('button','lockerQuick');quick.type='button';quick.innerHTML='<span>自分の見た目を変える</span><b>ロッカーを開く →</b>';quick.onclick=()=>{$('profBtn').click()};
+  const playPane=document.querySelector('.mPane[data-tab="play"]');if(playPane)playPane.prepend(quick);
+  choose(selected);
 })();
 
 /* One revision protects the complete economic snapshot; stale saves fail closed. */
