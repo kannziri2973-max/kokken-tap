@@ -4251,7 +4251,11 @@ function press(x,y,id){
     const d=Math.abs(x-(t.lane+.5)*lw);
     if(d<reach&&d<bd){bd=d;best=t}
   }
-  if(best&&G.phase==='play'&&AUTO[G.mode]&&best.row>G.scroll+Math.max(.8,G.speed*.18))return;
+  // A direct touch on the next visible black tile must register, even above the timing line.
+  // Keyboard / lane-only taps keep the early-input limit; later rows never skip the next row.
+  const directHit=best&&y!==null&&x>=best.lane*lw&&x<=(best.lane+1)*lw&&
+    y>=Math.max(0,yBottom(best.row)-best.len*rh)&&y<=Math.min(H,yBottom(best.row));
+  if(best&&!directHit&&G.phase==='play'&&AUTO[G.mode]&&best.row>G.scroll+Math.max(.8,G.speed*.18))return;
   if(best){
     if(G.phase==='ready'){G.phase='play';startTrack(0);G.musicClock=ac?ac.currentTime:null;scheduleMusic()}
     hitTile(best,id,x,y);return;
@@ -5049,7 +5053,7 @@ function touchToBoard(t){
   const r=canvas.getBoundingClientRect();let x=t.clientX-r.left,y=t.clientY-r.top;
   const pad=r.width/4*1.6;
   if(x<-pad||x>r.width+pad)return null;
-  return[Math.max(0,Math.min(r.width-1,x)),Math.max(0,Math.min(r.height-1,y))];
+  return[Math.max(0,Math.min(W-1,x*W/r.width)),Math.max(0,Math.min(H-1,y*H/r.height))];
 }
 if(hasTouch){
   document.addEventListener('touchstart',e=>{
@@ -5079,7 +5083,7 @@ canvas.addEventListener('pointerdown',e=>{
   e.preventDefault();initAudio();
   const r=canvas.getBoundingClientRect();
   try{canvas.setPointerCapture(e.pointerId)}catch(err){}
-  press(e.clientX-r.left,e.clientY-r.top,'p'+e.pointerId);
+  press((e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height,'p'+e.pointerId);
 },{passive:false});
 ['pointerup','pointercancel','lostpointercapture'].forEach(n=>canvas.addEventListener(n,e=>{
   if(hasTouch&&e.pointerType==='touch')return;
