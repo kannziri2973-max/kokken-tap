@@ -176,7 +176,17 @@ window.KOKKEN_WEB=1;
         onConnection:(cb,err)=>{const f={cb,err};connCbs.add(f);setTimeout(()=>{try{cb(conn)}catch(e){}},0);return()=>connCbs.delete(f)},
         leave:async()=>{clearInterval(keep);try{offPeers()}catch(e){}try{offConn()}catch(e){}try{await rtdb.remove(me)}catch(e){}}
       };
-    }};
+    },
+    /* 自分の様子だけを書く（ほかの人の様子は読まない）。画面を閉じると自動で消える */
+    beacon:async name=>{const key=String(name).replace(/[.#$\[\]\/]/g,'_').slice(0,60);const me=rtdb.push(rtdb.ref(rd,'rooms/'+key));let pres={};
+      const write=()=>rtdb.set(me,{uid:user.uid,t:Date.now(),p:JSON.parse(JSON.stringify(pres))});
+      try{await rtdb.onDisconnect(me).remove();await write()}catch(e){throw wrapErr(e)}
+      const offConn=rtdb.onValue(rtdb.ref(rd,'.info/connected'),s=>{if(s.val()){rtdb.onDisconnect(me).remove().catch(()=>{});write().catch(()=>{})}});
+      const keep=setInterval(()=>{rtdb.update(me,{t:Date.now()}).catch(()=>{})},30000);
+      return {set:async p=>{pres={...(p||{})};await write()},leave:async()=>{clearInterval(keep);try{offConn()}catch(e){}try{await rtdb.remove(me)}catch(e){}}}},
+    /* 管理者が、みんなの様子を見る */
+    watch:(name,cb)=>{const key=String(name).replace(/[.#$\[\]\/]/g,'_').slice(0,60);return rtdb.onValue(rtdb.ref(rd,'rooms/'+key),s=>{const v=s.val()||{};try{cb(Object.entries(v).map(([k,x])=>({id:k,uid:x&&x.uid,t:x&&x.t||0,p:x&&x.p||{}})))}catch(e){}},()=>{})}
+    };
   }
   window.claude={use:async n=>{await boot;if(!F||!F.user)return null;if(n==='db')return makeDb();if(n==='user')return makeUser();if(n==='room')return makeRoom();return null}};
   /* ---- 管理者のための小さなパネル（URLの最後に #admin を付けて開いたときだけ出る） ---- */
@@ -1760,6 +1770,32 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
 .penCard .penT,.penCard .penR{margin:0;font-size:14px;line-height:1.6}
 .penCard .penR{color:#555}
 .penCard .penL{margin:0;padding-left:20px;font-size:14px;line-height:1.8}
+/* 文字のスタイル */
+.fsBox{margin:12px 0 4px}
+.fsGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.fsBtn{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 10px;min-height:64px;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--line,#ccd);cursor:pointer}
+.fsBtn b{font-size:17px;font-weight:400;line-height:1.2}
+.fsBtn small{font-size:11px;color:var(--mute,#667);line-height:1.4}
+.fsBtn.on{border:2px solid var(--red,#e0213a);background:#fff6f7}
+/* いま遊んでいる人 */
+.lvSum{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.lvSum div{display:flex;flex-direction:column;align-items:center;padding:10px 4px;background:#0d0f14;color:#fff}
+.lvSum b{font-family:var(--display);font-size:26px;font-weight:400;line-height:1.1}
+.lvSum small{font-size:11.5px;opacity:.75}
+.lvRow{display:flex;flex-direction:column;gap:4px;background:#fff;border:1px solid var(--line,#ccd);border-left:4px solid #9aa0b4;padding:10px 12px}
+.lvRow small{color:var(--mute,#667);font-size:11.5px}
+.lvHd{display:flex;align-items:center;gap:8px}
+.lvHd b{font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lvSt{font-size:11px;font-weight:700;padding:2px 7px;background:#9aa0b4;color:#fff;white-space:nowrap}
+.lvDot{width:9px;height:9px;border-radius:50%;background:#9aa0b4;flex:none}
+.lvW{font-size:13.5px;line-height:1.5;word-break:break-all}
+.lvRow.lvPlay{border-left-color:#18b85a}.lvPlay .lvSt,.lvPlay .lvDot{background:#18b85a}
+.lvPlay .lvDot{animation:lvBlink 1.2s ease-in-out infinite}
+.lvRow.lvPause{border-left-color:#e0a000}.lvPause .lvSt,.lvPause .lvDot{background:#e0a000}
+.lvRow.lvRes{border-left-color:#2c6bd6}.lvRes .lvSt,.lvRes .lvDot{background:#2c6bd6}
+.lvRow.lvAway{opacity:.6}
+@keyframes lvBlink{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.lvPlay .lvDot{animation:none}}
 /* カジノチップを買うボタン */
 .chipBuy{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .chipBuy button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:52px;padding:6px 4px;border:1px solid #c9a227;background:rgba(255,215,106,.1);color:inherit;font-weight:700}
@@ -4236,8 +4272,8 @@ function update(dt){
 
 /* ---------- 描画 ---------- */
 const rgb=c=>`rgb(${c[0]|0},${c[1]|0},${c[2]|0})`;
-const FONT_D='"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif';
-const FONT_B='"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif';
+let FONT_D='"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif';
+let FONT_B='"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif';
 function star(cx,cy,r,on){
   ctx.beginPath();
   for(let i=0;i<10;i++){
@@ -12666,6 +12702,125 @@ async function penReturn(x,done){
   PEN.log=PEN.log.map(y=>y.id===x.id?{...y,back:Date.now()}:y);await cloud.db.doc('mail/_penlog').set({items:PEN.log});
   moveToast('↩ プレゼントとして返しました');
 }
+
+
+/* ======== いま遊んでいる人（管理者だけが見られる・リアルタイム） ========
+   ・みんなのゲームが、Realtime Database の rooms/kb-online に「いまの様子」を小さく書く（画面を閉じると自動で消える）
+     中身: 名前・何をしているか（メニューの画面／弾いている曲とスコア）・端末の種類・開いた時間・コイン
+   ・書くのは、様子が変わったときと、弾いている間は10秒ごとだけ（通信を少なく）
+   ・管理者は管理画面の「いま遊んでいる人」で、それを見られる */
+const LV={b:null,sig:'',last:0,since:Date.now(),busy:false,watch:null,list:[],tick:null};
+const lvDev=()=>{try{const u=navigator.userAgent;return /iPhone/.test(u)?'iPhone':/iPad/.test(u)?'iPad':/Android/.test(u)?'Android':/Mac/.test(u)?'Mac':/Windows/.test(u)?'Windows':'その他'}catch(e){return '?'}};
+const LV_TAB={play:'あそぶ',story:'ストーリー',event:'イベント',social:'みんな',more:'その他'};
+function lvState(){
+  if(document.hidden)return {st:'away',w:'アプリをはなれている'};
+  if(G&&['play','ready','countdown','paused','failing','finishing'].includes(G.phase)){
+    const m={song:'楽曲',classic:'クラシック',zen:'禅',rush:'ラッシュ',relay:'リレー',arcade:'アーケード'}[G.mode]||G.mode;
+    return {st:G.phase==='paused'?'pause':'play',w:(G.song&&G.song.name)||'',m,sc:Math.floor(num(G.score)),raid:G.raid?1:0,vs:G.battle?1:0}}
+  if(G&&G.phase==='over')return {st:'result',w:(G.song&&G.song.name)||'',sc:Math.floor(num(G.score))};
+  const sec=[...document.querySelectorAll('#stage > section.screen, body > section.screen')].find(s=>!s.hidden&&s.id!=='menu');
+  if(sec){const h=sec.querySelector('h1');return {st:'menu',w:((h&&h.textContent)||sec.id).replace(/\s+/g,' ').trim().slice(0,24)}}
+  return {st:'menu',w:'メニュー（'+(LV_TAB[store.get('menuTab','play')]||'あそぶ')+'）'};
+}
+async function lvStart(){
+  if(LV.b||LV.busy||!cloud.db||!cloud.uid)return;LV.busy=true;
+  try{const api=window.claude&&window.claude.use?await window.claude.use('room'):null;if(api&&api.beacon)LV.b=await api.beacon('kb-online')}catch(e){}
+  LV.busy=false;lvPush(true);
+}
+function lvPush(force){
+  if(!LV.b)return;const s=lvState(),sig=JSON.stringify({...s,sc:0});const now=Date.now();
+  if(!force&&sig===LV.sig&&!(s.st==='play'&&now-LV.last>10000))return;
+  LV.sig=sig;LV.last=now;
+  LV.b.set({v:1,nick:myNick(),dev:lvDev(),since:LV.since,c:coins(),...s}).catch(()=>{});
+}
+setInterval(()=>{try{if(!LV.b)lvStart();else lvPush(false)}catch(e){}},3000);
+document.addEventListener('visibilitychange',()=>{try{lvPush(true)}catch(e){}});
+/* ---------- 管理画面 ---------- */
+(function(){
+  const E=document.createElement('section');E.id='liveEdit';E.className='screen panel';E.hidden=true;$('stage').appendChild(E);
+  const ob=$('ownerBlock');if(ob){const b=el('div','gfBox');b.append(el('div','label','🟢 いま遊んでいる人（リアルタイム）'),el('p','hint','だれが、いま何をしているかが、その場で見られます。'));
+    const go=el('button','btn pri','いま遊んでいる人を見る');go.id='lvOpen';go.addEventListener('click',openLive);b.appendChild(go);ob.prepend(b)}
+})();
+async function openLive(){if(!cloud.isOwner)return;if(!admOk()){moveToast('🔒 管理者ロックを解除してください');return}
+  const E=$('liveEdit');E.hidden=false;E.scrollTop=0;renderLive();
+  if(!LV.watch){try{const api=window.claude&&window.claude.use?await window.claude.use('room'):null;
+    if(api&&api.watch){LV.watch=api.watch('kb-online',list=>{LV.list=list;if(!$('liveEdit').hidden&&Date.now()-(LV.lastR||0)>800){LV.lastR=Date.now();renderLive()}else if(!LV.pend){LV.pend=setTimeout(()=>{LV.pend=null;if(!$('liveEdit').hidden){LV.lastR=Date.now();renderLive()}},900)}});LV.ok=true}else LV.ok=false}catch(e){LV.ok=false}renderLive()}
+  clearInterval(LV.tick);let n=0;LV.tick=setInterval(()=>{if($('liveEdit').hidden||!admOk()){clearInterval(LV.tick);if(!$('liveEdit').hidden){$('liveEdit').hidden=true;moveToast('🔒 管理者ロックがかかったので、画面を閉じました')}lvStop();return}if(++n%5===0)renderLive()},3000)}
+function lvStop(){if(LV.watch){try{LV.watch()}catch(e){}LV.watch=null}}
+const lvAgo=ms=>{ms=Math.max(0,ms);const m=Math.floor(ms/6e4);return m<1?'1分未満':m<60?`${m}分`:`${Math.floor(m/60)}時間${m%60}分`};
+function renderLive(){
+  const E=$('liveEdit');if(!E)return;const keep=E.scrollTop;E.textContent='';
+  const top=el('div','toprow');top.appendChild(el('h1','','🟢 いま遊んでいる人'));const bk=el('button','sound','閉じる');bk.addEventListener('click',()=>{E.hidden=true;clearInterval(LV.tick);lvStop()});top.appendChild(bk);E.appendChild(top);
+  if(LV.ok===false){E.appendChild(el('p','hint','この開き方では見られません（Firebase の Realtime Database につながっていません）。'));return}
+  const now=Date.now(),by=new Map();
+  (LV.list||[]).filter(x=>x&&x.p&&x.p.v===1&&now-x.t<75000).forEach(x=>{const k=x.uid||x.id,o=by.get(k);if(!o||x.t>o.t)by.set(k,x)});
+  const L=[...by.values()].sort((a,b)=>{const r=s=>({play:0,pause:1,result:2,menu:3,away:4}[s]??5);return r(a.p.st)-r(b.p.st)||num(b.p.sc)-num(a.p.sc)});
+  const nPlay=L.filter(x=>x.p.st==='play'||x.p.st==='pause').length,nAway=L.filter(x=>x.p.st==='away').length;
+  const sm=el('div','lvSum');sm.append(el('div','',''),el('div','',''),el('div','',''));
+  [[`${L.length}`,'オンライン'],[`${nPlay}`,'プレイ中'],[`${nAway}`,'はなれている']].forEach(([a,b],i)=>{const d=sm.children[i];d.append(el('b','',a),el('small','',b))});
+  E.appendChild(sm);
+  if(!LV.watch&&LV.ok!==false)E.appendChild(el('p','hint','つないでいます…'));
+  else if(!L.length)E.appendChild(el('p','hint','いまは、だれも開いていません。'));
+  const ST={play:['プレイ中','lvPlay'],pause:['一時停止','lvPause'],result:['結果画面','lvRes'],menu:['メニュー','lvMenu'],away:['はなれている','lvAway']};
+  L.forEach(x=>{const p=x.p,me=x.uid===cloud.uid,[stn,cls]=ST[p.st]||['?','lvMenu'];
+    const r=el('div','lvRow '+cls);
+    const hd=el('div','lvHd');hd.append(el('span','lvDot'),el('b','',String(p.nick||'プレイヤー').slice(0,16)+(me?'（あなた）':'')),el('span','lvSt',stn));r.appendChild(hd);
+    let what='';
+    if(p.st==='play'||p.st==='pause')what=`🎹 ${p.w||'?'}（${p.m||''}）・ スコア ${num(p.sc).toLocaleString()}${p.raid?' ・ 👹ボスと戦闘中':''}${p.vs?' ・ ⚔対戦中':''}`;
+    else if(p.st==='result')what=`🏁 ${p.w||''} を弾きおわった ・ ${num(p.sc).toLocaleString()}`;
+    else what=`📍 ${p.w||''}`;
+    r.appendChild(el('div','lvW',what));
+    r.appendChild(el('small','',`${p.dev||'?'} ・ 開いてから ${lvAgo(now-num(p.since))} ・ 🪙 ${num(p.c).toLocaleString()}${x.uid?' ・ ID '+x.uid.slice(0,8)+'…':''}`));
+    if(x.uid&&!me){const a=el('div','usRow');const pb=el('button','sound','🚫 没収');pb.addEventListener('click',()=>{try{PEN.sel=x.uid;E.hidden=true;clearInterval(LV.tick);lvStop();openPenEdit()}catch(e){}});
+      const cb=el('button','sound','IDをコピー');cb.addEventListener('click',()=>{try{navigator.clipboard.writeText(x.uid);moveToast('IDをコピーしました')}catch(e){}});a.append(pb,cb);r.appendChild(a)}
+    E.appendChild(r)});
+  E.appendChild(el('p','hint','画面を閉じた人は、すぐ（電波が切れたときは1分ほどで）消えます。ゲームを新しい版に更新した人から表示されます。'));
+  E.scrollTop=keep;
+}
+
+/* ======== 文字のスタイル（フォント） ========
+   ・標準を「シャープ」にした: 数字と英字は角ばった Oxanium / Chakra Petch、日本語は M PLUS 1（見出し）と Murecho（本文）
+   ・設定で選べる: シャープ／ドット／和風／ポップ／もとの文字
+   ・ボタンの文字そのものがそのフォントで出るので、選ぶ前に見た目がわかる */
+const FONTSETS={
+  sharp:{name:'シャープ',sub:'角ばった、ゲームらしい文字',
+    css:'family=Oxanium:wght@800&family=M+PLUS+1:wght@800&family=Chakra+Petch:wght@500;700&family=Murecho:wght@400;500;700',
+    d:'"Oxanium","M PLUS 1","Hiragino Sans","Yu Gothic",sans-serif',b:'"Chakra Petch","Murecho","Hiragino Sans","Yu Gothic",system-ui,sans-serif'},
+  dot:{name:'ドット',sub:'レトロゲームのドット文字',css:'family=DotGothic16',
+    d:'"DotGothic16","Hiragino Sans",monospace',b:'"DotGothic16","Hiragino Sans","Yu Gothic",monospace'},
+  wa:{name:'和風',sub:'筆で書いたような見出し',css:'family=Yuji+Syuku&family=Zen+Kaku+Gothic+New:wght@400;500;700',
+    d:'"Yuji Syuku","Hiragino Mincho ProN","Yu Mincho",serif',b:'"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif'},
+  pop:{name:'ポップ',sub:'まるくて元気な文字',css:'family=RocknRoll+One&family=M+PLUS+Rounded+1c:wght@400;500;700',
+    d:'"RocknRoll One","Hiragino Maru Gothic ProN",sans-serif',b:'"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif'},
+  old:{name:'もとの文字',sub:'いままでの見た目',css:'',
+    d:'"Dela Gothic One","Hiragino Sans","Yu Gothic",sans-serif',b:'"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif'}
+};
+const FS_ALL='https://fonts.googleapis.com/css2?'+Object.values(FONTSETS).map(f=>f.css).filter(Boolean).join('&')+'&display=swap';
+function fontNow(){const k=store.get('fontSet','sharp');return FONTSETS[k]?k:'sharp'}
+function applyFont(k){
+  const f=FONTSETS[k]||FONTSETS.sharp,R=document.documentElement;
+  R.style.setProperty('--display',f.d);R.style.setProperty('--body',f.b);R.dataset.font=k;
+  FONT_D=f.d;FONT_B=f.b;
+  if(f.css){let l=document.getElementById('fsLink');if(!l){l=document.createElement('link');l.id='fsLink';l.rel='stylesheet';document.head.appendChild(l)}
+    const href='https://fonts.googleapis.com/css2?'+f.css+'&display=swap';if(l.href!==href)l.href=href}
+  try{document.fonts&&document.fonts.ready.then(()=>{try{if(!G)renderSongs()}catch(e){}})}catch(e){}
+}
+applyFont(fontNow());
+/* 設定の画面に「文字のスタイル」 */
+(function(){
+  const sp=$('setSpeed');const blk=sp?sp.closest('.block'):null;if(!blk)return;
+  const w=el('div','fsBox');w.appendChild(el('div','label','文字のスタイル'));
+  const g=el('div','fsGrid');
+  /* 見本を見せるため、選ぶボタンには全部のフォントを読みこむ（設定の画面を開いたときだけ） */
+  let loaded=false;const loadAll=()=>{if(loaded)return;loaded=true;const l=document.createElement('link');l.rel='stylesheet';l.href=FS_ALL;document.head.appendChild(l)};
+  const draw=()=>{g.textContent='';const cur=fontNow();Object.entries(FONTSETS).forEach(([k,f])=>{const b=el('button','fsBtn'+(k===cur?' on':''));b.type='button';
+    const t=el('b','','黒鍵タップ 12,345');t.style.fontFamily=f.d;const s=el('small','',f.name+' ・ '+f.sub);s.style.fontFamily=f.b;b.append(t,s);
+    b.addEventListener('click',()=>{store.set('fontSet',k);applyFont(k);draw();moveToast(`文字を「${f.name}」にしました`)});g.appendChild(b)})};
+  draw();w.appendChild(g);
+  const ref=blk.querySelector('.hint');(ref||sp.closest('.bgrow')).after(w);
+  const ab=$('adminBtn');if(ab)ab.addEventListener('click',loadAll);
+  try{new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))loadAll()}).observe(w)}catch(e){loadAll()}
+})();
 
 /* ==================== メニューを下のタブで分ける（見やすく） ====================
    もとの部品（ボタンやカード）はそのまま動かして入れるだけなので、押したときの動きは前と同じ。
