@@ -4193,7 +4193,6 @@ function advanceHead(){while(G.tiles[G.head]&&G.tiles[G.head].state!==0)G.head++
 
 function hitTile(t,id,x,y){
   t.hitAt=performance.now();
-  G.tapCombo=(G.tapCombo||0)+1;
   G.tapBursts=(G.tapBursts||[]).filter(b=>t.hitAt-b.at<420).slice(-11);
   G.tapBursts.push({x:(t.lane+.5)*lw,y:y==null?Math.min(H-PF-20,yBottom(t.row)-rh*.5):y,at:t.hitAt,lane:t.lane});
   G.lastHit={lane:t.lane,t:t.hitAt};
@@ -4302,7 +4301,7 @@ function press(x,y,id){
   let row=y===null?(head?head.row:Math.round(G.scroll)):Math.floor(G.scroll-1+(H-PF-y)/rh)+0;
   row=Math.floor((H-PF-(y===null?yBottom(row)-rh/2:y))/rh+G.scroll-1);
   /* ミス保険: 白を押しても3回までは失敗にしない */
-  if(G.lives>0){G.tapCombo=0;G.lives--;G.warn={lane,row,t:performance.now()};play(45,0,.35);play(46,0.01,.25);return}
+  if(G.lives>0){G.lives--;G.warn={lane,row,t:performance.now()};play(45,0,.35);play(46,0.01,.25);return}
   fail('white',{lane,row});
 }
 function release(id){
@@ -4315,7 +4314,6 @@ function endHold(t,full){
   if(full){G.pops.push({x:(t.lane+.5)*lw,y:Math.max(rh*.8,yBottom(t.row)-t.len*rh+rh*.3),text:'+'+t.len*(G.pts||1),t:.7})}
 }
 function fail(kind,bad){
-  if(G)G.tapCombo=0;
   if(owner('god')){
     if(kind==='miss')activeTiles().forEach(t=>hitTile(t,'god'));
     if(kind==='time')G.timeLeft=14;
@@ -4426,12 +4424,6 @@ function drawTapFeedback(now){
     ctx.fillStyle=gr;ctx.fillRect(b.lane*lw,b.y-90,lw,180);
     ctx.strokeStyle='#36c9f0';ctx.lineWidth=3*a;ctx.beginPath();ctx.arc(b.x,b.y,12+(reduced?0:p*38),0,Math.PI*2);ctx.stroke();
     if(!reduced)for(let i=0;i<6;i++){const ang=i*Math.PI/3,d=14+p*48;ctx.fillStyle=i%2?'#fff':'#36c9f0';ctx.fillRect(b.x+Math.cos(ang)*d-2,b.y+Math.sin(ang)*d-2,4*a,4*a)}
-  }
-  if(G.tapCombo>=2&&G.lastHit&&now-G.lastHit.t<1300){
-    ctx.globalAlpha=Math.min(1,(1300-(now-G.lastHit.t))/300);const milestone=G.tapCombo%25===0;
-    ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`800 ${milestone?27:21}px ${FONT_B}`;
-    ctx.lineWidth=4;ctx.strokeStyle='rgba(0,0,0,.65)';ctx.strokeText(G.tapCombo+' COMBO',W/2,H*.19);
-    ctx.fillStyle=milestone?'#ffdb66':'#fff';ctx.fillText(G.tapCombo+' COMBO',W/2,H*.19);
   }
   ctx.restore();
 }
@@ -5089,51 +5081,37 @@ function requestWake(){try{navigator.wakeLock&&navigator.wakeLock.request('scree
 function releaseWake(){try{wake&&wake.release().catch(()=>{});wake=null}catch(e){}}
 
 /* ---------- 入力 ---------- */
-/* タッチは touchstart で直接受ける。ブラウザのジェスチャ判定を待たず、同時押しも取りこぼさない */
+/* Use one input event family. Touch-capability flags do not tell us which events arrive. */
 const hasTouch='ontouchstart' in window;
-/* iPad では盤面の上に重なった要素や盤面の外側に指が落ちると canvas にタッチが届かないことがある。
-   プレイ中は画面全体でタッチを受け、盤面の座標に直して判定する（ボタンだけは通常どおり） */
+const usesPointer=typeof window.PointerEvent==='function';
 function playing(){return G&&(G.phase==='ready'||G.phase==='play')}
 function touchToBoard(t){
-  const r=canvas.getBoundingClientRect();let x=t.clientX-r.left,y=t.clientY-r.top;
-  const pad=r.width/4*1.6;
-  if(x<-pad||x>r.width+pad)return null;
-  return[Math.max(0,Math.min(W-1,x*W/r.width)),Math.max(0,Math.min(H-1,y*H/r.height))];
-}
-if(hasTouch){
-  document.addEventListener('touchstart',e=>{
-    if(!playing())return;
-    const hitBtn=e.target.closest&&e.target.closest('button,input,select,textarea,a,label');
-    /* 一時停止ボタンは右の列の上にかぶっている。押せる黒タイルがその列にあるときは、ボタンではなくタイルとして受ける */
-    if(hitBtn&&hitBtn.id==='pauseBtn'&&G&&G.phase==='play'&&activeTiles().some(t=>t.lane===3)){
-      e.preventDefault();initAudio();pauseGuard=performance.now();
-      for(const t of e.changedTouches){const p=touchToBoard(t);if(p)press(p[0],p[1],'t'+t.identifier)}
-      return;
-    }
-    if(hitBtn)return;
-    e.preventDefault();initAudio();
-    for(const t of e.changedTouches){const p=touchToBoard(t);if(p)press(p[0],p[1],'t'+t.identifier)}
-  },{passive:false,capture:true});
-  ['touchend','touchcancel'].forEach(n=>document.addEventListener(n,e=>{
-    if(!G)return;
-    for(const t of e.changedTouches)release('t'+t.identifier);
-  },{passive:true,capture:true}));
-  /* プレイ中のピンチ・ダブルタップ拡大・長押しメニューを止める */
-  document.addEventListener('touchmove',e=>{if(playing()&&e.cancelable)e.preventDefault()},{passive:false,capture:true});
-  ['contextmenu','selectstart','dblclick'].forEach(n=>document.addEventListener(n,e=>{if(playing())e.preventDefault()},{capture:true}));
-  ['gesturestart','gesturechange'].forEach(n=>document.addEventListener(n,e=>{if(playing())e.preventDefault()},{passive:false}));
-}
-canvas.addEventListener('pointerdown',e=>{
-  if(hasTouch&&e.pointerType==='touch')return;
-  e.preventDefault();initAudio();
   const r=canvas.getBoundingClientRect();
-  try{canvas.setPointerCapture(e.pointerId)}catch(err){}
-  press((e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height,'p'+e.pointerId);
-},{passive:false});
-['pointerup','pointercancel','lostpointercapture'].forEach(n=>canvas.addEventListener(n,e=>{
-  if(hasTouch&&e.pointerType==='touch')return;
-  release('p'+e.pointerId);
-}));
+  if(!r.width||!r.height)return null;
+  const x=(t.clientX-r.left)*W/r.width,y=(t.clientY-r.top)*H/r.height;
+  if(x<0||x>=W||y<0||y>=H)return null;
+  return [x,y];
+}
+function boardInput(e,points,prefix){
+  if(!playing())return;
+  if(e.target.closest&&e.target.closest('button,input,select,textarea,a,label'))return;
+  if([...document.querySelectorAll('#stage > section.screen')].some(x=>!x.hidden))return;
+  if(e.cancelable)e.preventDefault();
+  try{initAudio()}catch(err){console.warn('Audio initialization failed',err)}
+  for(const t of points){const p=touchToBoard(t);if(p)press(p[0],p[1],prefix+(t.pointerId??t.identifier))}
+}
+if(usesPointer){
+  document.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    boardInput(e,[e],'p');
+  },{passive:false,capture:true});
+  ['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,e=>release('p'+e.pointerId),{passive:true,capture:true}));
+}else{
+  document.addEventListener('touchstart',e=>boardInput(e,[...e.changedTouches],'t'),{passive:false,capture:true});
+  ['touchend','touchcancel'].forEach(n=>document.addEventListener(n,e=>{for(const t of e.changedTouches)release('t'+t.identifier)},{passive:true,capture:true}));
+  canvas.addEventListener('mousedown',e=>{if(!hasTouch&&e.button===0)boardInput(e,[{clientX:e.clientX,clientY:e.clientY,identifier:0}],'m')},{passive:false});
+  document.addEventListener('mouseup',()=>release('m0'));
+}
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 ['touchend','click','keydown'].forEach(n=>document.addEventListener(n,()=>{if(ac)wakeAudio()},{passive:true,capture:true}));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ac)wakeAudio()});
@@ -13025,6 +13003,7 @@ applyFont(fontNow());
   menuTab(store.get('menuTab','play'));
 })();
 
+if($('appVer'))$('appVer').textContent+=' ・ 入力修正版11';
 /* Locker: existing inventory and persistence remain authoritative. */
 (function(){
   const root=$('prof');root.classList.add('locker');root.querySelector('h1').textContent='ロッカー';$('profBtn').textContent='ロッカー・プロフィール';
