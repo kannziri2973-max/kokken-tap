@@ -52,6 +52,9 @@ Existing balances and frozen portfolios are not confiscated or reset.
 @keyframes lockerEquip{50%{border-color:#c4f05b}}.lockerEquipped{animation:lockerEquip .35s ease-out}
 @media(prefers-reduced-motion:reduce){.lockerEquipped{animation:none}}
 @media(max-width:360px){#prof.locker .profHead{gap:12px;padding-inline:10px}#prof.locker #profNick{font-size:19px}}
+
+.dmDialog{width:min(560px,calc(100% - 20px));height:min(720px,90dvh);padding:16px;border:1px solid #cbd5e1;border-radius:18px;background:#fff;color:#172033;box-sizing:border-box}
+.dmDialog::backdrop{background:#11182799}.dmWrap{display:flex;flex-direction:column;height:100%;gap:10px}.dmHead{display:flex;align-items:center;gap:8px}.dmHead b{flex:1;overflow-wrap:anywhere}.dmList{flex:1;min-height:100px;overflow:auto;background:#f1f5f9;border-radius:12px;padding:12px;overscroll-behavior:contain}.dmBubble{max-width:85%;width:fit-content;padding:10px 13px;border-radius:14px;background:#fff;margin:0 0 12px;white-space:pre-wrap;overflow-wrap:anywhere}.dmBubble.mine{margin-left:auto;background:#dceaff}.dmBubble small{display:block;font-size:11px;color:#526175;margin-top:5px}.dmForm{display:flex;gap:8px;align-items:flex-end}.dmForm textarea{flex:1;min-width:0;resize:none;min-height:72px;font:inherit;font-size:16px;padding:10px;border:1px solid #94a3b8;border-radius:10px}.dmStatus{font-size:12px;min-height:18px;white-space:pre-wrap}.dmSetup pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:250px;overflow:auto;font-size:11px}.dmSetup{font-size:12px}
 </style>
 <script>
 /* ===================================================================
@@ -194,6 +197,29 @@ window.KOKKEN_WEB=1;
       onSnapshot:(cb,err)=>fs.onSnapshot(fs.query(fs.collection(db,p),...parts),s=>cb({docs:s.docs.map(snapDoc)}),e=>{console.warn(p,e);err&&err(wrapErr(e))})
     };return q};
     return {doc,collection,
+      chatOpen:async peer=>{
+        const uid=F.user.uid,members=[uid,peer].sort();
+        if(uid===peer||!peer)throw Error('invalid_peer');
+        const cfg=await fs.getDoc(fs.doc(db,'live/chatConfig'));
+        if(!cfg.exists()||cfg.data().enabled!==true||cfg.data().version!==1)throw Error('chat_not_configured');
+        const room=members.join('__'),ref=fs.doc(db,'chatRooms/'+room);
+        await fs.runTransaction(db,async tx=>{const old=await tx.get(ref);if(!old.exists())tx.set(ref,{members,lastAt:fs.serverTimestamp(),lastSender:uid,lastMessageId:''})});
+        return room;
+      },
+      chatWatch:(room,cb,err)=>fs.onSnapshot(fs.query(fs.collection(db,'chatRooms/'+room+'/messages'),fs.orderBy('createdAt','desc'),fs.limit(100)),snap=>cb(snap.docs.map(d=>({id:d.id,...d.data(),pending:d.metadata.hasPendingWrites})).reverse()),err),
+      chatSend:async(room,id,text)=>{
+        const uid=F.user.uid,ref=fs.doc(db,'chatRooms/'+room),msg=fs.doc(db,'chatRooms/'+room+'/messages/'+id);
+        if(!text.trim()||text.length>500)throw Error('invalid_text');
+        return fs.runTransaction(db,async tx=>{
+          const old=await tx.get(msg),parent=await tx.get(ref);
+          if(old.exists()){if(old.data().sender!==uid||old.data().text!==text)throw Error('message_conflict');return}
+          if(!parent.exists()||!parent.data().members.includes(uid))throw Error('invalid_room');
+          tx.update(ref,{lastAt:fs.serverTimestamp(),lastSender:uid,lastMessageId:id});
+          tx.set(msg,{sender:uid,text,createdAt:fs.serverTimestamp()});
+        });
+      },
+      chatBlock:async(peer,blocked)=>{const ref=fs.doc(db,'chatBlocks/'+F.user.uid+'/users/'+peer);if(blocked)await fs.setDoc(ref,{blocked:true});else await fs.deleteDoc(ref)},
+
       commitAccount:async(expected,data)=>{
         const ref=fs.doc(db,'scores/'+F.user.uid);
         return fs.runTransaction(db,async tx=>{
@@ -2061,7 +2087,69 @@ kbd{font:inherit;font-weight:700;border:1px solid var(--line);background:#fff;pa
       <h1>曲とゲームの管理</h1>
       <button class="sound" id="adminBack">メニューに戻る</button>
     </div>
-    <p class="hint">ここでの変更は、今使っているブラウザにだけ保存されます。リンクを開いた他の人には表示されません。</p>
+    <p class="hint">ここでの変更は、今使っているブラウザにだけ保存されます。リンクを開いた他の人には表示されません。</p><details class="block dmSetup"><summary>フレンドチャットの通信設定（管理者用）</summary><p>現在のHTMLにはチャット画面と通信処理を追加済みです。実際の送受信には、Firebase側のルール設定が必要です。</p><ol><li>Firestoreの既存ルールをバックアップし、下の追加ルールを統合してください。広いワイルドカードの許可が残っていると会話が公開されるため、chatRooms・chatBlocks・live/chatConfigへの重複する許可を除外してください。</li><li>social/{uid}は本人だけが更新できることを確認してください。別人がフレンド一覧を書き換えられる設定では有効化しないでください。</li><li>エミュレーターで「第三者の閲覧拒否・なりすまし拒否・非相互フレンドの送信拒否・ブロック・連投拒否・二重送信」を検証してください。</li><li>検証後、Firestore管理コンソールで live/chatConfig に enabled（真偽値）= true と version（数値）= 1 を保存してください。無効化は enabled = false。</li></ol><p>この追加ルールは本番へ未反映・エミュレーター未検証です。既存ルール全体を置き換えるものではありません。会話はサーバーへ保存され、参加者2人とプロジェクト管理者がアクセスできます。エンドツーエンド暗号化ではありません。最新100件を表示し、それ以前もサーバーには残ります。</p><pre>// 既存の rules_version = &#x27;2&#x27; の service cloud.firestore 内、
+// match /databases/{database}/documents の中へ統合する追加ルールです。
+// 既存ルール全体をこれだけで置き換えないでください。
+// 全パスを許可するワイルドカードは必ず修正してください。
+// social/{uid} の書き込みは本人だけ、live/chatConfig は運営だけに限定してください。
+function dmOn() {
+  return request.auth != null &amp;&amp;
+    get(/databases/$(database)/documents/live/chatConfig).data.enabled == true &amp;&amp;
+    get(/databases/$(database)/documents/live/chatConfig).data.version == 1;
+}
+function dmMember(m) {
+  return request.auth != null &amp;&amp; m is list &amp;&amp; m.size() == 2 &amp;&amp; request.auth.uid in m;
+}
+function dmCanSend(m) {
+  return dmOn() &amp;&amp; dmMember(m) &amp;&amp; m[0] is string &amp;&amp; m[1] is string &amp;&amp; m[0] != m[1] &amp;&amp;
+    m[0].matches(&#x27;^[a-zA-Z0-9]+$&#x27;) &amp;&amp; m[1].matches(&#x27;^[a-zA-Z0-9]+$&#x27;) &amp;&amp;
+    m[1] in get(/databases/$(database)/documents/social/$(m[0])).data.friends &amp;&amp;
+    m[0] in get(/databases/$(database)/documents/social/$(m[1])).data.friends &amp;&amp;
+    !exists(/databases/$(database)/documents/chatBlocks/$(m[0])/users/$(m[1])) &amp;&amp;
+    !exists(/databases/$(database)/documents/chatBlocks/$(m[1])/users/$(m[0]));
+}
+match /live/chatConfig {
+  allow get: if request.auth != null;
+  allow write: if false; // Firebase管理コンソールからだけ有効化する
+}
+match /chatBlocks/{uid}/users/{peer} {
+  allow get: if request.auth != null &amp;&amp; request.auth.uid == uid;
+  allow create, update: if request.auth != null &amp;&amp; request.auth.uid == uid &amp;&amp; uid != peer &amp;&amp;
+    request.resource.data.keys().hasOnly([&#x27;blocked&#x27;]) &amp;&amp; request.resource.data.blocked == true;
+  allow delete: if request.auth != null &amp;&amp; request.auth.uid == uid;
+}
+match /chatRooms/{room} {
+  allow get: if request.auth != null &amp;&amp;
+    (!exists(/databases/$(database)/documents/chatRooms/$(room)) || dmMember(resource.data.members));
+  allow create: if dmCanSend(request.resource.data.members) &amp;&amp;
+    room == request.resource.data.members[0] + &#x27;__&#x27; + request.resource.data.members[1] &amp;&amp;
+    request.resource.data.keys().hasOnly([&#x27;members&#x27;,&#x27;lastAt&#x27;,&#x27;lastSender&#x27;,&#x27;lastMessageId&#x27;]) &amp;&amp;
+    request.resource.data.lastAt == request.time &amp;&amp; request.resource.data.lastSender == request.auth.uid &amp;&amp;
+    request.resource.data.lastMessageId == &#x27;&#x27;;
+  allow update: if dmCanSend(resource.data.members) &amp;&amp;
+    request.resource.data.diff(resource.data).affectedKeys().hasOnly([&#x27;lastAt&#x27;,&#x27;lastSender&#x27;,&#x27;lastMessageId&#x27;]) &amp;&amp;
+    request.resource.data.lastAt == request.time &amp;&amp; request.resource.data.lastSender == request.auth.uid &amp;&amp;
+    request.resource.data.lastMessageId is string &amp;&amp; request.resource.data.lastMessageId.size() == 36 &amp;&amp;
+    (resource.data.lastMessageId == &#x27;&#x27; || request.time &gt;= resource.data.lastAt + duration.value(1,&#x27;s&#x27;)) &amp;&amp;
+    getAfter(/databases/$(database)/documents/chatRooms/$(room)/messages/$(request.resource.data.lastMessageId)).data.createdAt == request.time &amp;&amp;
+    getAfter(/databases/$(database)/documents/chatRooms/$(room)/messages/$(request.resource.data.lastMessageId)).data.sender == request.auth.uid;
+  match /messages/{message} {
+    function members() { return get(/databases/$(database)/documents/chatRooms/$(room)).data.members; }
+    allow get: if dmOn() &amp;&amp; dmMember(members());
+    allow list: if dmOn() &amp;&amp; dmMember(members()) &amp;&amp; request.query.limit &lt;= 100;
+    allow create: if dmCanSend(members()) &amp;&amp; message.size() == 36 &amp;&amp;
+      request.resource.data.keys().hasOnly([&#x27;sender&#x27;,&#x27;text&#x27;,&#x27;createdAt&#x27;]) &amp;&amp;
+      request.resource.data.sender == request.auth.uid &amp;&amp; request.resource.data.text is string &amp;&amp;
+      request.resource.data.text.size() &gt; 0 &amp;&amp; request.resource.data.text.size() &lt;= 500 &amp;&amp;
+      request.resource.data.createdAt == request.time &amp;&amp;
+      getAfter(/databases/$(database)/documents/chatRooms/$(room)).data.lastMessageId == message &amp;&amp;
+      getAfter(/databases/$(database)/documents/chatRooms/$(room)).data.lastAt == request.time &amp;&amp;
+      getAfter(/databases/$(database)/documents/chatRooms/$(room)).data.lastSender == request.auth.uid;
+  }
+}
+// 既存 social ルールの write を次の条件に統合してください（追加だけでは既存の許可を無効にできません）。
+// request.auth != null &amp;&amp; request.auth.uid == uid
+</pre></details>
 
     <div class="block">
       <div class="label">音楽や動画のファイルから追加</div>
@@ -4135,7 +4223,8 @@ function newGame(songId,audio){
   const opt=nextOpts;nextOpts=null;
   const mode=FORCE_SONG||isStage(song)||song.audio||chal||opt?'song':curMode();
   if(wet)wet.gain.value=(song.cat==='sanct'?.55:LOOK[song.cat]?LOOK[song.cat].wet:.16)*.7;
-  ['sanctum','ash','ice','sun','god','exroom','exmap'].forEach(id=>{$(id).hidden=true});
+  // Every realm must leave the board unobstructed, including the eight upper realms.
+  [...new Set(Object.values(ROOM_SCREEN)), 'exmap'].forEach(id=>{$(id).hidden=true});
   G={mode,song,audio:audio||null,videoUrl:song.videoUrl||null,phase:'ready',tiles:[],head:0,scroll:0,target:0,speed:AUTO[mode]?(mode==='song'?baseOf(song):mode==='rush'?4.2:3):0,
      score:0,count:0,lap:0,lapStart:0,lapLen:song.total,nextRow:0,genLap:0,lastLanes:[],flat:0,time:0,
      holds:[],pops:[],banner:null,bad:null,failT:0,failKind:'',rate:5,lastTap:0,maxSpeed:0,continued:false,resumeTo:'play',cd:0,
@@ -4301,6 +4390,19 @@ function press(x,y,id){
     }
     // Repeated touches on an already pressed tile must not consume another tile in its lane.
     if(!best&&G.tiles.some(t=>t.state!==0&&x>=t.lane*lw&&x<(t.lane+1)*lw&&y>=yBottom(t.row)-t.len*rh&&y<=yBottom(t.row)))return;
+    // Accept a light edge touch immediately. Exact hits above always win over padding.
+    if(!best){
+      const pad=Math.min(18,Math.max(10,lw*.16));let nearest=Infinity;
+      for(let i=G.head;i<G.tiles.length;i++){
+        const t=G.tiles[i];if(t.state!==0)continue;
+        const bottom=yBottom(t.row),top=bottom-t.len*rh;
+        if(bottom<0||top>H)continue;
+        const dx=Math.max(t.lane*lw-x,0,x-(t.lane+1)*lw);
+        const dy=Math.max(Math.max(0,top)-y,0,y-Math.min(H,bottom));
+        const distance=Math.hypot(dx,dy);
+        if(distance<=pad&&distance<nearest){best=t;nearest=distance;directHit=true}
+      }
+    }
   }
   const act=activeTiles(),reach=Math.max(act.length===1?lw*J[0]:lw*J[1],lw*.5+FR);
   if(!best)for(const t of act){
@@ -5661,7 +5763,7 @@ const ACH=[
  {id:'godLap2',name:'神域の二周目',desc:'神の領域の曲で2周する',hide:3,v:s=>s.godLap,goal:2},
 ];
 const goalOf=a=>typeof a.goal==='function'?a.goal():a.goal;
-const isDone=(a,s)=>{if(s&&Array.isArray(s.granted)&&s.granted.includes(a.id))return true;const v=a.v(s);return a.low?(v!==null&&v>0&&v<=a.goal):v>=goalOf(a)};
+const isDone=(a,s)=>{s=s||loadStats();if([s.granted,s.unlocked].some(ids=>Array.isArray(ids)&&ids.includes(a.id)))return true;const v=a.v(s);return a.low?(v!==null&&v>0&&v<=a.goal):v>=goalOf(a)};
 const sealsDone=s=>ACH.filter(a=>a.seal&&isDone(a,s)).length;
 const door=(s,k)=>!!(s&&Array.isArray(s.doors)&&s.doors.includes(k));
 const sanctumOpen=s=>sealsDone(s)===5||door(s,'sanct')||owner('open');
@@ -6669,7 +6771,7 @@ function frameArt(id){
   const url=out.toDataURL('image/png');frameCache.set(id,url);return url;
 }
 function tagEl(id){const t=TAGS[id],e=document.createElement('span');e.className='tag t-'+(t?t.style:'plain')+(t&&t.ach?' skill':'');e.textContent=t?t.name:'';if(t&&t.style==='cu'){e.style.background=`linear-gradient(90deg,${t.c1},${t.c2})`;e.style.color=t.tc}return e}
-function tagEarned(id,st){const t=TAGS[id];if(!t)return false;if(t.offer)return offered()>=t.offer;if(t.ach){const a=ACH.find(x=>x.id===t.ach);return !!a&&isDone(a,st)}return loadOwned().includes('tag:'+id)}
+function tagEarned(id,st){const t=TAGS[id];if(!t)return false;if(t.offer)return offered()>=t.offer;if(t.ach){const a=ACH.find(x=>x.id===t.ach);return !!a&&isDone(a,st||loadStats())}return loadOwned().includes('tag:'+id)}
 /* クリアでもらえるコイン: 楽曲モードはクリアでスコアそのまま、途中で終わると4分の1。むずかしいコースは2倍 */
 function coinsFor(g){
   if(g.mode==='song'){if(g.audio)return 0;const base=g.lap>=1?g.score:Math.floor(g.score/4);return base}
@@ -8375,7 +8477,7 @@ const EXR={
   look:{edge:'#c08aff',top:'#08020e',topL:'#14061e',fill:['#f0e0ff','#6a1fc8'],grid:'rgba(200,150,255,.2)',overlay:'rgba(0,0,0,.4)',wet:.66},
   intro:'何もない。音さえ、ここでは遅れて届く。<br>神の領域を越えた者だけが、虚無を弾ける。',
   cond:'神の領域の曲を1曲、最後まで弾ききる',prog:s=>[countIn(s,'god'),1],tag:['虚無を統べる者','#000000','#8a3cff','#f3e6ff']},
- maou:{name:'魔王の間',short:'魔王',glyph:'👹',col:'#9a0014',judge:'sun',pts:8,need:3,
+  maou:{name:'魔王の間',short:'魔王',glyph:'👹',col:'#9a0014',judge:'sun',pts:8,need:3,
   bg:['#050001','#2a0006','#5a000c'],amb:'star',pal:['#ff4a5a','#ffb36a','#ffffff'],
   look:{edge:'#ff3a4a',top:'#1a0004',topL:'#2a0008',fill:['#ffd8d0','#d0001f'],grid:'rgba(255,80,90,.22)',overlay:'rgba(10,0,2,.4)',wet:.5},
   intro:'倒れたはずの魔王の、心臓の音がまだ聞こえる。<br>特大イベントで魔王を討った者だけが入れる。',
@@ -9343,6 +9445,49 @@ function renderPzCharts(box){
     card.append(h,sm,row);box.appendChild(card)});
   box.appendChild(el('p','hint','みんなの譜面は練習扱いです（コイン・記録・ミッションには数えません）。気に入ったら ♡ で応援しよう。'));
 }
+
+const DM={dialog:null,stop:null,seq:0,drafts:new Map(),retries:new Map(),pending:new Map()};
+function closeFriendChat(){DM.seq++;if(DM.stop)DM.stop();DM.stop=null;if(DM.dialog){DM.dialog.remove();DM.dialog=null}}
+async function openFriendChat(peer){
+  closeFriendChat();const token=DM.seq,owner=cloud.uid,db=cloud.db,key=owner+':'+peer;
+  const dialog=el('dialog','dmDialog'),wrap=el('div','dmWrap'),head=el('div','dmHead');DM.dialog=dialog;
+  const close=el('button','sound','戻る'),block=el('button','sound','ブロック');head.append(close,el('b',null,nickOf(peer)),block);
+  const list=el('div','dmList'),status=el('div','dmStatus','接続しています…'),form=el('form','dmForm'),input=el('textarea'),send=el('button','btn pri','送信'),count=el('small');
+  list.setAttribute('role','log');list.setAttribute('aria-label','メッセージ');status.setAttribute('role','status');input.setAttribute('aria-label','メッセージを入力');input.placeholder='メッセージを入力（500文字まで）';input.maxLength=500;input.value=DM.drafts.get(owner+':'+peer)||'';send.type='submit';input.disabled=send.disabled=block.disabled=true;
+  form.append(input,send);wrap.append(head,list,status,count,form);dialog.append(wrap);document.body.append(dialog);dialog.showModal();
+  const active=()=>DM.seq===token&&cloud.uid===owner&&DM.dialog===dialog;
+  close.onclick=closeFriendChat;dialog.addEventListener('cancel',e=>{e.preventDefault();closeFriendChat()});
+  let room=null,busy=DM.pending.has(key),blocked=false,ready=false,retry=DM.retries.get(key)||null,lastSent=0;
+  const update=()=>{count.textContent=input.value.length+'/500';send.disabled=!ready||blocked||busy||!input.value.trim();input.disabled=!ready||blocked||busy;block.disabled=!room||busy};
+  input.oninput=()=>{DM.drafts.set(owner+':'+peer,input.value);update()};update();
+  const previous=DM.pending.get(key);if(previous)previous.then(()=>{if(active()){input.value=DM.drafts.get(key)||'';status.textContent='送信しました。'}},()=>{if(active())status.textContent='送信に失敗しました。再送できます。'}).finally(()=>{busy=false;retry=DM.retries.get(key)||null;if(active())update()});
+  function fail(e){if(!active())return;ready=false;status.textContent=String(e&&e.message).includes('chat_not_configured')?'チャットは準備中です。管理者による通信設定が必要です。':'接続できません。相互フレンド・ブロック・通信設定を確認して、開き直してください。';update()}
+  form.onsubmit=async e=>{
+    e.preventDefault();if(!active()||!ready||blocked||busy||!input.value.trim())return;
+    if(Date.now()-lastSent<1100){status.textContent='少し待ってから送信してください。';return}
+    const text=input.value.trim();if(text.length>500)return;
+    if(!retry||retry.text!==text)retry={id:crypto.randomUUID(),text};DM.retries.set(key,retry);
+    busy=true;status.textContent='送信中…';update();
+    const operation=db.chatSend(room,retry.id,text).then(()=>{DM.retries.delete(key);if((DM.drafts.get(key)||'').trim()===text)DM.drafts.delete(key)});DM.pending.set(key,operation);
+    try{await operation;if(!active())return;input.value='';retry=null;lastSent=Date.now();status.textContent='送信しました。'}
+    catch(e){if(active())status.textContent='送信できませんでした。入力は残っています。通信やフレンド状態を確認して再送してください。'}
+    finally{DM.pending.delete(key);busy=false;if(active()){update();if(!blocked)input.focus()}}
+  };
+  // Enterは改行。日本語入力の確定で誤送信しないよう送信ボタンだけで送る。
+  block.onclick=async()=>{if(!active()||busy||!room)return;busy=true;update();try{await db.chatBlock(peer,!blocked);if(!active())return;blocked=!blocked;block.textContent=blocked?'ブロック解除':'ブロック';status.textContent=blocked?'ブロック中です。お互いにメッセージを送れません。':'ブロックを解除しました。';}catch(e){if(active())status.textContent='ブロック設定を保存できませんでした。'}finally{busy=false;if(active())update()}};
+  try{
+    if(!db||!db.chatOpen||!mySoc().friends.includes(peer))throw Error('unavailable');
+    room=await db.chatOpen(peer);if(!active())return;
+    const bs=await db.doc('chatBlocks/'+owner+'/users/'+peer).get();if(!active())return;blocked=!!(bs.exists);block.textContent=blocked?'ブロック解除':'ブロック';
+    ready=true;status.textContent=blocked?'ブロック中です。':'最新100件を表示します。個人情報は書き込まないでね。';update();
+    DM.stop=db.chatWatch(room,messages=>{
+      if(!active())return;const near=list.scrollHeight-list.scrollTop-list.clientHeight<80,first=!list.children.length;list.textContent='';
+      messages.forEach(m=>{const bubble=el('div','dmBubble'+(m.sender===owner?' mine':''));bubble.append(el('span',null,String(m.text||'')));const date=m.createdAt&&typeof m.createdAt.toDate==='function'?m.createdAt.toDate():null;bubble.append(el('small',null,(m.sender===owner?'あなた':'相手')+' ・ '+(m.pending?'送信中':date?date.toLocaleString('ja-JP',{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'時刻確認中')));list.append(bubble)});
+      if(!messages.length)list.append(el('p',null,'まだメッセージはありません。'));if(near||first)list.scrollTop=list.scrollHeight;
+    },fail);input.focus();
+  }catch(e){fail(e)}
+}
+
 function renderPzFriends(box){
   const me=mySoc(),rows=(cloud.rows||[]).filter(r=>!String(r.id).startsWith('c-')&&r.id!==cloud.uid);
   if(window.KOKKEN_WEB&&cloud.uid){const iv=el('div','invBox');iv.append(el('b',null,'🎁 友だちを招待しよう'),el('small',null,`このリンクから来た友だちが登録すると、ふたりとも 3,000コイン！ ・ 招待した人数 ${invCount()}人`));const inp=el('input');inp.readOnly=true;inp.value=invLink();const cp=el('button','btn pri','📤 招待リンクを送る／コピー');cp.addEventListener('click',async()=>{try{if(navigator.share){await navigator.share({text:'黒鍵タップで勝負しよう！',url:invLink()});return}}catch(e){}try{await navigator.clipboard.writeText(invLink());cp.textContent='コピーしました！'}catch(e){inp.select()}});iv.append(inp,cp);box.appendChild(iv)}
@@ -9363,7 +9508,7 @@ function renderPzFriends(box){
     const st=el('button','sound','💌 スタンプ');st.disabled=!canSoc();st.addEventListener('click',()=>{sp.hidden=!sp.hidden});
     const pv=el('button','sound','記録');pv.disabled=!r.id;pv.addEventListener('click',()=>{try{openPView(uid)}catch(e){}});
     const rm=el('button','sound danger','外す');rm.disabled=!canSoc();rm.addEventListener('click',()=>{if(rm.dataset.arm!=='1'){rm.dataset.arm='1';rm.textContent='本当に外す';return}me.friends=me.friends.filter(x=>x!==uid);saveSoc();renderPlaza()});
-    bt.append(st,pv,rm);card.append(av,tx,bt,sp);sec.appendChild(card)});
+    const chat=el('button','sound','💬 チャット');chat.disabled=!canSoc()||!mutual;chat.title=mutual?'メッセージを送る':'お互いにフレンドへ追加すると会話できます';chat.onclick=()=>openFriendChat(uid);bt.append(chat,st,pv,rm);card.append(av,tx,bt,sp);sec.appendChild(card)});
   box.appendChild(sec);
   /* さがす */
   const fs=el('div','pzSec');fs.appendChild(el('h3',null,'🔍 フレンドをさがす'));const inp=el('input','pzInput');inp.type='text';inp.placeholder='名前で検索';inp.value=SOC.q||'';
