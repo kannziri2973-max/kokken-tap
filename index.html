@@ -3862,20 +3862,45 @@ const MODES={
 const AUTO={song:1,arcade:1,rush:1};
 
 /* ---------- 保存 ---------- */
+// A durable journal keeps debit, inventory and reward receipts together.
+let econPending=null,econFailed=null,econCloudPending=false,econStopped=false;
+function econHalt(e){econStopped=true;econBlock('保存を完了できませんでした。重複した受け取りを防ぐため停止しました。空き容量・保存設定を確認して読み直してください。');throw e}
+function econRecover(){const raw=localStorage.getItem('kokken:econJournal');if(!raw)return;const entries=JSON.parse(raw);if(!Array.isArray(entries))throw new Error('Invalid journal');for(const [k,v] of entries){if(typeof k!=='string'||(v!==null&&typeof v!=='string'))throw new Error('Invalid journal');if(v===null)localStorage.removeItem('kokken:'+k);else localStorage.setItem('kokken:'+k,v)}localStorage.removeItem('kokken:econJournal')}
+try{econRecover()}catch(e){econHalt(e)}
+function econAtomic(fn){
+  if(econStopped)throw new Error('保存が停止しています');
+  if(econPending)return fn();
+  econPending=new Map();econFailed=null;econCloudPending=false;
+  try{
+    const result=fn();if(result&&typeof result.then==='function')throw new Error('Async economy transaction');
+    if(econFailed)throw econFailed;
+    const entries=[...econPending];
+    if(entries.length){localStorage.setItem('kokken:econJournal',JSON.stringify(entries));for(const [k,v] of entries){if(v===null)localStorage.removeItem('kokken:'+k);else localStorage.setItem('kokken:'+k,v)}localStorage.removeItem('kokken:econJournal')}
+    const sync=econCloudPending;econPending=null;econCloudPending=false;
+    if(sync)queueMicrotask(()=>pushCloud());return result;
+  }catch(e){econPending=null;econCloudPending=false;return econHalt(e)}
+}
 const store={
-  get(k,d){try{const v=localStorage.getItem('kokken:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
-  set(k,v){try{localStorage.setItem('kokken:'+k,JSON.stringify(v))}catch(e){}}
+  remove(k){if(econPending)econPending.set(k,null);else econAtomic(()=>store.remove(k))},
+  get(k,d){try{const v=econPending&&econPending.has(k)?econPending.get(k):localStorage.getItem('kokken:'+k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{
+    if(econStopped)throw new Error('保存が停止しています');
+    if(k==='wallet'&&(!v||![v.e,v.s].every(n=>Number.isSafeInteger(n)&&n>=0)||v.s>v.e))throw new Error('コイン残高が不正です');
+    const raw=JSON.stringify(v);if(raw===undefined)throw new Error('保存データが不正です');
+    if(econPending)econPending.set(k,raw);else localStorage.setItem('kokken:'+k,raw);
+  }catch(e){if(econPending){econFailed=e;throw e}return econHalt(e)}}
 };
 
 /* Economy hardening 2026-11-11. Client fixes, NOT server-authoritative anti-cheat.
    Temporarily blocked: deterministic stock settlement, player gifts, unsigned
    imports. Firebase rules/backend still required to reject modified clients. */
 const ECON_NOTICE='安全な決済への移行中です。この機能は一時停止しています。';
-const ECON_KEYS=/^(wallet|owned|giftUsed|invPaid|invDone|invOld|csChip|login|daily|pass|story|ustory|stats|coinResetT|bets|rewardDaily|gacha(?::.*)?|tk:[a-z]+|tkArm:[a-z]+)$/;
+const ECON_KEYS=/^(wallet|owned|giftUsed|invPaid|invDone|invOld|csChip|login|daily|pass|story|ustory|stats|coinResetT|offered|csNet|penUsed|penGuard|penDone|poll|d1|d1try:.*|d1rw:.*|tnrw:.*|quizPlay:.*|bkRes:.*|bets|rewardDaily|gacha(?::.*)?|tk:[a-z]+|tkArm:[a-z]+)$/;
 function econSnapshot(){const out={};Object.keys(localStorage).forEach(k=>{if(k.startsWith('kokken:')&&ECON_KEYS.test(k.slice(7)))out[k.slice(7)]=store.get(k.slice(7),null)});return out}
-function econRestore(d){
+function econRestore(){const self=this,args=arguments;return econAtomic(()=>econRestoreImpl.apply(self,args))}
+function econRestoreImpl(d){
   if(d.econState&&typeof d.econState==='object'){
-    Object.keys(localStorage).forEach(k=>{if(k.startsWith('kokken:')&&ECON_KEYS.test(k.slice(7)))localStorage.removeItem(k)});
+    Object.keys(localStorage).forEach(k=>{if(k.startsWith('kokken:')&&ECON_KEYS.test(k.slice(7)))store.remove(k.slice(7))});
     Object.entries(d.econState).forEach(([k,v])=>{if(ECON_KEYS.test(k))store.set(k,v)});
   }else{
     /* Legacy migration: server balance and consumables win, never max(local,remote). */
@@ -3885,18 +3910,20 @@ function econRestore(d){
   }
 }
 function econBlock(message){
-  if(document.getElementById('econBlock'))return;
+  econStopped=true;if(document.getElementById('econBlock'))return;
   const box=document.createElement('div');box.id='econBlock';
   box.style.cssText='position:fixed;inset:0;z-index:999999;background:#0d0f14;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:20px';
   const p=document.createElement('p');p.textContent=message;
   const b=document.createElement('button');b.textContent='保存済みの記録を読み直す';b.onclick=()=>location.reload();box.append(p,b);document.body.appendChild(box);
 }
 function rewardDelta(g,total){
+  if(!Number.isSafeInteger(total)||total<0)throw new Error('報酬額が不正です');
   const previous=Number.isFinite(g.coinPaid)?g.coinPaid:0;
   const due=Math.max(0,Math.floor(total)-previous);
   g.coinPaid=Math.max(previous,Math.floor(total));return due;
 }
-function limitedWin(kind,amount){
+function limitedWin(){const self=this,args=arguments;return econAtomic(()=>limitedWinImpl.apply(self,args))}
+function limitedWinImpl(kind,amount){
   const day=jstDay(),old=store.get('rewardDaily',null),d=old&&old.day===day?old:{day,counts:{}};
   const count=Math.max(0,Number(d.counts[kind])||0);if(count>=10)return false;
   d.counts[kind]=count+1;store.set('rewardDaily',d);
@@ -4208,7 +4235,7 @@ function hitTile(t,id,x,y){
   }
   G.lastTap=t.hitAt;
   /* 音符と伴奏はタイルを押した瞬間から発音する。 */
-  playTileMusic(t);
+  try{playTileMusic(t)}catch(err){console.warn('Tile audio failed',err)}
   if(G.ev||G.tapfx){
     const cx=(t.lane+.5)*lw,cy=Math.min(H-10,yBottom(t.row)-rh/2),parts=[];
     G.fx=(G.fx||[]).filter(f=>t.hitAt-f.t0<900);
@@ -4228,7 +4255,7 @@ function hitTile(t,id,x,y){
     }
   }
   if(t.len>1&&AUTO[G.mode]){
-    t.state=1;t.owner=id;t.s0=G.scroll;t.need=t.len-.55;t.award=0;t.prog=0;G.holds.push(t);
+    t.state=1;t.owner=id;t.s0=G.scroll;t.need=Math.max(.1,t.row+t.len-G.scroll-.55);t.award=0;t.prog=0;G.holds.push(t);
   }else t.state=2;
   if(!AUTO[G.mode]){G.target=Math.max(G.target,t.row+1)}
   const lapEndTile=G.tiles.find(x=>x.lapNo===t.lapNo&&x.lapEnd>G.lap);
@@ -4258,6 +4285,8 @@ function press(x,y,id){
   if(!G||G.replay)return;
   if(G.phase!=='ready'&&G.phase!=='play')return;
   if(G.phase==='ready'&&G.audio){G.phase='play';startTrack(0);return}
+  if(y!==null){const held=G.holds.find(t=>t.state===1&&x>=t.lane*lw&&x<(t.lane+1)*lw&&y>=yBottom(t.row)-t.len*rh&&y<=yBottom(t.row));
+    if(held){held.owner=id;return}}
   // Match the visible tile under the finger before considering lane assistance.
   let best=null,bd=1e9,directHit=false;
   const FR=Math.max(18,lw*.14),J=G.judge||JUDGE.base;
@@ -4278,7 +4307,7 @@ function press(x,y,id){
     const d=Math.abs(x-(t.lane+.5)*lw);
     if(d<reach&&d<bd){bd=d;best=t}
   }
-  if(best&&!directHit&&G.phase==='play'&&AUTO[G.mode]&&best.row>G.scroll+Math.max(.8,G.speed*.18))return;
+
   if(best){
     if(G.phase==='ready'){G.phase='play';startTrack(0);G.musicClock=ac?ac.currentTime:null}
     hitTile(best,id,x,y);return;
@@ -5003,7 +5032,8 @@ requestAnimationFrame(frame);
 /* ---------- 結果 ---------- */
 function bestKey(g){return g.mode==='song'?'best:song:'+g.song.id:'best:'+g.mode}
 function rankText(l){return l<=0?'':l<=3?'★'.repeat(l):'★★★'+'♛'.repeat(Math.min(l-3,3))}
-function showResult(){
+function showResult(){const self=this,args=arguments;return econAtomic(()=>showResultImpl.apply(self,args))}
+function showResultImpl(){
   if(G.resultShown)return;G.resultShown=true;G.phase='over';
   $('pauseBtn').hidden=true;
   const reasons={white:'白いタイルを押しました',miss:'黒いタイルを見逃しました',time:'時間切れです'};
@@ -5103,6 +5133,7 @@ function boardInput(e,points,prefix){
 if(usesPointer){
   document.addEventListener('pointerdown',e=>{
     if(e.pointerType==='mouse'&&e.button!==0)return;
+    if(playing()&&e.target===canvas)try{canvas.setPointerCapture(e.pointerId)}catch(err){}
     boardInput(e,[e],'p');
   },{passive:false,capture:true});
   ['pointerup','pointercancel'].forEach(n=>document.addEventListener(n,e=>release('p'+e.pointerId),{passive:true,capture:true}));
@@ -5853,6 +5884,7 @@ function buildCloud(){
   return {prof:{icon:pr.icon,img:pr.icon==='img'?pr.img:'',frame:pr.frame,tag:pr.tag},wallet:{...loadWallet(),r:num(store.get('coinResetT',0))},offered:offered(),tickets:ticketMap(),giftUsed:giftUsed(),owned:loadOwned(),weekly:{wk,score:store.get('wed:'+wk,0)},nick:(store.get('nick','')||'プレイヤー').slice(0,16),total,best,laps,modes,stats:{clears:s.clears,tiles:s.tiles,fast:s.fast,maxLap:s.maxLap,relay:s.relay,ashLap:s.ashLap,godLap:s.godLap,sunPerfect:s.sunPerfect,perf:s.perf,granted:s.granted,doors:s.doors,events:s.events,wed:s.wed,fest:s.fest,unlocked:s.unlocked},achv:s.unlocked.length,updated:Date.now()};
 }
 async function pushCloud(){
+  if(econPending){econCloudPending=true;return}if(econStopped)return;
   if(!cloud.uid||!cloud.canWrite)return;
   if(!cloud.loaded){cloud.again=true;return}
   if(cloud.busy){cloud.again=true;return}
@@ -6477,7 +6509,7 @@ function dailyToday(kind){
 const inToday=(kind,id)=>dailyToday(kind).includes(id);
 function msToNextDay(){const now=Date.now(),d=new Date(now+9*3600e3);d.setUTCHours(24,0,0,0);return d.getTime()-9*3600e3-now}
 const validItem=x=>typeof x==='string'&&(([k,v])=>({frame:FRAMES,skin:SKINS,fx:TAPFX,tag:TAGS})[k]&&({frame:FRAMES,skin:SKINS,fx:TAPFX,tag:TAGS})[k][v]&&(({frame:FRAMES,skin:SKINS,fx:TAPFX,tag:TAGS})[k][v].price>0||({frame:FRAMES,skin:SKINS,fx:TAPFX,tag:TAGS})[k][v].gacha===1||({frame:FRAMES,skin:SKINS,fx:TAPFX,tag:TAGS})[k][v].gift===1))(x.split(':'));
-function loadWallet(){const w=store.get('wallet',null);return w&&typeof w==='object'?{e:num(w.e),s:num(w.s)}:{e:0,s:0}}
+function loadWallet(){const w=store.get('wallet',null);if(w===null)return {e:0,s:0};if(!w||![w.e,w.s].every(n=>Number.isSafeInteger(n)&&n>=0)||w.s>w.e)return econHalt(new Error('保存されたコイン残高が不正です'));return {e:w.e,s:w.s}}
 const coins=()=>{if(owner('rich'))return 99999999;const w=loadWallet();return Math.max(0,Math.round(w.e-w.s))};
 function loadOwned(){const o=store.get('owned',[]);return Array.isArray(o)?o.filter(validItem):[]}
 function loadProfile(){return cleanProf(store.get('prof',null))}
@@ -6764,8 +6796,7 @@ function renderShop(){
       b.addEventListener('click',()=>{
         if(coins()<v.price||(v.ev&&!(curEvent()&&curEvent().id===v.ev)))return;
         if(armed!==shopTab+':'+id){armed=shopTab+':'+id;renderShop();return}
-        armed=null;spend(v.price);
-        const o=loadOwned();o.push(shopTab+':'+id);store.set('owned',o);
+        armed=null;if(loadOwned().includes(shopTab+':'+id))return;econAtomic(()=>{spend(v.price);const o=loadOwned();o.push(shopTab+':'+id);store.set('owned',o)});pushCloud();
         saveProfile({[key]:id});[60,64,67,72].forEach((m,i)=>play(m+12,i*.06,.4));renderShop();
       });
     }
@@ -6858,7 +6889,8 @@ function renderTicket(){
   });
 }
 const JUDGE_ORDER=['base','sanct','ash','ice','sun','god'];
-function useTicket(g){
+function useTicket(){const self=this,args=arguments;return econAtomic(()=>useTicketImpl.apply(self,args))}
+function useTicketImpl(g){
   const used=[],song=g.mode==='song'&&!g.audio&&g.song.cat!=='mine';
   const take=id=>{tkSet(id,tkN(id)-1);store.set('tkArm:'+id,false);used.push(TICKETS[id].icon+TICKETS[id].name.replace('チケット',''))};
   if(tkArmed('speed')&&(song||g.mode==='rush')){
@@ -6874,7 +6906,7 @@ function useTicket(g){
   }
   if(used.length){g.banner={text:'チケット使用',sub:used.join('・'),t:2};renderTicket()}
 }
-function spend(price){if(!Number.isSafeInteger(price)||price<0)throw new Error('金額が正しくありません');if(owner('rich'))return;const w=loadWallet();if(price>coins()||!Number.isSafeInteger(w.s+price))throw new Error('コインが足りないか金額が大きすぎます');w.s+=price;store.set('wallet',w)}
+function spend(price){if(econStopped)throw new Error('保存が停止しています');if(!Number.isSafeInteger(price)||price<0)throw new Error('金額が正しくありません');if(owner('rich'))return;const w=loadWallet();if(price>coins()||!Number.isSafeInteger(w.s+price))throw new Error('コインが足りないか金額が大きすぎます');w.s+=price;store.set('wallet',w)}
 function ticketShopCard(grid){
   Object.entries(TICKETS).forEach(([id,t])=>{
     const item=document.createElement('div');item.className='item ticket';
@@ -6890,13 +6922,14 @@ function ticketShopCard(grid){
     b.addEventListener('click',()=>{
       if(coins()<t.price||tkN(id)>=99)return;
       if(armed!==key){armed=key;renderShop();return}
-      armed=null;spend(t.price);tkSet(id,tkN(id)+1);
+      armed=null;econAtomic(()=>{spend(t.price);tkSet(id,tkN(id)+1)});
       [60,64,67,72].forEach((m,i)=>play(m+12,i*.06,.4));renderShop();renderTicket();pushCloud();
     });
     item.append(st,n,sm,b);grid.appendChild(item);
   });
 }
-function reviveGame(){
+function reviveGame(){const self=this,args=arguments;return econAtomic(()=>reviveGameImpl.apply(self,args))}
+function reviveGameImpl(){
   if(!G||G.phase!=='over'||G.finished||G.mode!=='song'||G.battle||G.ghost||G.audio||G.d1||G.tn||tkN('revive')<=0)return;
   tkSet('revive',tkN('revive')-1);
   const c=G.continued;continueGame();G.continued=c;
@@ -7229,8 +7262,11 @@ function giftLines(g){
   return p;
 }
 const giftSummary=g=>giftLines(g).join(' ・ ')||'（中身なし）';
-function applyGift(id,g){
-  if(giftUsed().includes(id))return false;
+function applyGift(){const self=this,args=arguments;return econAtomic(()=>applyGiftImpl.apply(self,args))}
+function applyGiftImpl(id,g){
+  if(typeof id!=='string'||!id||giftUsed().includes(id))return false;
+  if(!g||!Number.isSafeInteger(g.coins||0)||(g.coins||0)<0||!g.tk||!Array.isArray(g.items))throw new Error('報酬データが不正です');
+  for(const [k,n] of Object.entries(g.tk)){if(!TICKETS[k]||!Number.isSafeInteger(n)||n<0)throw new Error('チケット報酬が不正です')}
   if(g.coins){const w=loadWallet();w.e+=g.coins;store.set('wallet',w)}
   Object.entries(g.tk).forEach(([k,n])=>tkSet(k,tkN(k)+n));
   if(g.items.length){const o=loadOwned();g.items.forEach(x=>{if(!o.includes(x))o.push(x)});store.set('owned',o)}
@@ -7801,7 +7837,7 @@ function saisenCard(grid){
     const v=Math.floor(+inp.value||0);if(v<=0||v>coins())return;
     if((v>=100000||v===coins())&&saiArmed!==v){saiArmed=v;go.classList.add('armed');go.textContent=`本当に ${v.toLocaleString()} コインを投げる？（もう一度押す）`;return}
     saiArmed=0;const before=Object.entries(TAGS).filter(([id,t])=>t.offer&&tagEarned(id)).map(([id])=>id);
-    spend(v);store.set('offered',offered()+v);renderCoins();
+    econAtomic(()=>{spend(v);store.set('offered',offered()+v)});renderCoins();
     box.classList.remove('shake');void box.offsetWidth;box.classList.add('shake');
     [79,84,91].forEach((m,i)=>play(m,i*.12,.5));setTimeout(()=>play(60,0,.6),420);
     const [k,msg]=drawOmikuji(v);res.textContent='';const om=document.createElement('div');om.className='omikuji';
@@ -7897,7 +7933,9 @@ function pullOnce(b,st,forceMin,forceTop){
   st.log.push({t:Date.now(),rar,name:prizeName(p),dup:p.dup||0,b:b.id==='base'?'':b.name});
   return p;
 }
-function doPull(n){
+function doPull(){const self=this,args=arguments;return econAtomic(()=>doPullImpl.apply(self,args))}
+function doPullImpl(n){
+  if(n!==1&&n!==10)return null;
   const b=curBanner(),cost=n===10?b.cost10:b.cost1;
   if(coins()<cost)return null;
   spend(cost);
@@ -8269,7 +8307,8 @@ $('adminBtn').addEventListener('click',()=>{if(!cloud.isOwner)return;subscribeCu
 
 /* ---------- 運営: 全員のコインをそろえる（live/reset） ---------- */
 const CR={unsub:null};
-function applyCoinReset(d){
+function applyCoinReset(){const self=this,args=arguments;return econAtomic(()=>applyCoinResetImpl.apply(self,args))}
+function applyCoinResetImpl(d){
   const t=num(d&&d.t),c=Math.max(0,Math.floor(num(d&&d.coins)));
   if(!t||t<=num(store.get('coinResetT',0)))return;
   const w=loadWallet();store.set('wallet',{e:w.s+c,s:w.s});store.set('coinResetT',t);
@@ -9014,7 +9053,8 @@ const LOGIN_RW=[{coins:500},{coins:800},{coins:0,tk:{coin2:1}},{coins:1500},{coi
 function loginState(){const v=store.get('login',null);return v&&typeof v==='object'?{last:String(v.last||''),streak:num(v.streak),days:num(v.days)}:{last:'',streak:0,days:0}}
 function loginNextDay(){const L=loginState();return L.last===yesterday()?(L.streak%7)+1:1}
 function loginCanClaim(){return loginState().last!==jstDay()}
-function claimLogin(){
+function claimLogin(){const self=this,args=arguments;return econAtomic(()=>claimLoginImpl.apply(self,args))}
+function claimLoginImpl(){
   if(!loginCanClaim())return null;const L=loginState(),d=loginNextDay(),w={tk:{},items:[],...LOGIN_RW[d-1]};
   store.set('login',{last:jstDay(),streak:d,days:L.days+1});grantRw(w);addXp(50);
   addNote('take',`📅 ログインボーナス ${d}日目: ${rwText(w)}`,'login:'+jstDay());
@@ -9051,7 +9091,8 @@ function dailyState(){
   const r=seeded(hashStr('kk-miss-'+d)%2147483646+1),a=MISS.map(m=>m.id);for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
   return {d,ids:a.slice(0,3),p:[0,0,0],got:[0,0,0],all:false};
 }
-function progressHook(slow){
+function progressHook(){const self=this,args=arguments;return econAtomic(()=>progressHookImpl.apply(self,args))}
+function progressHookImpl(slow){
   if(!G||slow||G.song&&G.song.cat==='mine')return;
   const dt=Math.max(0,G.count-(G.progTiles||0));G.progTiles=G.count;const first=!G.progOnce;G.progOnce=true;
   const r={dt,first,tiles:G.count,clear:!!G.finished&&G.mode==='song',lap:G.lap|0,cat:G.song&&G.song.cat,mode:G.mode,score:G.score|0,ranked:!!((G.battle&&G.battle.ranked)||(G.ghost&&G.ghost.ranked))};
@@ -9076,7 +9117,8 @@ function renderDailyCard(){
   }catch(e){}
 }
 function passClaimable(){const P=passState(),lv=passLv(P.xp),o=[];for(let i=1;i<=lv;i++)if(!P.got.includes(i))o.push(i);return o}
-function claimPass(lvs){const P=passState();const got=[];lvs.forEach(lv=>{if(P.got.includes(lv)||lv>passLv(P.xp))return;P.got.push(lv);got.push(lv);grantRw(passReward(lv,P.k))});store.set('pass',P);if(got.length){[72,76,79,84,88].forEach((m,i)=>play(m,i*.06,.45));pushCloud()}renderDailyCard();return got}
+function claimPass(){const self=this,args=arguments;return econAtomic(()=>claimPassImpl.apply(self,args))}
+function claimPassImpl(lvs){lvs=Array.isArray(lvs)?[...new Set(lvs)].filter(lv=>Number.isInteger(lv)&&lv>=1&&lv<=PASS_MAX):[];const P=passState();const got=[];lvs.forEach(lv=>{if(P.got.includes(lv)||lv>passLv(P.xp))return;P.got.push(lv);got.push(lv);grantRw(passReward(lv,P.k))});store.set('pass',P);if(got.length){[72,76,79,84,88].forEach((m,i)=>play(m,i*.06,.45));pushCloud()}renderDailyCard();return got}
 let dailyTab='login';
 function openDaily(tab){if(tab)dailyTab=tab;initAudio();$('daily').hidden=false;$('daily').scrollTop=0;renderDaily()}
 function renderDaily(){
@@ -9458,9 +9500,10 @@ function d1Record(score){const d=jstDay(),v=d1Mine();const nv={d,s:Math.max(v.d=
 const d1Val=(row,d)=>{const x=row.d1;if(!x)return null;if(x.d===d)return num(x.s);if(x.y&&x.y.d===d)return num(x.y.s);return null};
 function d1Rank(d){const me=d1Mine(),list=[];(cloud.rows||[]).forEach(r=>{if(r.id===cloud.uid)return;const v=d1Val(r,d);if(v!==null)list.push({nick:String(r.nick||'プレイヤー').slice(0,16),s:v})});
   const mv=me.d===d?num(me.s):(me.y&&me.y.d===d?num(me.y.s):null);if(mv!==null&&store.get('d1try:'+d,false))list.push({nick:myNick(),s:mv,me:1});return list.sort((a,b)=>b.s-a.s)}
-function d1Reward(){const y=yesterday();if(!store.get('d1try:'+y,false)||store.get('d1rw:'+y,false)||!cloud.rows)return;
+function d1Reward(){const self=this,args=arguments;return econAtomic(()=>d1RewardImpl.apply(self,args))}
+function d1RewardImpl(){const y=yesterday();if(!store.get('d1try:'+y,false)||store.get('d1rw:'+y,false)||!cloud.rows)return;
   const list=d1Rank(y),i=list.findIndex(x=>x.me);if(i<0)return;store.set('d1rw:'+y,true);
-  const c=[8000,5000,3000][i]||500;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();
+  const c=[8000,5000,3000][i]||500;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();pushCloud();
   addNote('take',`🎵 きのうの「今日の1曲」で${i+1}位！ +${c.toLocaleString()}コイン`,'d1rw:'+y);if(i<3)moveToast(`🏆 きのうの今日の1曲で ${i+1}位！ +${c.toLocaleString()}コイン`)}
 function startD1(){const d=jstDay();if(store.get('d1try:'+d,false))return;const s=d1Song(d);XP.d1=true;FORCE_SONG=true;initAudio();$('daily').hidden=true;startSong(s.id)}
 function renderD1(){
@@ -9509,9 +9552,10 @@ function tnStatus(){
 }
 function tnEnter(){const I=tnInfo();if(!I.open||Date.now()>I.entryEnd||tnMine()||!canSync())return;tnSave({wk:I.wk,e:Date.now(),s:[null,null,null]});moveToast('🏆 週末トーナメントにエントリーしました！');renderTour()}
 function tnPlay(r){const I=tnInfo(),me=tnMine();if(!me||me.s[r]!=null)return;const song=tnSongs(I.wk)[r];XP.tn={wk:I.wk,r};FORCE_SONG=true;initAudio();$('tour').hidden=true;startSong(song.id)}
-function tnReward(){const S=tnStatus();if(!S.R)return;const I=S.B.I,ch=S.champ;if(!ch)return;
-  if(store.get('tnrw:'+I.wk,false))return;store.set('tnrw:'+I.wk,true);
-  const real=S.B.seats.filter(Boolean).length;if(Date.now()<I.entryEnd)return;
+function tnReward(){const self=this,args=arguments;return econAtomic(()=>tnRewardImpl.apply(self,args))}
+function tnRewardImpl(){const S=tnStatus();if(!S.R)return;const I=S.B.I,ch=S.champ;if(!ch)return;
+  if(!tnMine()||TN.test||Date.now()<I.entryEnd||store.get('tnrw:'+I.wk,false))return;
+  const real=S.B.seats.filter(Boolean).length;store.set('tnrw:'+I.wk,true);
   const me=ch.me&&real>=2,second=!me&&real>=2&&S.R[2].some(x=>x&&x.me);const c=me?20000:second?5000:1000;const w=loadWallet();w.e+=c;store.set('wallet',w);
   if(me){const o=loadOwned();if(!o.includes('tag:tnking'))o.push('tag:tnking');store.set('owned',o)}
   renderCoins();pushCloud();addNote('take',me?`👑 週末トーナメント優勝！ 称号「週末王者」と ${c.toLocaleString()}コイン`:second?`🥈 週末トーナメント準優勝 ${c.toLocaleString()}コイン`:`🏆 週末トーナメント参加賞 ${c.toLocaleString()}コイン`,'tnrw:'+I.wk);
@@ -9562,7 +9606,7 @@ function qzMenu(){clearInterval(QZ.timer);const box=$('quizBody');box.textConten
   const row=el('div','nickRow');const inp=el('input','pzInput');inp.inputMode='numeric';inp.maxLength=4;inp.placeholder='部屋番号（4けた）';const jn=el('button','sound','入る');jn.addEventListener('click',()=>{const c=inp.value.normalize('NFKC').replace(/\D/g,'');if(c.length===4)qzJoin(c,'guest')});row.append(inp,jn);
   v.append(mk,row);box.appendChild(v);if(QZ.msg){box.appendChild(el('p','pzNote',QZ.msg));QZ.msg=''}
 }
-function qzStart(seed,mode,startAt){QZ.mode=mode;QZ.qs=qzMake(seed);QZ.i=0;QZ.score=0;QZ.ok=0;QZ.my={};QZ.startAt=startAt||Date.now();qzShow()}
+function qzStart(seed,mode,startAt){QZ.mode=mode;QZ.paid=false;QZ.qs=qzMake(seed);QZ.i=0;QZ.score=0;QZ.ok=0;QZ.my={};QZ.startAt=startAt||Date.now();qzShow()}
 function qzShow(){
   clearInterval(QZ.timer);const box=$('quizBody');box.textContent='';const q=QZ.qs[QZ.i];if(!q){qzEnd();return}
   QZ.answered=false;const head=el('div','qzHead');head.append(el('b',null,`第${QZ.i+1}問 / 10`),el('span',null,`${QZ.score.toLocaleString()}点`));box.appendChild(head);
@@ -9584,11 +9628,12 @@ function qzAnswer(ci,btn){
   if(QZ.mode==='vs'){QZ.my['q'+QZ.i]=[ok?1:0,ms];qzPres({a:QZ.my,sc:QZ.score})}
   else{clearInterval(QZ.timer);setTimeout(()=>{QZ.i++;qzShow()},1200)}
 }
-function qzEnd(){
+function qzEnd(){const self=this,args=arguments;return econAtomic(()=>qzEndImpl.apply(self,args))}
+function qzEndImpl(){
   clearInterval(QZ.timer);const box=$('quizBody');box.textContent='';
   box.append(el('div','qzEnd'));const e=box.lastChild;e.append(el('small',null,'結果'),el('b',null,`${QZ.score.toLocaleString()}点`),el('span',null,`10問中 ${QZ.ok}問 正解`));
   if(QZ.mode==='solo'){const best=num(store.get('quizBest',0));if(QZ.score>best){store.set('quizBest',QZ.score);e.appendChild(el('em',null,'自己ベスト更新！'));pushCloud()}
-    const k='quizPlay:'+jstDay(),n=num(store.get(k,0));if(n<3&&QZ.ok){store.set(k,n+1);const c=QZ.ok*30;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();e.appendChild(el('span',null,`+${c}コイン（今日 ${n+1}/3回目）`))}}
+    const k='quizPlay:'+jstDay(),n=num(store.get(k,0));if(n<3&&QZ.ok&&!QZ.paid){QZ.paid=true;store.set(k,n+1);const c=QZ.ok*30;const w=loadWallet();w.e+=c;store.set('wallet',w);renderCoins();e.appendChild(el('span',null,`+${c}コイン（今日 ${n+1}/3回目）`));pushCloud()}}
   else{qzRenderScores(box);const ps=qzPeers().sort((a,b)=>b.sc-a.sc);if(ps[0]&&ps[0].me&&!QZ.paid&&ps.length>1){QZ.paid=true;if(limitedWin('quiz',500))e.appendChild(el('em',null,'🏆 優勝！ +500コイン'));else e.appendChild(el('em',null,'🏆 優勝！（今日の報酬は10回まで）'))}}
   const again=el('button','btn pri','メニューへ');again.addEventListener('click',()=>{qzLeave();qzMenu()});box.appendChild(again);
 }
@@ -9656,11 +9701,12 @@ $('rShare').addEventListener('click',shareResult);$('shClose').addEventListener(
 /* ---------- 友だち招待（Web版） ---------- */
 const invLink=()=>WEB_URL+(cloud.uid&&window.KOKKEN_WEB?'?inv='+encodeURIComponent(cloud.uid):'');
 try{const m=/[?&]inv=([^&#]+)/.exec(location.search);if(m&&window.KOKKEN_WEB&&!store.get('invBy',null))store.set('invBy',decodeURIComponent(m[1]).slice(0,60))}catch(e){}
-function invCheck(){
+function invCheck(){const self=this,args=arguments;return econAtomic(()=>invCheckImpl.apply(self,args))}
+function invCheckImpl(){
   if(!window.KOKKEN_WEB||!cloud.uid||!cloud.loaded)return;const by=store.get('invBy',null);
   if(by&&by!==cloud.uid&&!store.get('invDone',false)&&!store.get('invOld',false)){
     const fresh=num(loadStats().tiles)<200;store.set('invDone',true);if(fresh){const w=loadWallet();w.e+=3000;store.set('wallet',w);renderCoins();moveToast('🎁 招待ボーナス +3,000コイン！ ようこそ黒鍵タップへ');addNote('take','🎁 招待ボーナス +3,000コイン','inv')}else store.set('invOld',true);pushCloud()}
-  const paid=store.get('invPaid',[]);const list=(cloud.rows||[]).filter(r=>r.inv===cloud.uid&&r.id!==cloud.uid&&!paid.includes(r.id));
+  const paid=store.get('invPaid',[]);const list=[...new Map((cloud.rows||[]).filter(r=>r.inv===cloud.uid&&typeof r.id==='string'&&r.id!==cloud.uid&&!paid.includes(r.id)).map(r=>[r.id,r])).values()];
   if(list.length){const w=loadWallet();w.e+=3000*list.length;store.set('wallet',w);store.set('invPaid',paid.concat(list.map(r=>r.id)));renderCoins();pushCloud();
     list.forEach(r=>addNote('take',`🎁 ${String(r.nick||'プレイヤー').slice(0,16)} さんが招待で来てくれました！ +3,000コイン`,'invp:'+r.id));moveToast(`🎁 招待した友だちが来てくれた！ +${(3000*list.length).toLocaleString()}コイン`)}
 }
@@ -9871,9 +9917,9 @@ setInterval(()=>{try{const busy=gameBusy();FEEDS.forEach(f=>{if(busy&&f.on()){f.
 const csNet=()=>{const d=store.get('csNet',null);return d&&d.k===jstDay()?num(d.v)+(d.neg?-num(d.neg):0):0};
 function csAddNet(v){const d=store.get('csNet',null),cur=d&&d.k===jstDay()?d:{k:jstDay(),v:0,neg:0};if(v>=0)cur.v=num(cur.v)+v;else cur.neg=num(cur.neg)-v;store.set('csNet',cur)}
 const csLeft=()=>Infinity;
-const csCan=n=>n>0&&coins()>=n;
-function csTake(n){spend(n);csAddNet(-n);renderCoins();CS.dirty=true}
-function csGive(n){n=Math.round(n);if(n<=0)return;const w=loadWallet();w.e+=n;store.set('wallet',w);csAddNet(n);renderCoins();CS.dirty=true}
+const csCan=n=>Number.isSafeInteger(n)&&n>0&&n<=100000000&&coins()>=n;
+function csTake(n){if(!csCan(n))return false;try{spend(n)}catch(e){return false}csAddNet(-n);renderCoins();CS.dirty=true;pushCloud();return true}
+function csGive(n){if(!Number.isSafeInteger(n)||n<0)throw new Error('配当額が不正です');if(n===0)return;const w=loadWallet();w.e+=n;store.set('wallet',w);csAddNet(n);renderCoins();CS.dirty=true}
 try{store.set('sbet',null);store.set('vsbet',0)}catch(e){}
 const yen=n=>Math.round(n).toLocaleString();
 const CS={tab:'hl',dirty:false,hlBet:1000,sbBet:1000,sbT:'best',vsBet:1000,bkBet:1000,bkSel:{}};
@@ -9916,7 +9962,7 @@ function renderCasino(){
 /* ---------- 1. 鍵盤ハイ＆ロー ---------- */
 const HL={on:false,bet:0,pot:0,cur:0,prev:0,step:0,res:''};
 const HL_LO=60,HL_HI=84,HL_MAX=12;
-function hlOdds(cur){const ph=(HL_HI-cur)/24,pl=(cur-HL_LO)/24;const f=p=>p>0?Math.max(1.01,Math.floor(.95/p*100)/100):0;return {up:f(ph),dn:f(pl)}}
+function hlOdds(cur){const ph=(HL_HI-cur)/24,pl=(cur-HL_LO)/24;const f=p=>p>0?Math.floor(.95/p*100)/100:0;return {up:f(ph),dn:f(pl)}}
 function hlKeys(){const box=el('div','hlKeys');const W=[0,2,4,5,7,9,11];let wi=0;const pos={};
   for(let m=HL_LO;m<=HL_HI;m++){if(W.includes(m%12)){const i=el('i');i.dataset.m=m;box.appendChild(i);pos[m]=wi;wi++}}
   for(let m=HL_LO;m<=HL_HI;m++){if(!W.includes(m%12)){const e=el('em');e.dataset.m=m;e.style.left=`calc(100% / 15 * ${pos[m-1]+1})`;box.appendChild(e)}}
@@ -9941,9 +9987,10 @@ function renderHL(body){
   }
   const msg=el('div','csMsg');msg.id='hlMsg';msg.textContent=HL.msg||'';box.appendChild(msg);
 }
-function hlStart(){if(HL.on||HL.busy)return;const n=CS.hlBet;if(!csCan(n))return;csTake(n);Object.assign(HL,{on:true,busy:false,round:(HL.round||0)+1,bet:n,pot:n,cur:HL_LO+Math.floor(Math.random()*25),prev:0,step:0,res:'',msg:''});
+function hlStart(){const self=this,args=arguments;return econAtomic(()=>hlStartImpl.apply(self,args))}
+function hlStartImpl(){if(HL.on||HL.busy)return;const n=CS.hlBet;if(!csCan(n)||!csTake(n))return;Object.assign(HL,{on:true,busy:false,round:(HL.round||0)+1,bet:n,pot:n,cur:HL_LO+Math.floor(Math.random()*25),prev:0,step:0,res:'',msg:''});
   if(HL.cur===HL_LO||HL.cur===HL_HI)HL.cur=72;play(HL.cur,0,.8);renderCasino()}
-function hlGuess(dir){if(!HL.on||HL.busy)return;const o=hlOdds(HL.cur),mult=dir>0?o.up:o.dn;if(!mult)return;HL.busy=true;const round=HL.round;
+function hlGuess(dir){if(!HL.on||HL.busy||![1,-1].includes(dir))return;const o=hlOdds(HL.cur),mult=dir>0?o.up:o.dn;if(!mult)return;HL.busy=true;const round=HL.round;
   document.querySelectorAll('#casino .hlBtns button, #casino .csBig, #csBack').forEach(b=>b.disabled=true);
   let nx;do{nx=HL_LO+Math.floor(Math.random()*25)}while(nx===HL.cur);
   HL.prev=HL.cur;HL.cur=nx;const ok=dir>0?nx>HL.prev:nx<HL.prev;
@@ -9953,7 +10000,8 @@ function hlGuess(dir){if(!HL.on||HL.busy)return;const o=hlOdds(HL.cur),mult=dir>
       if(HL.step>=HL_MAX||HL.pot>=HL.bet*200){hlCash();return}
       renderCasino();const n=$('hlNote');if(n){n.classList.add('flash','win')}}
     else{HL.on=false;HL.res='lose';HL.msg=`はずれ… ${yen(HL.bet)} コインが消えた`;play(40,0,.7);play(41,.03,.6);renderCasino();const n=$('hlNote');if(n)n.classList.add('flash')}},380)}
-function hlCash(silent){if(!HL.on||HL.busy)return;HL.on=false;HL.res='win';csGive(HL.pot);const gain=HL.pot-HL.bet;HL.msg=`💰 ${yen(HL.pot)} コインを受け取った（${gain>=0?'+':''}${yen(gain)}）`;
+function hlCash(){const self=this,args=arguments;return econAtomic(()=>hlCashImpl.apply(self,args))}
+function hlCashImpl(silent){if(!HL.on||HL.busy||HL.step<1)return;HL.on=false;HL.res='win';csGive(HL.pot);pushCloud();const gain=HL.pot-HL.bet;HL.msg=`💰 ${yen(HL.pot)} コインを受け取った（${gain>=0?'+':''}${yen(gain)}）`;
   if(!silent){[72,76,79,84].forEach((n,i)=>play(n,i*.06,.5));renderCasino()}}
 
 /* ---------- 2. スコア賭け（自分のうでに賭ける） ---------- */
@@ -10014,10 +10062,10 @@ function betLine(win,text){let e=$('rBet');if(!e){e=document.createElement('div'
 const VSB={stake:0,ok:0};
 const vsTok=(()=>{let t=null;return()=>t||(t=Math.random().toString(36).slice(2,10))})();
 {const vj=vsJoin;vsJoin=async function(){VSB.stake=0;VSB.ok=0;const r=await vj.apply(this,arguments);try{if(VS.named)await vsPresence({tok:vsTok(),bet:0,bok:0,betIn:0})}catch(e){}return r}}
-function vsRoomStake(){const h=VS.role==='host'?null:vsHost();return VS.role==='host'?VSB.stake:h?Math.max(0,Math.floor(num(h.presence.bet))):0}
+function vsRoomStake(){return 0;const h=VS.role==='host'?null:vsHost();return VS.role==='host'?VSB.stake:h?Math.max(0,Math.floor(num(h.presence.bet))):0}
 {const vs0=vsStart;vsStart=function(id,seed){const B=vsRoomStake();const r=vs0.apply(this,arguments);try{
   if(G&&G.battle&&B>0){const inBet=VS.role==='host'||VSB.ok===B;
-    if(inBet&&csCan(B)){csTake(B);G.vsBet=B;vsPresence({betIn:B})}else{vsPresence({betIn:0});if(inBet)moveToast('コインが足りないので、今回は賭けに参加できません')}}
+    if(inBet&&csCan(B)&&csTake(B)){G.vsBet=B;vsPresence({betIn:B})}else{vsPresence({betIn:0});if(inBet)moveToast('コインが足りないので、今回は賭けに参加できません')}}
   else vsPresence({betIn:0})}catch(e){}return r}}
 {const rv=renderVsResult;renderVsResult=function(){const r=rv.apply(this,arguments);try{
   if(G&&G.battle&&G.vsBet&&!G.vsBetDone){const B=G.vsBet;const ps=vsOthers().filter(p=>num(p.presence.betIn)===B);
@@ -10031,7 +10079,7 @@ function vsRoomStake(){const h=VS.role==='host'?null:vsHost();return VS.role==='
     pushCloud()}
 }catch(e){}return r}}
 {const rb=renderBattle;renderBattle=function(){const r=rb.apply(this,arguments);try{if(!VS.named)return r;const box=$('vsLobby');if(!box)return r;
-  const B=vsRoomStake(),wrap=el('div','vsBet');wrap.appendChild(el('b','','💰 賭け対戦'));
+  const B=vsRoomStake(),wrap=el('div','vsBet');wrap.appendChild(el('small','',ECON_NOTICE+' 通常の対戦は遊べます。'));box.appendChild(wrap);return r;
   if(VS.role==='host'){
     wrap.appendChild(el('small','','賭け金を決めると、乗った人どうしで同じ額を出し合い、いちばん高いスコアの人が全部もらいます（場代5%）。'));
     const c=chipsEl([0,1000,5000,10000,50000,100000],VSB.stake,coins(),v=>{VSB.stake=Math.max(0,Math.floor(v));vsPresence({bet:VSB.stake});renderBattle()});
@@ -10073,7 +10121,7 @@ function bkResult(mid){const s=store.get('bkRes:'+mid,null);if(s!=null)return s;
   if(mid.startsWith('q:')){const x=BK.list.find(y=>'q:'+y.id===mid);return x&&x.res!=null?x.res:null}
   const rows=(cloud.rows||[]).map(r=>r.bets&&r.bets[mid]).filter(b=>b&&b.res!=null);return rows.length?rows[0].res:null}
 function bkOdds(pool,o){const w=pool.p[o]||0;return w>0?Math.max(1,Math.floor(pool.tot*.95/w*100)/100):null}
-function bkSettle(){const B=myBets();let ch=false;
+function bkSettle(){return;/* Pending stakes are preserved until trusted settlement is available. */const B=myBets();let ch=false;
   Object.entries(B).forEach(([mid,b])=>{if(b.paid)return;const res=bkResult(mid);if(res==null)return;
     if(mid.startsWith('raid:')&&b.res==null){b.res=res;ch=true}
     const pool=bkPool(mid);b.paid=1;ch=true;
@@ -10084,7 +10132,7 @@ function bkSettle(){const B=myBets();let ch=false;
   Object.keys(B).forEach(k=>{if(B[k].paid&&Date.now()-num(B[k].t)>30*864e5){delete B[k];ch=true}});
   if(ch){store.set('bets',B);pushCloud()}}
 setInterval(()=>{try{if(!gameBusy()&&cloud.rows){bkRaidMarket();bkSettle()}}catch(e){}},8000);
-function renderBK(body){
+function renderBK(body){body.appendChild(el('p','csMsg',ECON_NOTICE+' 受付と自動精算を停止しています。未精算の賭けは保存されています。'));return;
   const box=el('div','csBox');body.appendChild(box);
   box.append(el('h2','','📊 みんなの予想'),el('p','','みんなで結果を予想してコインを賭けます。当たった人で、外れた人のコインも山分け（場代5%）。人気がない方に賭けて当てると大もうけ。賭けは1つの問題に1回だけ。'));
   box.appendChild(chipsEl([1000,5000,10000,50000,100000],CS.bkBet,coins(),x=>{CS.bkBet=x;renderCasino()}));
@@ -10100,7 +10148,7 @@ function renderBK(body){
       b.disabled=!m.open||!!mine;
       b.addEventListener('click',()=>{if(!m.open||mine)return;if(!csCan(CS.bkBet)){moveToast('コインが足りません');return}
         if(b.dataset.armed!=='1'){os.querySelectorAll('.bkOpt').forEach(x=>{x.dataset.armed='';x.setAttribute('aria-pressed','false')});b.dataset.armed='1';b.setAttribute('aria-pressed','true');b.querySelector('small').textContent=`もう一度押すと ${yen(CS.bkBet)} コイン賭けます`;return}
-        csTake(CS.bkBet);const B2=myBets();B2[m.id]={o:i,n:CS.bkBet,t:Date.now()};store.set('bets',B2);pushCloud();moveToast(`📊 「${o}」に ${yen(CS.bkBet)} コイン賭けました`);renderCasino()});
+        const current=bkMarkets().find(x=>x.id===m.id);if(!current||!current.open||Date.now()>=current.close||myBets()[m.id])return;if(!csTake(CS.bkBet))return;const B2=myBets();B2[m.id]={o:i,n:CS.bkBet,t:Date.now()};store.set('bets',B2);pushCloud();moveToast(`📊 「${o}」に ${yen(CS.bkBet)} コイン賭けました`);renderCasino()});
       os.appendChild(b)});
     c.appendChild(os);
     if(mine&&mine.paid)c.appendChild(el('div','csMsg'+(mine.pay?'':' bad'),mine.pay?`当たり！ +${yen(mine.pay)} コイン`:m.res==='void'?'返金されました':'はずれ…'));
@@ -10285,12 +10333,13 @@ $('adminBtn').addEventListener('click',()=>{try{setupBossSong();if($('raSong')&&
 
 /* ---------- カジノのチップ: 曲を1曲弾くと1枚（上限なし）。ハイ＆ローは1回1枚。ギャンブルだけにならないように ---------- */
 const chipN=()=>Math.max(0,Math.floor(num(store.get('csChip',2))));
-function chipAdd(n){store.set('csChip',Math.max(0,Math.min(Number.MAX_SAFE_INTEGER,chipN()+n)))}
+function chipAdd(n){if(!Number.isSafeInteger(n)||!Number.isSafeInteger(chipN()+n)||chipN()+n<0)throw new Error('チップ数が不正です');store.set('csChip',chipN()+n)}
 /* コインでチップを買う（1枚 1,000コイン・10枚 9,000コイン）。賭けの勝ち負けには数えない */
 const CHIP_PACKS=[[1,1000],[10,9000],[50,40000]];
-function chipBuy(n,price){if(coins()<price){HL.msg='コインが足りません';renderCasino();return}spend(price);chipAdd(n);renderCoins();pushCloud();HL.msg=`🎟 カジノチップを${n}枚買いました（${yen(price)}コイン）`;[76,79,84].forEach((m,i)=>play(m,i*.05,.35));renderCasino()}
+function chipBuy(){const self=this,args=arguments;return econAtomic(()=>chipBuyImpl.apply(self,args))}
+function chipBuyImpl(n,price){if(!CHIP_PACKS.some(p=>p[0]===n&&p[1]===price))return;if(coins()<price){HL.msg='コインが足りません';renderCasino();return}spend(price);chipAdd(n);renderCoins();pushCloud();HL.msg=`🎟 カジノチップを${n}枚買いました（${yen(price)}コイン）`;[76,79,84].forEach((m,i)=>play(m,i*.05,.35));renderCasino()}
 {const sr=showResult;showResult=function(){const first=G&&!G.resultShown;const r=sr.apply(this,arguments);try{if(first&&chipEligible(G)){G.chipGranted=true;chipAdd(1);pushCloud();const e=$('rCoin');if(e)e.textContent+=` ・ 🎟 カジノチップ +1（${chipN().toLocaleString()}枚）`}}catch(e){}return r}}
-{const hs=hlStart;hlStart=function(){if(HL.on||HL.busy||!csCan(CS.hlBet))return;if(chipN()<1){HL.msg='🎟 カジノチップがありません。曲を1曲弾くか、コインで買えます';renderCasino();return}chipAdd(-1);return hs.apply(this,arguments)}}
+{const hs=hlStart;hlStart=function(){if(HL.on||HL.busy||!csCan(CS.hlBet))return;if(chipN()<1){HL.msg='🎟 カジノチップがありません。曲を1曲弾くか、コインで買えます';renderCasino();return}const self=this,args=arguments;return econAtomic(()=>{chipAdd(-1);const result=hs.apply(self,args);if(!HL.on)chipAdd(1);return result})}}
 {const rh=renderHL;renderHL=function(body){rh.apply(this,arguments);try{const box=body.querySelector('.csBox');const n=chipN();
   const c=el('div','csMsg'+(n?'':' bad'),`🎟 カジノチップ ${n.toLocaleString()}枚 ・ ハイ＆ローは1回1枚。通常速度の楽曲を20枚以上押してクリアすると1枚（1プレイ1枚）。コインでも買えます`);box.insertBefore(c,box.children[2]);
   if(!HL.on){const row=el('div','chipBuy');CHIP_PACKS.forEach(([k,pr])=>{const b=el('button','');b.append(el('b','',`🎟 ${k}枚`),el('small','',`${yen(pr)}コイン`));b.disabled=coins()<pr;b.addEventListener('click',()=>chipBuy(k,pr));row.appendChild(b)});box.insertBefore(row,c.nextSibling)}
@@ -10737,7 +10786,8 @@ function usPlay(s,k,test){
     FORCE_SONG=true;usHideAll();startSong(song.id);
   });
 }
-function usReward(s,k,test){
+function usReward(){const self=this,args=arguments;return econAtomic(()=>usRewardImpl.apply(self,args))}
+function usRewardImpl(s,k,test){
   const c=s.chapters[k];if(test||!c)return '';
   const already=usDone(s.id,c.id);usMark(s.id,c.id);if(already)return '';
   const g={coins:c.coins||0,tk:{},items:(c.items||[]).filter(x=>validItem(x)),from:{kind:'u',name:usTitle(s).slice(0,16)}};
@@ -12130,7 +12180,8 @@ function plCount(p){
   (cloud.rows||[]).forEach(r=>{if(r.id===me||!r.poll||typeof r.poll!=='object')return;add(r.poll[p.id],String(r.nick||'プレイヤー').slice(0,16))});
   add(plMine()[p.id],myNick());return {c,n,texts};
 }
-function plAnswer(p,a,x){
+function plAnswer(){const self=this,args=arguments;return econAtomic(()=>plAnswerImpl.apply(self,args))}
+function plAnswerImpl(p,a,x){
   if(!plOpen(p))return 'このアンケートは締め切られています';
   if(p.type==='text'){x=plStr(x,100).trim();if(!x)return 'ひとこと書いてください'}else{a=[...new Set(a)].filter(i=>Number.isInteger(i)&&i>=0&&i<p.opts.length);if(!a.length)return 'えらんでください';if(p.type==='one')a=a.slice(0,1)}
   const m=plMine(),first=!m[p.id];m[p.id]=p.type==='text'?{x,t:Date.now()}:{a,t:Date.now()};store.set('poll',m);pushCloud();
@@ -12308,8 +12359,8 @@ function trReward(t){
   const champ=S.champ&&S.champ.me,second=!champ&&S.Rr[t.R-1].some(x=>x&&x.me),best4=!champ&&!second&&t.R>=2&&S.Rr[t.R-2].some(x=>x&&x.me);
   const c=champ?t.prize.c1:second?t.prize.c2:best4?t.prize.c4:t.prize.cp;const items=champ&&t.tag?['tag:trnchamp']:[];
   if(!c&&!items.length)return;
-  applyGift('trn:'+t.id,{coins:c,tk:{},items,from:{kind:'u',name:`大会「${t.name}」`}});
-  if(champ)moveToast(`👑 大会「${t.name}」優勝！`);
+  const awarded=applyGift('trn:'+t.id,{coins:c,tk:{},items,from:{kind:'u',name:`大会「${t.name}」`}});
+  if(awarded&&champ)moveToast(`👑 大会「${t.name}」優勝！`);
 }
 /* 画面 */
 (function(){
@@ -12700,7 +12751,7 @@ function penClean(p){
 {const mc=mergeCloud;mergeCloud=function(d){
   const pre={owned:loadOwned(),tk:Object.fromEntries(Object.keys(TICKETS).map(k=>[k,tkN(k)]))};
   mc.apply(this,arguments);
-  try{if(d&&Array.isArray(d.penUsed)){const u=penUsed();d.penUsed.forEach(x=>{if(typeof x==='string'&&x.length<60&&!u.includes(x))u.push(x)});store.set('penUsed',u.slice(-120))}
+  try{if(d&&Array.isArray(d.penUsed)){const u=penUsed();d.penUsed.forEach(x=>{if(typeof x==='string'&&x.length<60&&!u.includes(x))u.push(x)});store.set('penUsed',u)}
     if(d&&d.penDone&&typeof d.penDone==='object'){const pd=penDoneAll();Object.keys(d.penDone).forEach(k=>{if(!pd[k])pd[k]=d.penDone[k]});store.set('penDone',pd)}
     /* 7日間は、ほかの端末の古い記録で取り上げたものが戻らないようにする */
     const g=store.get('penGuard',null);if(g&&g.until>Date.now()){
@@ -12710,7 +12761,8 @@ function penClean(p){
 /* 管理者からの「返す」プレゼントで同じアイテムが届いたら、もう戻ってよい */
 {const ag=applyGift;applyGift=function(id,g){const r=ag.apply(this,arguments);try{if(r&&g){const gd=store.get('penGuard',null);if(gd){if(g.items&&g.items.length)gd.items=(gd.items||[]).filter(x=>!g.items.includes(x));if(g.tk)Object.keys(g.tk).forEach(k=>{if(gd.tk)delete gd.tk[k]});store.set('penGuard',gd)}}}catch(e){}return r}}
 /* 取り上げる */
-function penApply(p){
+function penApply(){const self=this,args=arguments;return econAtomic(()=>penApplyImpl.apply(self,args))}
+function penApplyImpl(p){
   const u=penUsed();if(u.includes(p.id))return null;
   const got={c:0,tk:{},ch:0,it:[],t:Date.now()};
   if(p.coins){const have=coins(),take=p.coins===-1?have:Math.min(p.coins,have);if(take>0){const w=loadWallet();w.s+=take;store.set('wallet',w);got.c=take}}
@@ -12721,7 +12773,7 @@ function penApply(p){
     const pr=loadProfile(),fix={};if(rm.includes('frame:'+pr.frame))fix.frame='none';if(rm.includes('tag:'+pr.tag))fix.tag='';if(rm.includes('skin:'+pr.skin))fix.skin='default';if(rm.includes('fx:'+pr.fx))fix.fx='none';
     if(Object.keys(fix).length)store.set('prof',{...pr,...fix})}
   const gd=store.get('penGuard',null)||{};store.set('penGuard',{until:Date.now()+7*864e5,items:[...new Set((gd.until>Date.now()?gd.items||[]:[]).concat(rm))],tk:{...(gd.until>Date.now()?gd.tk||{}:{}),...got.tk}});
-  store.set('penUsed',u.concat(p.id).slice(-120));
+  store.set('penUsed',u.concat(p.id));
   const pd=penDoneAll();pd[p.id]=got;const ks=Object.keys(pd);if(ks.length>40)ks.slice(0,ks.length-40).forEach(k=>delete pd[k]);store.set('penDone',pd);
   return got;
 }
@@ -12997,13 +13049,16 @@ applyFont(fontNow());
     const on=id=>{const e=$(id);return !!(e&&!e.hidden&&e.classList.contains('on'))};
     const cur=store.get('menuTab','play');
     const has={play:typeof loginCanClaim==='function'&&loginCanClaim(),event:on('eventBar')||on('wedBar')||on('festBar')||!!($('surpriseBar')&&!$('surpriseBar').hidden)||!!($('csPend')&&!$('csPend').hidden)};
+    const signature=['eventBar','wedBar','festBar','surpriseBar','csPend'].map(id=>{const e=$(id);return e&&!e.hidden?(e.textContent||'').replace(/\d+:\d+(?::\d+)?/g,'').trim():''}).join('|');
+    if(cur==='event')store.set('eventMenuSeen',signature);
+    has.event=has.event&&store.get('eventMenuSeen','')!==signature;
     Object.entries(btns).forEach(([k,b])=>b.classList.toggle('has',!!has[k]&&k!==cur));
   }catch(e){}}
   setInterval(dots,4000);
   menuTab(store.get('menuTab','play'));
 })();
 
-if($('appVer'))$('appVer').textContent+=' ・ 入力修正版11';
+if($('appVer'))$('appVer').textContent+=' ・ 入力・HiGH＆LOW修正版13';
 /* Locker: existing inventory and persistence remain authoritative. */
 (function(){
   const root=$('prof');root.classList.add('locker');root.querySelector('h1').textContent='ロッカー';$('profBtn').textContent='ロッカー・プロフィール';
@@ -13212,6 +13267,24 @@ window.addEventListener('pagehide',raidPresenceLeave);
  },200);
  const hint=el('p','hint','曲を選ぶとチケット画面が開きます。持っていないチケットは選べません。');hint.id='ticketStartHint';$('songSearch').after(hint);
 })();
+
+
+/* All wrappers are synchronous; cloud saves run after the local commit. */
+{const original=applyGift;applyGift=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=doPull;doPull=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=chipBuy;chipBuy=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=hlStart;hlStart=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=hlCash;hlCash=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=limitedWin;limitedWin=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=showResult;showResult=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=claimLogin;claimLogin=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=claimPass;claimPass=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=progressHook;progressHook=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=d1Reward;d1Reward=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=tnReward;tnReward=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=invCheck;invCheck=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=usReward;usReward=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
+{const original=penApply;penApply=function(){const self=this,args=arguments;return econAtomic(()=>original.apply(self,args))}}
 
 })();
 </script>
